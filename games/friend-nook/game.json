@@ -1,0 +1,12 @@
+{
+  "name": "Rare Friends: Friend Nook",
+  "consumable": "Gift Box",
+  "price": "1000000000000000000",
+  "outcomes": [
+    { "name": "Common keepsake", "chanceBps": 4500, "reward": "350000000000000000" },
+    { "name": "Uncommon keepsake", "chanceBps": 2800, "reward": "700000000000000000" },
+    { "name": "Rare keepsake", "chanceBps": 1700, "reward": "1400000000000000000" },
+    { "name": "Epic keepsake", "chanceBps": 700, "reward": "2500000000000000000" },
+    { "name": "Legendary keepsake", "chanceBps": 300, "reward": "5000000000000000000" }
+  ]
+}

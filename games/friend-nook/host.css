@@ -1,0 +1,57 @@
+/* Rare Friends: Friend Nook — trusted runtime layout (FriendSDK host.css).
+ * Centres the standard 960 × 640 game frame on a warm wallpaper page inside a wooden picture frame, and gives
+ * the SDK toolbar and menus the game's cream-and-walnut palette (same controls, same positions). */
+:root {
+  --rf-game-aspect-ratio: 3 / 2;
+  /* the contest asks for the SDK's 960 × 640 container: never larger, smaller only on small screens */
+  --rf-game-max-width: min(960px, calc(100vw - 72px), calc((100vh - 96px) * 1.5));
+  --fn-ink: #3a2a1e; --fn-paper: #fff6e6; --fn-wood: #8a5a3a; --fn-wood-light: #b7875a; --fn-wood-dark: #5a3b26; --fn-gold: #f2c94c;
+}
+html:root {
+  min-height: 100%;
+  background-color: #e8c9a0;
+  background-image:
+    radial-gradient(circle at 12px 12px, rgba(255,246,230,.55) 0 2px, transparent 2.5px),
+    repeating-linear-gradient(90deg, #e8c9a0 0 26px, #e2c093 26px 30px);
+  background-size: 48px 48px, auto;
+}
+html:root body {
+  min-height: 100vh; margin: 0; background: transparent;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px 16px; box-sizing: border-box;
+}
+/* wooden picture frame around the game */
+html:root body #root {
+  position: relative; width: 100%;
+  max-width: calc(var(--rf-game-max-width) + 28px);
+  margin: 0 auto; padding: 10px;
+  background: repeating-linear-gradient(90deg, var(--fn-wood) 0 9px, #7f5234 9px 10px, var(--fn-wood) 10px 21px, #946244 21px 22px);
+  border: 4px solid var(--fn-ink);
+  box-shadow: inset 0 3px 0 var(--fn-wood-light), inset 3px 0 0 #9a6a48, inset 0 -3px 0 var(--fn-wood-dark), inset -3px 0 0 var(--fn-wood-dark), 0 10px 0 rgba(58,42,30,.3);
+}
+html:root body .rf-game-frame { border-color: var(--fn-ink); background: #8fbf6a; }
+/* SDK toolbar: cream labels with walnut borders; all three items share one height and font */
+html:root body .rf-frame-toolbar > * { background: rgba(255,246,230,.94); color: var(--fn-ink); border: 2px solid var(--fn-ink); box-shadow: none; }
+html:root body .rf-frame-toolbar > *, html:root body .rf-game-frame .rf-frame-toolbar button {
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+  min-width: 120px; width: auto; max-width: none; height: 32px; min-height: 32px; padding: 0 10px;
+  font: 700 12px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; white-space: nowrap;
+}
+html:root body .rf-game-frame .rf-frame-toolbar button:hover:not(:disabled) { background: #fff; }
+/* the mode label ("Local preview") is status text, not a button */
+html:root body .rf-frame-toolbar > .rf-frame-mode { background: rgba(255,246,230,.75); border-color: transparent; color: #7a5a3e; font-weight: 600; cursor: default; }
+html:root body .rf-frame-toolbar > .rf-frame-mode::before { content: ""; flex: none; width: 6px; height: 6px; margin-right: 6px; background: #7fb069; box-shadow: 0 0 0 1px var(--fn-ink); }
+html:root body .rf-frame-menu { background: var(--fn-paper); color: var(--fn-ink); border: 3px solid var(--fn-ink); }
+html:root body .rf-frame-menu-heading, html:root body .rf-frame-menu-footer { border-color: #ead9bd; }
+html:root body .rf-frame-scrim button { background: var(--fn-paper); color: var(--fn-ink); border: 2px solid var(--fn-ink); }
+html:root body .rf-frame-scrim button:hover:not(:disabled) { background: #fff; }
+html:root body .rf-frame-scrim .rf-frame-primary { background: var(--fn-gold); color: var(--fn-ink); }
+html:root body .rf-frame-friends button[aria-pressed=true] { background: var(--fn-gold); }
+html:root body .rf-runtime-status { background: var(--fn-paper); color: var(--fn-ink); }
+/* small or short screens: thinner frame; toolbar items size to their text */
+@media (max-width: 640px), (max-height: 560px) {
+  :root { --rf-game-max-width: min(960px, calc(100vw - 20px), calc((100vh - 24px) * 1.5)); }
+  html:root body { padding: 6px; }
+  html:root body #root { padding: 4px; border-width: 3px; max-width: calc(var(--rf-game-max-width) + 14px); }
+  html:root body .rf-frame-toolbar > *, html:root body .rf-game-frame .rf-frame-toolbar button { min-width: 0; height: 26px; min-height: 26px; padding: 0 6px; font-size: 10px; }
+}
