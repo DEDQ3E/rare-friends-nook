@@ -356,7 +356,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
         const target = doing?.target ? placedById(doing.target) : null;
         let x: number, y: number;
         if (em.at && target) { const [pi, pj] = placePoint(target, em.at[0], em.at[1]); [x, y] = project(pi, pj, em.at[2]); }
-        else { const [hx, hy] = headPoint(); x = hx; y = em.kind === "bubble" ? project(fr.i, fr.j, 8)[1] : em.kind === "steam" ? project(fr.i, fr.j, fr.z + 12)[1] : hy; }
+        else { const [hx, hy] = headPoint(); x = hx; y = em.kind === "bubble" ? project(fr.i, fr.j, 7.6)[1] : em.kind === "steam" ? project(fr.i, fr.j, fr.z + 12)[1] : hy; }
         const rnd = (a: number) => (Math.random() - .5) * a, color = em.colors ? em.colors[Math.floor(Math.random() * em.colors.length)] : undefined;
         if (em.kind === "bubble") particles.push({ x: x + rnd(26), y, vx: rnd(4), vy: -10 - Math.random() * 8, life: 1.2, max: 1.2, kind: "bubble", r: 1 + Math.random() * 1.4 });
         else if (em.kind === "steam") particles.push({ x: x + rnd(6), y: y - 2, vx: rnd(4), vy: -9, life: 1.8, max: 1.8, kind: "steam", r: 1.5 });
@@ -430,8 +430,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     return { dx: 0, dy: 0 };
   }
   function friendPart(): Part {
-    const r = .2;
-    return makePart(fr.i - r, fr.i + r, fr.j - r, fr.j + r, fr.z, fr.z + 30, "friend", drawFriendNow);
+    const r = .2, z0 = fr.bath ? 9.2 : fr.z;
+    return makePart(fr.i - r, fr.i + r, fr.j - r, fr.j + r, z0, z0 + 30, "friend", drawFriendNow);
   }
   function drawFriendNow(c: CanvasRenderingContext2D) {
     const { rows, facing } = frameRows(); if (!rows.length) return;
@@ -448,6 +448,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     }
     c.restore();
     const prop = doing?.phase === "do" ? PROPS[doing.action.id] : undefined;
+    if (fr.bath && doing?.seat) drawTubFront(c, footprint(doing.seat));
     if (prop && !fr.lie) { const left = fr.facing === "left"; drawPixmap(c, ICONS[prop], Math.round(x + off.dx + (left ? -20 : 11)), Math.round(y + off.dy - 17), 1); }
     // family flourishes around (never on) the Friend: Sparkling twinkles, Family hearts
     if (!reduced && !fr.lie && !doing && !fr.moving) {
@@ -459,6 +460,29 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       }
       if (temper.family === "Family") { const ph = (fr.clock % 4) / 4; if (ph < .5 * (.5 + strength)) { const hy = top - 4 - ph * 16; c.fillStyle = `rgba(255,77,109,${1 - ph * 1.6})`; c.fillRect(x + 9, hy, 2, 2); c.fillRect(x + 12, hy, 2, 2); c.fillRect(x + 9, hy + 1, 5, 2); c.fillRect(x + 10, hy + 3, 3, 1); } }
     }
+  }
+  /** The near half of the bath (water, foam, front rim and end) drawn over the Friend sitting in it. */
+  function drawTubFront(c: CanvasRenderingContext2D, [a, b, e, d]: readonly number[]) {
+    const P = project, dk = darkness(minute), rim = .12, wz = 7.6, W = ["#FFFFFF", "#E6E6EE", "#D2D2DE"];
+    const q = (pts: readonly (readonly [number, number])[], fill: string, stroke = true) => fillPoly(c, pts.flatMap(p => [p[0], p[1]]), lit(fill, dk), stroke);
+    // water in front of the Friend, then foam floating on it
+    // the water line is level on screen: everything of the Friend below it is under water
+    const [fx, fy] = P(fr.i, fr.j, wz), line = fy - 3;
+    c.save(); c.beginPath(); c.rect(-1e4, line, 2e4, 1e4); c.clip();
+    q([P(a + rim, b + rim, wz), P(e - rim, b + rim, wz), P(e - rim, d - rim, wz), P(a + rim, d - rim, wz)], "#8FC6DE", false);
+    c.restore();
+    c.fillStyle = lit("#B5DCEC", dk); c.fillRect(fx - 20, line, 40, 1);
+    for (let n = 0; n < 12; n++) {
+      const bob = reduced ? 0 : Math.sin(fr.clock * 2 + n) * .6, bx = fx - 21 + n * 3.8, by = line + 1 + (n % 3) * 1.4;
+      c.fillStyle = lit(n % 3 ? "#FFFFFF" : "#DCEFF3", dk * .6); c.beginPath(); c.ellipse(bx, by + bob, 3.4, 2.1, 0, 0, Math.PI * 2); c.fill();
+    }
+    // front rim (along i at the near side) and the right end: outer faces, then tops
+    q([P(a, d, 0), P(e, d, 0), P(e, d, 9), P(a, d, 9)], W[1]);
+    q([P(e, b, 0), P(e, d, 0), P(e, d, 9), P(e, b, 9)], W[2]);
+    q([P(a, d - rim, 9), P(e, d - rim, 9), P(e, d, 9), P(a, d, 9)], W[0]);
+    q([P(e - rim, b, 9), P(e, b, 9), P(e, d, 9), P(e - rim, d, 9)], W[0]);
+    // inner side of the front rim, seen above the water
+    q([P(a + rim, d - rim, wz), P(e - rim, d - rim, wz), P(e - rim, d - rim, 9), P(a + rim, d - rim, 9)], "#EEF3F6", false);
   }
   function headPoint(): [number, number] {
     const { rows } = frameRows(), [x, y] = project(fr.i, fr.j, fr.z);
@@ -505,10 +529,6 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       else { g.fillStyle = p.color ?? "#FFFFFF"; g.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); }
     }
     g.globalAlpha = 1;
-    if (fr.bath) { // foam on the water around the Friend
-      const [x, wy] = project(fr.i, fr.j, 9.2);
-      for (let n = 0; n < 9; n++) { const fx = x - 16 + n * 4, bob = reduced ? 0 : Math.sin(fr.clock * 2 + n) * .6; g.fillStyle = lit(n % 3 ? "#FFFFFF" : "#DCEFF3", k * .6); g.beginPath(); g.ellipse(fx, wy + (n % 2) * 1.5 + bob, 3.2, 2, 0, 0, Math.PI * 2); g.fill(); }
-    }
     if (hintUid && !placing) {
       const anchor = hintUid === "friend" ? (() => { const [hx, hy] = headPoint(); return { x: hx, y: hy - 16 }; })() : tops.get(hintUid);
       if (anchor) drawPixmap(g, ARROW, Math.round(anchor.x - 4), Math.round(anchor.y - 14 - (reduced ? 0 : Math.abs(Math.sin(t * 4)) * 4)), 1);

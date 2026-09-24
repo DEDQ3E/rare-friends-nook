@@ -91,7 +91,7 @@ export const FURNITURE: readonly FurnitureDef[] = [
   { id: "plant-bed", name: "Potted plant", origin: [.13, .05], foot: [.13, .05, .69, .61], spots: [], build: b => plant(b, .13, .05) },
   /* ---------------- bathroom ---------------- */
   { id: "bathtub", name: "Bathtub", origin: [5.15, .1], foot: [5.15, .1, 7.0, 1.1], spots: [[6.05, 1.6]], wall: true,
-    pose: { i: 6.05, j: .55, z: -1, face: [1, 1] },
+    pose: { i: 6.075, j: .6, z: -3, face: [1, 1] },
     build: b => {
       const i = 5.15, j = .1, w = 1.85, d = 1.0;
       b.box(i, j, w, d, 9, WHT); b.tp(i + .12, j + .12, i + w - .12, j + d - .12, 9.01, "#8FC6DE"); b.tp(i + .12, j + .12, i + w - .12, j + .28, 9.02, "#B5DCEC");
