@@ -4,6 +4,10 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
+🎬 **Demo with sound (47 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
+
+https://github.com/user-attachments/assets/ba8e0824-cde9-49f6-81cb-2066e2926d94
+
 ![Dancing to the record player, watching TV, taking a bath](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friend-nook.gif)
 
 **Project name**
@@ -180,6 +184,7 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 - `npm run typecheck`, `npm run check` (`friendsdk check`: valid, expected reward 0.9165 RF, maximum 5 RF), `npm test` (`friendsdk test`: PASS at 960 px).
 - Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
 - **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots and GIF use the same live reads for #7730.
+- **Video:** `tests/video.mjs` records the demo above, picture and sound together, straight from the running game.
 - **Music:** `tests/music.mjs` records every track straight from the game's audio graph to check the mix (similar loudness across tracks, no clipping).
 - `tests/docs.mjs` checks that every price, odd and value in this file and the README matches `game.json` and the code.
 - Rules pass: canonical artwork never transformed, no wallet code, no storage, no parent-page access, everything simulated and labelled, purchases ignored while the runtime is paused.

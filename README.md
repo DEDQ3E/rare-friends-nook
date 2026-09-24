@@ -5,6 +5,10 @@ A cozy isometric life sim starring **your** Rare Friend, built with FriendSDK v0
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/** (simulated economy)
 
+🎬 **Demo with sound (47 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File](media/friend-nook.webm).
+
+https://github.com/user-attachments/assets/ba8e0824-cde9-49f6-81cb-2066e2926d94
+
 ![Dancing, watching TV and taking a bath](media/friend-nook.gif)
 
 Your Friend moves into a little pixel house and lives in it like a Sim. Everything it does by itself comes from
@@ -79,7 +83,7 @@ npm run docs       # every number in the docs matches game.json and the code
 Browser checks (need `npm install --no-save playwright` and `npx playwright install chromium`):
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`.
 Real Friends read live from mainnet: `node tests/friends.mjs` (also needs `pngjs`). Music to WAV: `node tests/music.mjs`.
-README media: `node tests/media.mjs` (also needs `gifenc` and `pngjs`).
+Demo video with sound: `node tests/video.mjs` (Microsoft Edge). README media: `node tests/media.mjs` (also needs `gifenc` and `pngjs`).
 
 ## Layout
 
