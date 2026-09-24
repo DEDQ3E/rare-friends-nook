@@ -1,6 +1,6 @@
 # Rare Friends: Friend Nook
 
-![Wori, a Generation 1 Hoverer, in its isometric house](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/house.png)
+![Humippy (Friend #7730, a Generation 3 Hoverer) in its isometric house](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/house.png)
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
@@ -16,17 +16,21 @@ Full submission: [`submissions/friend-nook/README.md`](https://github.com/DEDQ3E
 
 ## What did you build?
 
-A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitchen, living and dining room) in isometric cut-away view with day and night, five needs and 31 things to do on 27 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself. The house is alive (TV channels and a video game, swimming fish, a turning record, steam, bath bubbles) with procedural music and a sound for every activity. A hint always points to one thing that raises the lowest need.
+A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitchen, living and dining room) in isometric cut-away view with day and night, five needs and 31 things to do on 27 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself. The house is alive (TV channels and a video game, swimming fish, a turning record, steam, bath bubbles) with a composed, synthesized soundtrack for each time of day (marimba morning, vibraphone swing, lo-fi evening, music-box lullaby, a disco record) and a sound for every activity. A hint always points to one thing that raises the lowest need.
 
 ## How does it use Rare Friends?
 
 - **Its own artwork:** canonical Generations frames through the SDK sprite reader, four facings, never recoloured, rotated or reshaped; clothes fitted to its own silhouette.
 - **Family = temperament:** loves, dislikes, need rates, speed, voice lines and a signature idle per family. A Hoverer floats and naps, a Skeleton wakes at night, an Asymmetry zigzags between toys and the arcade. It may refuse what it dislikes.
 - **Generation = character strength:** one read-only `generation(tokenId)` call sets it from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more, refuse more, gesture and speak more expressively.
-- **The token itself:** from its sprite seed come a nickname, a favourite colour (its blanket, cushion and rug), a personal favourite activity, a snack, a birthday, a catchphrase and a quirk with real effects (chatterbox, night snacker, early bird, collector, hummer…). Two Hoverers are different Friends.
+- **The token itself:** from its sprite seed come a nickname, a favourite colour (its blanket, cushion and rug), a personal favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects (night snacker, early bird, bookworm, sky watcher, cuddle bug…). Two Hoverers are different Friends.
 - **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, a diary of its own choices and friendship levels.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
+
+**Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Their own *Meet your Friend* cards, and what each chose by itself, are in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
+
+![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
 
 ## How RF is spent, and the economy
 
@@ -61,11 +65,11 @@ Click or tap furniture to pick an action, the floor to walk; arrows / WASD, `E` 
 
 ## What have you tested?
 
-`npm run typecheck`, `friendsdk check` (valid), `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), and browser checks with the SDK harness: furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound and mute, phone sizes, 60 fps. The live Pages build is byte-identical to `docs/`.
+`npm run typecheck`, `friendsdk check` (valid), `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), and ten real Friends read live from mainnet through the real runtime, browser checks with the SDK harness: furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound and mute, phone sizes, 60 fps. The live Pages build is byte-identical to `docs/`.
 
 ## Known limitations
 
-No storage in the SDK sandbox (a reload starts fresh); automated tests use the mock wallet's Friend #7730; the generation is one public read from inside the game (never an ownership check; falls back to medium strength); mobile needs the wallet app's browser; sound starts after the first click.
+No storage in the SDK sandbox (a reload starts fresh); the SDK test harness uses the mock wallet's Friend #7730 (the ten-Friend run mocks only the wallet; no Hollow in its list); the generation is one public read from inside the game (never an ownership check; falls back to medium strength); mobile needs the wallet app's browser; sound starts after the first click.
 
 ## Credits
 

@@ -1,6 +1,6 @@
 # Rare Friends: Friend Nook
 
-![Wori, a Generation 1 Hoverer, in its isometric house](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/house.png)
+![Humippy (Friend #7730, a Generation 3 Hoverer) in its isometric house](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/house.png)
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
@@ -22,7 +22,7 @@ Your Generations Friend lives in a cozy isometric house like a Sim, and everythi
 
 A life sim with one star. The selected Friend moves into a 12 × 10 tile pixel house with a bedroom, a bathroom, a kitchen, a living room and a dining area, shown in isometric cut-away view with a day and night cycle. It has five needs (hunger, energy, fun, hygiene, social) and 31 things to do on 27 kinds of furniture: sleep, stargaze, bathe, cook, snack, eat dinner with you, watch TV, play video games, read, dance to the record player, play ball, paint, play the arcade and more. Click furniture to choose an action, or leave it alone and watch it choose by itself.
 
-The house is alive: the TV shows three channels and a video game, fish swim, the record turns, the pan sizzles, steam rises, bubbles pop in the bath, and the whole house has procedural music that follows the time of day plus a sound for every activity. A hint always points to one thing in the house that raises the lowest need. Gift Boxes (the SDK chance game) give keepsakes for the hutch, and Buy mode adds furniture you place yourself. Everything lives inside the SDK's 960 × 640 container, with a compact layout for phones.
+The house is alive: the TV shows three channels and a video game, fish swim, the record turns, the pan sizzles, steam rises, bubbles pop in the bath, and the house has its own composed, synthesized soundtrack: a marimba morning, a swinging vibraphone afternoon, a lo-fi Rhodes evening, a music-box lullaby at night and a disco record to dance to, plus a sound for every activity. A hint always points to one thing in the house that raises the lowest need. Gift Boxes (the SDK chance game) give keepsakes for the hutch, and Buy mode adds furniture you place yourself. Everything lives inside the SDK's 960 × 640 container, with a compact layout for phones.
 
 ## How does it use Rare Friends?
 
@@ -31,7 +31,7 @@ The Friend is the only character, and the game is about who it is.
 - **Its own artwork.** The ownership-verified Friend is drawn from its canonical Generations frames through the SDK sprite reader (black mask, white one-pixel halo), in four facings: toward the camera uses the `down` frames, away `up`, sideways `left` / `right`. Its sprite is never recoloured, rotated or reshaped: asleep it rests upright under the blanket, in the bath the near rim and the foam are drawn over it. Clothes from the wardrobe are fitted to its own silhouette and come off in one tap.
 - **Family = temperament.** Each of the nine families has its own loves, dislikes, need rates, walking speed, voice lines and a signature idle: a Hoverer floats and naps, a Skeleton rattles and wakes up at night, a Sparkling twinkles and lives in the bath, an Asymmetry zigzags between toys and the arcade, a Colossus moves slowly and owns the sofa, a Hollow wants books and quiet. It may refuse what it dislikes ("Water? On my bones? No.").
 - **Generation = character strength.** One read-only `generation(tokenId)` call on the Generations contract sets how strong the character is, from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more about what they love, refuse more often, gesture more and speak more expressively. Every generation plays the full game.
-- **The token itself = what makes it unique.** From the sprite seed the SDK returns, the game derives a nickname, a favourite colour (its blanket, cushion and living-room rug take that colour), a personal favourite activity outside its family's loves, a favourite snack, a birthday, a catchphrase and one quirk with real effects (chatterbox, man of few words, night snacker, early bird, sleepyhead, neat freak, collector, hummer). Two Hoverers are different Friends.
+- **The token itself = what makes it unique.** From the sprite seed the SDK returns, the game derives a nickname, a favourite colour (its blanket, cushion and living-room rug take that colour), a personal favourite activity outside its family's loves, a favourite snack, a birthday, a catchphrase and one of twelve quirks with real effects (chatterbox, quiet one, night snacker, early bird, sleepyhead, neat freak, collector, hummer, bookworm, speedy, sky watcher, cuddle bug). A quirk can even overrule the family: a Bookworm Mask reads although Masks dislike books. Two Hoverers are different Friends.
 - **A voice.** Speech is voiced as a babble of syllables whose pitch and timbre come from the family (a deep slow Colossus, an airy Hoverer, a clacky Skeleton), more expressive with stronger generations.
 - **A relationship.** A *Meet your Friend* card opens first; a diary records what it chose by itself, what it refused and which wishes you granted; friendship levels go from Stranger to Forever Friend.
 
@@ -50,6 +50,29 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 | Colossus | Gentle Giant | sofa, TV, dinner, naps, bean bag | bar stools, toys | slowest walker |
 | Sparkling | Style Icon | bath, mirror, outfits, gifts, vanity | toys | hygiene drops faster |
 | Hollow | Introvert | reading, books, stargazing, aquarium, painting | dancing, games, arcade | social drops slower |
+
+## Ten real Friends, ten characters
+
+Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK runtime (wallet flow, fresh ownership check, sandboxed iframe) for a fixed list of ten real Generations Friends, with their artwork, family, seed and generation read **live from Robinhood mainnet**; only the wallet account and the ownership answers are mocked, as in `friendsdk test`. Eight of the nine families, generations 1 to 6, and two pairs from one family. Each card below is the game's own *Meet your Friend* card; then each Friend was left alone at 3× for about four in-game hours.
+
+![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
+
+| Friend | Family · generation | Nickname | Temperament · strength | Favourite thing | Colour | Quirk | Chose by itself (first 4 in-game hours) |
+|---|---|---|---|---|---|---|---|
+| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Play video games, Snack at the bar, Dance ♥ |
+| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Cook a meal ♥, Play with toys, Nap |
+| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Play with toys ♥, Cook a meal, Dance ♥ |
+| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Play video games ♥, Snack at the bar, Play video games ♥, Nap |
+| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Play with toys, Nap ♥, Snack at the bar |
+| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Daydream ♥, Cook a meal |
+| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Cook a meal, Take a bath ♥, Read |
+| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Watch TV ♥, Grab a snack ♥, Nap |
+| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Watch TV ♥, Snack at the bar, Watch TV ♥ |
+| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Play with toys, Cook a meal, Nap |
+
+♥ = something it loves. The two Asymmetries share a family but not a life: Veluri (Gen 1, Legendary) is an early bird who wants to stargaze; Robo (Gen 5, Gentle) raids the fridge at night and loves to cook. Yeps, a Colossus Sky watcher, went straight to the window to daydream. Each house takes its Friend's colour (blanket, cushion, rug):
+
+![The same house, ten different lives](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-life.png)
 
 ## How RF is spent, and the economy
 
@@ -90,7 +113,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 - **Paid outcomes:** only the Gift Box, through the SDK chance game (`buy` → `play` → `settle`); in the preview the SDK's simulated ledger picks the keepsake. The odds are the table above.
 - **Behaviour only** (browser `Math.random`, no RF involved): which of the Friend's top three wanted activities it picks, wishes, whether it refuses something it dislikes, which hint is suggested, voice lines and particles.
-- **Deterministic from the token:** nickname, favourite colour, favourite activity, snack, birthday, catchphrase and quirk come from a seeded generator over the sprite seed and token ID, so the same Friend is always the same.
+- **Deterministic from the token:** nickname, favourite colour, favourite activity, snack, birthday, catchphrase and quirk each come from their own hash of the sprite seed and token ID, so the same Friend is always the same and neighbouring token IDs are unrelated.
 
 ## Source code
 
@@ -127,13 +150,15 @@ Preview balance: 20 RF (simulated, from the SDK). Gift Box 1 RF (odds and values
 
 - `npm run typecheck`, `npm run check` (`friendsdk check`: valid, expected reward 0.9165 RF, maximum 5 RF), `npm test` (`friendsdk test`: PASS at 960 px).
 - Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
+- **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots and GIF use the same live reads for #7730.
+- **Music:** `tests/music.mjs` records every track straight from the game's audio graph to check the mix (similar loudness across tracks, no clipping).
 - `tests/docs.mjs` checks that every price, odd and value in this file and the README matches `game.json` and the code.
 - Rules pass: canonical artwork never transformed, no wallet code, no storage, no parent-page access, everything simulated and labelled, purchases ignored while the runtime is paused.
 
 ## Known limitations
 
 - The SDK sandbox has no storage: a reload starts a fresh house, clock and friendship.
-- Automated tests use the SDK's mock wallet with Friend #7730, whose simulated ledger always returns the first keepsake; other families are covered by code, not by a live test.
+- `friendsdk test` and the interaction tests use the SDK's mock wallet with Friend #7730, whose simulated ledger always returns the first keepsake. The ten-Friend run reads real artwork and generations but mocks the wallet; no Hollow Friend was in the fixed list, so that family is covered by code only.
 - The generation is one public read of the Generations contract from inside the game (the same RPC the SDK sprite reader uses and the child CSP allows). It is never an ownership check; if it fails, the character uses medium strength.
 - Mobile needs the wallet app's browser; in portrait the 3:2 frame is small (the game suggests turning the phone).
 - Sound starts after the first click or key press (browser rule).

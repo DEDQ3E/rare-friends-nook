@@ -71,6 +71,12 @@ plus temperament modifiers. One in-game day lasts about 8 real minutes at 1× sp
 - **Wishes.** A thought bubble shows a wish drawn from the Friend's likes. Fulfilling it gives
   Friendship points; Friendship levels unlock furniture and titles.
 - **Voice.** Short speech lines and emotes per family (talk, idle, reactions to gifts and food).
+- **The token itself.** Each trait is its own hash of the sprite seed and token ID: nickname, favourite colour
+  (blanket, cushion, rug), a favourite activity outside the family's loves, snack, birthday, catchphrase and one
+  of twelve quirks with real effects; a quirk may overrule the family (a Bookworm Mask reads).
+- **Sound.** A composed tune per time of day, each with its own synthesized band (marimba morning, vibraphone
+  swing, lo-fi Rhodes evening, music-box lullaby in 3/4, disco record for dancing); one-shots such as piano and
+  twinkles take their notes from the chord the music is on.
 
 ## Controls
 

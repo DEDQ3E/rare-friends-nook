@@ -6,7 +6,7 @@ import { ACTION } from "./sim.js";
 import type { Temperament } from "./personality.js";
 
 export type Accent = Readonly<{ name: string; top: string; left: string; right: string; light: string }>;
-export type Quirk = Readonly<{ id: "chatterbox" | "quiet" | "nightsnacker" | "earlybird" | "sleepyhead" | "neat" | "collector" | "hummer"; label: string; blurb: string }>;
+export type Quirk = Readonly<{ id: "chatterbox" | "quiet" | "nightsnacker" | "earlybird" | "sleepyhead" | "neat" | "collector" | "hummer" | "bookworm" | "speedy" | "skywatcher" | "cuddly"; label: string; blurb: string }>;
 export type Traits = Readonly<{
   nickname: string; accent: Accent; favorite: string; snack: string; birthday: { month: number; day: number; label: string };
   catchphrase: string; quirk: Quirk;
@@ -23,34 +23,45 @@ const ACCENTS: readonly Accent[] = [
   { name: "Plum", top: "#A0628E", left: "#864C75", right: "#6E3B60", light: "#C99BBD" },
 ];
 const SNACKS = ["strawberry mochi", "cheese toast", "honey pancakes", "seaweed crackers", "cherry pie", "mango pudding", "salted pretzels", "berry yoghurt", "corn dogs", "cinnamon rolls", "rice balls", "choco biscuits"];
-const QUIRKS: readonly Quirk[] = [
+export const QUIRKS: readonly Quirk[] = [
   { id: "chatterbox", label: "Chatterbox", blurb: "Talks twice as often." },
-  { id: "quiet", label: "Man of few words", blurb: "Talks half as often, and means it." },
+  { id: "quiet", label: "Quiet one", blurb: "Talks half as often, and means it." },
   { id: "nightsnacker", label: "Night snacker", blurb: "Raids the fridge after dark." },
   { id: "earlybird", label: "Early bird", blurb: "Up at dawn, whatever time it went to bed." },
   { id: "sleepyhead", label: "Sleepyhead", blurb: "Gets tired a bit faster." },
   { id: "neat", label: "Neat freak", blurb: "Stays clean longer and loves a quick wash." },
   { id: "collector", label: "Collector", blurb: "Treasures keepsakes: gifts mean more." },
   { id: "hummer", label: "Hummer", blurb: "Hums little tunes while it walks." },
+  { id: "bookworm", label: "Bookworm", blurb: "Reads whenever it can, whatever its family thinks of books." },
+  { id: "speedy", label: "Speedy", blurb: "Always in a hurry: walks a quarter faster." },
+  { id: "skywatcher", label: "Sky watcher", blurb: "Loves daydreaming at the window and looking at the stars." },
+  { id: "cuddly", label: "Cuddle bug", blurb: "Gets lonely sooner and loves being petted." },
 ];
-const FIRST = ["Mo", "Pi", "Lu", "Bo", "Ki", "Nu", "Zu", "Fi", "Ta", "Ro", "Mi", "Po", "Su", "Ji", "Wo", "Ba"];
-const LAST = ["mo", "ppy", "no", "bble", "ki", "to", "zzy", "lo", "ma", "sh", "ri", "gs", "ni", "do", "pi", "x"];
+/** Activities a quirk adds to the Friend's loves (and removes from its dislikes). */
+const QUIRK_LOVES: Readonly<Partial<Record<Quirk["id"], readonly string[]>>> = {
+  neat: ["wash"], bookworm: ["book", "read"], skywatcher: ["daydream", "stargaze", "telescope"], cuddly: ["pet", "talk"],
+};
+const FIRST = ["Mo", "Pi", "Lu", "Bo", "Ki", "Nu", "Zu", "Fi", "Ta", "Ro", "Mi", "Po", "Su", "Ji", "Wo", "Ba", "Gu", "Da", "Ye", "Ko", "Hu", "Te", "Ve", "Lo"];
+const MID = ["", "", "", "", "ra", "mi", "lu", "ko"];
+const LAST = ["mo", "ppy", "no", "bble", "ki", "to", "zzy", "lo", "ma", "sh", "ri", "gs", "ni", "do", "pi", "x", "mble", "ffin", "na", "bo", "tch", "li", "nk", "ps"];
 const PHRASE_A = ["Stars", "Socks", "Crumbs", "Bubbles", "Pickles", "Clouds", "Buttons", "Noodles", "Sprinkles", "Pebbles", "Mittens", "Biscuits"];
 const PHRASE_B = ["and spoons!", "forever!", "on toast!", "ahoy!", "in a jar!", "o'clock!", "galore!", "for everyone!", "and moonlight!", "at dawn!"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 /** Actions a Friend can pick as its personal favourite (things the starting house or the catalog offers). */
 const FAVORITES = ["stargaze", "daydream", "toys", "bath", "admire", "cook", "snack", "tv", "games", "sit", "book", "read", "dance", "ball", "dress", "piano", "fish", "paint", "arcade", "telescope", "primp", "lounge"];
 
-/** mulberry32: a small deterministic generator seeded from the token. */
-function rng(seed: number) {
-  let a = seed >>> 0;
-  return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+/** murmur3's 32-bit finalizer: spreads neighbouring seeds and token IDs over the whole range. */
+function fmix(h: number) { h ^= h >>> 16; h = Math.imul(h, 0x85EBCA6B); h ^= h >>> 13; h = Math.imul(h, 0xC2B2AE35); return (h ^ (h >>> 16)) >>> 0; }
+/** A counter-based generator: draw n is its own hash of (token key, n), so every trait is independent. */
+function rng(key: number) {
+  let n = 0;
+  return () => fmix(fmix(key ^ Math.imul(++n, 0x9E3779B9)) + n) / 4294967296;
 }
 
 export function traitsFor(tokenId: bigint, seed: number, t: Temperament): Traits {
-  const r = rng((seed ^ Number(tokenId % 2147483647n) * 2654435761) >>> 0);
+  const r = rng(fmix(fmix(seed >>> 0) ^ Number(tokenId & 0xFFFFFFFFn) ^ Math.imul(Number((tokenId >> 32n) & 0xFFFFFFFFn), 0x9E3779B1)));
   const pick = <T,>(list: readonly T[]) => list[Math.floor(r() * list.length)];
-  const nickname = pick(FIRST) + pick(LAST);
+  const nickname = pick(FIRST) + pick(MID) + pick(LAST);
   const accent = pick(ACCENTS);
   // a personal favourite outside the family's loves, so two Friends of one family still differ
   const options = FAVORITES.filter(a => !t.loves.includes(a) && !t.dislikes.includes(a));
@@ -68,9 +79,12 @@ export function personalize(t: Temperament, p: Traits | null): Temperament {
   const decay = { ...t.decay };
   if (p.quirk.id === "sleepyhead") decay.energy = (decay.energy ?? 1) * 1.2;
   if (p.quirk.id === "neat") decay.hygiene = (decay.hygiene ?? 1) * .7;
-  const loves = [...t.loves, p.favorite, ...(p.quirk.id === "neat" ? ["wash"] : [])].filter((a, i, all) => all.indexOf(a) === i && !!ACTION[a]);
+  if (p.quirk.id === "cuddly") decay.social = (decay.social ?? 1) * 1.3;
+  const extra = QUIRK_LOVES[p.quirk.id] ?? [];
+  const loves = [...t.loves, p.favorite, ...extra].filter((a, i, all) => all.indexOf(a) === i && !!ACTION[a]);
+  const dislikes = t.dislikes.filter(a => !extra.includes(a));
   return {
-    ...t, loves, decay,
+    ...t, loves, dislikes, decay, speed: t.speed * (p.quirk.id === "speedy" ? 1.25 : 1),
     voice: { ...t.voice, hello: [`${t.voice.hello[0]} ${p.catchphrase}`], idle: [...t.voice.idle, p.catchphrase, `I could go for some ${p.snack}.`], love: [...t.voice.love, p.catchphrase] },
   };
 }

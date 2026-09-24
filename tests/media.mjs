@@ -1,7 +1,8 @@
-// README media with the SDK's mock wallet (Friend #7730): screenshots in media/ and a short GIF.
+// README media for Friend #7730 in the real SDK runtime, its artwork, family, seed and generation read live from
+// mainnet (tests/live.mjs; only the wallet and ownership answers are mocked): screenshots in media/ and a GIF.
 // Needs (not in package.json): npm install --no-save playwright gifenc pngjs
 // Run: node tests/media.mjs
-import { testGame } from "@rarefriends/friendsdk/testing";
+import { liveRuntime } from "./live.mjs";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import gifenc from "gifenc";
 import { PNG } from "pngjs";
@@ -12,9 +13,10 @@ mkdirSync(out, { recursive: true });
 let k = 1;
 const at = (i, j, z = 0) => ({ x: ((i - j) * 18 - 18 + 240) * 2 * k, y: ((i + j) * 9 - z - 88 + 160) * 2 * k });
 
-await testGame("./games/friend-nook", {
-  width: 1000, height: 760, timeout: 600000,
-  check: async ({ page, game }) => {
+const rt = await liveRuntime();
+try {
+  {
+    const { page, game, close } = await rt.open(7730n, { width: 1000, height: 760 });
     const errors = []; page.on("pageerror", e => errors.push(String(e)));
     const root = page.locator("#root");
     const shot = async name => { await page.waitForTimeout(350); await root.screenshot({ path: `${out}/${name}.png` }); };
@@ -75,11 +77,13 @@ await testGame("./games/friend-nook", {
     gif.finish(); writeFileSync(`${out}/friend-nook.gif`, gif.bytes());
     console.log("frames", frames.length, "gif bytes", readFileSync(`${out}/friend-nook.gif`).length);
     if (errors.length) console.log("ERRORS:\n" + errors.join("\n"));
-  },
-});
-// phone, landscape
-await testGame("./games/friend-nook", { width: 844, height: 390, timeout: 120000, check: async ({ page, game }) => {
-  await game.getByRole("button", { name: /Welcome home/ }).click({ timeout: 60000 });
-  await page.waitForTimeout(1500); await page.screenshot({ path: `${out}/phone.png` });
-} });
+    await close();
+  }
+  { // phone, landscape
+    const { page, game, close } = await rt.open(7730n, { width: 844, height: 390 });
+    await game.getByRole("button", { name: /Welcome home/ }).click();
+    await page.waitForTimeout(1500); await page.screenshot({ path: `${out}/phone.png` });
+    await close();
+  }
+} finally { await rt.close(); }
 console.log("ok");

@@ -26,10 +26,20 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
   clothes fitted to its own silhouette. Needs (hunger, energy, fun, hygiene, social), free will, wishes,
   refusals, a diary of its own choices, friendship levels, a family voice, a signature idle.
 - **Hints:** the lowest need, and one thing in the house that raises it, with an arrow and a one-tap button.
-- **Sound:** procedural music that follows the time of day, a sound for every activity, footsteps, birds and
-  crickets; all synthesized with Web Audio.
+- **Sound:** a composed soundtrack for each time of day (marimba morning, vibraphone-and-Rhodes swing, lo-fi
+  evening with vinyl crackle, a music-box lullaby in 3/4) and a disco record to dance to, a sound for every activity,
+  footsteps by floor, finches, an owl; all synthesized with Web Audio.
 - **Economy (simulated):** Gift Box on the SDK chance game (1 RF, five keepsakes worth 0.9165 RF on average when
   sold back), food, clothes and Buy-mode furniture as RF sinks. Details in [submission/README.md](submission/README.md).
+
+## Ten real Friends
+
+`node tests/friends.mjs` plays ten real Generations Friends (eight families, generations 1 to 6) through the real
+SDK runtime, their artwork, family, seed and generation read live from Robinhood mainnet. Same house, ten characters:
+
+![Meet your Friend cards of ten real Friends](media/friends-cards.png)
+
+The full table (what each chose by itself) is in [submission/README.md](submission/README.md#ten-real-friends-ten-characters).
 
 ## Controls
 
@@ -64,6 +74,7 @@ npm run docs       # every number in the docs matches game.json and the code
 
 Browser checks (need `npm install --no-save playwright` and `npx playwright install chromium`):
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`.
+Real Friends read live from mainnet: `node tests/friends.mjs` (also needs `pngjs`). Music to WAV: `node tests/music.mjs`.
 README media: `node tests/media.mjs` (also needs `gifenc` and `pngjs`).
 
 ## Layout

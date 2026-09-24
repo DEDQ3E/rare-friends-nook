@@ -6,6 +6,7 @@ import { FURNITURE } from "../games/friend-nook/furniture.js";
 import { CATALOG } from "../games/friend-nook/catalog.js";
 import { WARDROBE } from "../games/friend-nook/wardrobe.js";
 import { KEEPSAKES } from "../games/friend-nook/keepsakes.js";
+import { QUIRKS } from "../games/friend-nook/traits.js";
 
 const game = JSON.parse(readFileSync("games/friend-nook/game.json", "utf8")) as { price: string; outcomes: { name: string; chanceBps: number; reward: string }[] };
 const index = readFileSync("games/friend-nook/index.tsx", "utf8"), engine = readFileSync("games/friend-nook/engine.ts", "utf8");
@@ -56,6 +57,11 @@ inDocs("3 snacks and 2 meals", ["submission/README.md"]);
 const furnitureKinds = new Set([...FURNITURE, ...CATALOG.map(c => c.def)].filter(f => ACTIONS.some(a => a.on.includes(f.id))).map(f => f.id));
 inDocs(`${ACTIONS.length} things to do on ${furnitureKinds.size} kinds of furniture`, ["submission/README.md"]);
 inDocs(`${ACTIONS.length} activities`, ["README.md"]);
+const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen"];
+inDocs(`one of ${WORDS[QUIRKS.length]} quirks`, ["submission/README.md"]);
+for (const q of QUIRKS) inDocs(q.label.toLowerCase(), ["submission/README.md"]);
+// the ten-Friend table is the one tests/friends.mjs recorded
+inDocs(readFileSync("media/friends.md", "utf8").trim(), ["submission/README.md"]);
 
 console.log(failures ? `${failures} mismatch(es)` : "docs match the code");
 process.exit(failures ? 1 : 0);
