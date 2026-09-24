@@ -9,7 +9,8 @@
     "check": "friendsdk check games/friend-nook",
     "test": "friendsdk test games/friend-nook",
     "build": "friendsdk build games/friend-nook --outdir docs",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "docs": "esbuild tests/docs.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/docs-check.mjs && node tmp/docs-check.mjs"
   },
   "author": "DEDQ3E",
   "license": "Apache-2.0",
