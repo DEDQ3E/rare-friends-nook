@@ -74,6 +74,10 @@ plus temperament modifiers. One in-game day lasts about 8 real minutes at 1× sp
 - **The token itself.** Each trait is its own hash of the sprite seed and token ID: nickname, favourite colour
   (blanket, cushion, rug), a favourite activity outside the family's loves, snack, birthday, catchphrase and one
   of twelve quirks with real effects; a quirk may overrule the family (a Bookworm Mask reads).
+- **Family heirloom.** Each family brings one piece into the house (front of the living room) with its own loved
+  activity: bone xylophone, mask stand, family photo table, cell garden, wobbly tower, cloud cushion, old boulder
+  seat, mirror ball, quiet lantern.
+- **Camera.** The game opens close on the Friend and follows it; the whole house is one tap away.
 - **Sound.** A composed tune per time of day, each with its own synthesized band (marimba morning, vibraphone
   swing, lo-fi Rhodes evening, music-box lullaby in 3/4, disco record for dancing); one-shots such as piano and
   twinkles take their notes from the chord the music is on.

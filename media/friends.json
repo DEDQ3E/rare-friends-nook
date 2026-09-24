@@ -15,9 +15,9 @@
     "quirk": "Sleepyhead",
     "says": "Stars forever!",
     "chose": [
-      "08:27 Play video games",
-      "09:53 Snack at the bar",
-      "11:18 Dance (loves it)"
+      "08:20 Dance (loves it)",
+      "09:27 Cook a meal",
+      "10:53 Try on a mask (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -38,9 +38,9 @@
     "quirk": "Chatterbox",
     "says": "Socks forever!",
     "chose": [
-      "08:37 Cook a meal (loves it)",
-      "10:19 Play with toys",
-      "11:24 Nap"
+      "08:39 Cook a meal (loves it)",
+      "10:13 Read",
+      "11:48 Snack at the bar (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -61,9 +61,8 @@
     "quirk": "Early bird",
     "says": "Bubbles ahoy!",
     "chose": [
-      "08:32 Play with toys (loves it)",
-      "10:07 Cook a meal",
-      "11:28 Dance (loves it)"
+      "09:38 Play video games (loves it)",
+      "10:41 Play video games (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -84,10 +83,8 @@
     "quirk": "Night snacker",
     "says": "Clouds galore!",
     "chose": [
-      "08:25 Play video games (loves it)",
-      "09:48 Snack at the bar",
-      "10:49 Play video games (loves it)",
-      "11:52 Nap"
+      "09:41 Play with toys (loves it)",
+      "11:16 Cook a meal (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -108,9 +105,9 @@
     "quirk": "Quiet one",
     "says": "Buttons for everyone!",
     "chose": [
-      "08:37 Play with toys",
-      "09:44 Nap (loves it)",
-      "11:32 Snack at the bar"
+      "08:28 Play video games",
+      "10:25 Snack at the bar",
+      "11:30 Nap (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -131,8 +128,8 @@
     "quirk": "Sky watcher",
     "says": "Stars and spoons!",
     "chose": [
-      "08:39 Daydream (loves it)",
-      "10:29 Cook a meal"
+      "09:16 Watch TV (loves it)",
+      "11:16 Cook a meal"
     ],
     "wishes": [],
     "errors": []
@@ -153,9 +150,9 @@
     "quirk": "Sleepyhead",
     "says": "Noodles in a jar!",
     "chose": [
-      "08:39 Cook a meal",
-      "10:09 Take a bath (loves it)",
-      "11:35 Read"
+      "08:21 Dance under the mirror ball (loves it)",
+      "09:51 Cook a meal",
+      "11:25 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -176,9 +173,9 @@
     "quirk": "Sleepyhead",
     "says": "Biscuits and spoons!",
     "chose": [
-      "08:26 Watch TV (loves it)",
-      "10:21 Grab a snack (loves it)",
-      "11:26 Nap"
+      "08:21 Rattle out a tune (loves it)",
+      "09:33 Cook a meal",
+      "11:10 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -199,9 +196,8 @@
     "quirk": "Night snacker",
     "says": "Pickles in a jar!",
     "chose": [
-      "08:25 Watch TV (loves it)",
-      "10:27 Snack at the bar",
-      "11:30 Watch TV (loves it)"
+      "08:56 Watch TV (loves it)",
+      "11:09 Grab a snack (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -222,9 +218,10 @@
     "quirk": "Night snacker",
     "says": "Biscuits and spoons!",
     "chose": [
-      "08:36 Play with toys",
-      "10:15 Cook a meal",
-      "11:50 Nap"
+      "08:26 Play video games",
+      "09:42 Look at family photos (loves it)",
+      "10:36 Snack at the bar",
+      "11:33 Look at family photos (loves it)"
     ],
     "wishes": [],
     "errors": []

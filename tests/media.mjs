@@ -24,7 +24,7 @@ try {
     await game.getByRole("button", { name: /Welcome home/ }).waitFor({ timeout: 60000 });
     k = (await canvas.boundingBox()).width / 960;
     await shot("intro");
-    await game.getByRole("button", { name: /Welcome home/ }).click();
+    await game.getByRole("button", { name: /Welcome home/ }).click(); await game.getByRole("button", { name: "Zoom out" }).click(); await page.waitForTimeout(1200); // the whole house for the README
     // animations on (the test browser asks for reduced motion)
     await game.getByRole("button", { name: "How to play" }).click(); await game.getByLabel("Reduce motion").selectOption("off"); await game.getByRole("button", { name: "Close" }).click();
     await game.getByRole("button", { name: "Got it" }).click().catch(() => {});

@@ -19,6 +19,7 @@ import { GIFT_LOVERS, KEEPSAKES } from "./keepsakes.js";
 import { CATALOG, CATALOG_DEF } from "./catalog.js";
 import { createSoundscape, voiceFor, type Soundscape } from "./audio.js";
 import { personalize, traitsFor } from "./traits.js";
+import { HEIRLOOM } from "./heirlooms.js";
 import "./style.css";
 
 const rfText = (value: bigint) => `${formatGameAmount(value, 18)} RF`;
@@ -45,7 +46,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [panel, setPanel] = useState<Panel>(null);
   const [toast, setToast] = useState("");
   const [speed, setSpeed] = useState(1);
-  const [zoomed, setZoomed] = useState(false);
+  const [zoomed, setZoomed] = useState(true); // the Friend is the star: start close, the whole house is one tap away
   const [muted, setMuted] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [outfit, setOutfit] = useState<Outfit>({});
@@ -76,6 +77,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const toastTimer = useRef(0);
 
   const familyTemper = temperamentFor(family);
+  const heirloom = family ? HEIRLOOM[family] : undefined;
   const traits = useMemo(() => (seed === null ? null : traitsFor(friendId, seed, familyTemper)), [friendId, seed, familyTemper]);
   const temper = useMemo(() => personalize(familyTemper, traits), [familyTemper, traits]);
   const nick = traits?.nickname ?? `Friend #${friendId.toString()}`;
@@ -172,6 +174,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   useEffect(() => { engine.current?.setPaused(paused); if (paused) setMenu(null); }, [paused, ready]);
   useEffect(() => { engine.current?.setSpeed(speed); }, [speed, ready]);
   useEffect(() => { engine.current?.setZoom(zoomed ? 1.7 : 1); }, [zoomed, ready]);
+  useEffect(() => { if (placing) setZoomed(false); }, [placing]); // placing furniture needs the whole house
   voiceRef.current = voiceFor(family, strength);
   useEffect(() => { scape.current?.setActivity(view?.active ?? null); }, [view?.active]);
   const hourNow = view ? hourOf(view.minute) : 8;
@@ -473,6 +476,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
             <span className="fn-chip fn-love">♥ Loves: {familyTemper.loves.map(id => ACTION[id]?.label).filter(Boolean).slice(0, 4).join(", ")}</span>
             <span className="fn-chip fn-hate">✕ Dislikes: {familyTemper.dislikes.map(id => ACTION[id]?.label).filter(Boolean).join(", ") || "nothing, really"}</span>
           </div>
+          {heirloom && <p className="fn-heir"><strong>Family heirloom: {heirloom.def.name}</strong> (in the living room) — {heirloom.blurb}</p>}
           <p className="fn-sub">Only {nick} has these:</p>
           <ul className="fn-mine">
             <li><strong>Favourite thing:</strong> {ACTION[traits.favorite]?.label}</li>
@@ -528,6 +532,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               <dt>Favourite colour</dt><dd><i className="fn-swatch" style={{ background: traits.accent.top }} /> {traits.accent.name} — its blanket, cushion and rug</dd>
               <dt>Favourite snack</dt><dd>{traits.snack}</dd>
               <dt>Birthday</dt><dd>{traits.birthday.label}</dd>
+              {heirloom && <><dt>Family heirloom</dt><dd>{heirloom.def.name}: {heirloom.action.label.toLowerCase()} (living room)</dd></>}
               <dt>Quirk</dt><dd>{traits.quirk.label}: {traits.quirk.blurb}</dd>
               <dt>Catchphrase</dt><dd>“{traits.catchphrase}”</dd></>}
               <dt>Friendship</dt><dd>{BOND_TITLES[level]} (level {level + 1}) · {v?.friendship ?? 0} points{level < BOND_LEVELS.length - 1 ? ` · next at ${BOND_LEVELS[level + 1]}` : ""}</dd>

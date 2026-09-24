@@ -5,7 +5,7 @@ let k = 1;
 const at = (i, j, z = 0) => ({ x: ((i - j) * 18 - 18 + 240) * 2 * k, y: ((i + j) * 9 - z - 88 + 160) * 2 * k });
 await testGame("./games/friend-nook", { timeout: 120000, check: async ({ page, game }) => {
   await game.getByRole("button", { name: /character card/ }).waitFor({ timeout: 60000 });
-    await game.getByRole("button", { name: /Welcome home/ }).click();
+    await game.getByRole("button", { name: /Welcome home/ }).click(); await game.getByRole("button", { name: "Zoom out" }).click(); await page.waitForTimeout(1200); // tests click furniture in the whole-house view
   const canvas = game.locator("canvas"); k = (await canvas.boundingBox()).width / 960;
   await game.getByRole("button", { name: "Got it" }).click().catch(() => {});
   await game.getByRole("button", { name: "How to play" }).click(); await game.getByLabel("Reduce motion").selectOption("off"); await game.getByRole("button", { name: "Close" }).click();

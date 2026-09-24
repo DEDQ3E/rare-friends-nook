@@ -1,6 +1,7 @@
 /** Life simulation: needs, the in-game clock, actions and free will. Pure logic (no drawing), so it can be
  * tested on its own. One in-game day lasts 8 real minutes at 1× speed (3 in-game minutes per real second). */
 import { preference, type Temperament } from "./personality.js";
+import { HEIRLOOMS } from "./heirlooms.js";
 
 export type NeedKey = "hunger" | "energy" | "fun" | "hygiene" | "social";
 export type Needs = Record<NeedKey, number>;
@@ -95,6 +96,8 @@ export const ACTIONS: readonly ActionDef[] = [
   { id: "pet", label: "Pet", on: ["friend"], minutes: 5, done: { social: 16, fun: 4 }, pose: "stand", anim: "bounce", withYou: true, icon: "heart" },
   { id: "talk", label: "Talk", on: ["friend"], minutes: 8, done: { social: 12 }, pose: "stand", anim: "bounce", withYou: true, icon: "chat" },
   { id: "gift", label: "Open a Gift Box", on: ["friend"], minutes: 5, pose: "stand", anim: "hop", withYou: true, panel: "gift", icon: "gift" },
+  // one family heirloom per family (only the Friend's own family's piece is in its house)
+  ...HEIRLOOMS.map(h => h.action),
 ];
 export const ACTION: Readonly<Record<string, ActionDef>> = Object.fromEntries(ACTIONS.map(a => [a.id, a]));
 

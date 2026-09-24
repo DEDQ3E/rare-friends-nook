@@ -6,7 +6,7 @@ await testGame("./games/friend-nook", {
   check: async ({ page, game }) => {
     const errors = []; page.on("pageerror", e => errors.push(String(e)));
     await game.getByRole("button", { name: /character card/ }).waitFor({ timeout: 60000 });
-    await game.getByRole("button", { name: /Welcome home/ }).click();
+    await game.getByRole("button", { name: /Welcome home/ }).click(); await game.getByRole("button", { name: "Zoom out" }).click(); await page.waitForTimeout(1200); // tests click furniture in the whole-house view
     const shot = async name => { await page.waitForTimeout(300); await page.locator("#root").screenshot({ path: `${out}/${name}.png` }); };
     const focus = () => game.locator("canvas").click({ position: { x: 30, y: 200 } });
     const confirm = async () => { const b = page.getByRole("button", { name: "Confirm preview" }); await b.waitFor({ timeout: 30000 }); await b.click(); };

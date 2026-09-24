@@ -5,7 +5,7 @@ const at = (i, j, z = 0) => ({ x: ((i - j) * 18 - 18 + 240) * 2 * k, y: ((i + j)
 await testGame("./games/friend-nook", { timeout: 240000, check: async ({ page, game }) => {
   const errors = []; page.on("pageerror", e => errors.push(String(e)));
   await game.getByRole("button", { name: /character card/ }).waitFor({ timeout: 60000 });
-    await game.getByRole("button", { name: /Welcome home/ }).click();
+    await game.getByRole("button", { name: /Welcome home/ }).click(); await game.getByRole("button", { name: "Zoom out" }).click(); await page.waitForTimeout(1200); // tests click furniture in the whole-house view
   const f = page.frames().find(x => x !== page.mainFrame());
   await f.evaluate(() => {
     const w = window; w.__audio = { osc: 0, noise: 0 };

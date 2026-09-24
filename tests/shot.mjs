@@ -8,7 +8,7 @@ await testGame("./games/friend-nook", {
     await game.getByRole("button", { name: /character card/ }).waitFor({ timeout: 60000 });
     await game.getByRole("button", { name: /Welcome home/ }).waitFor({ timeout: 60000 }); await page.waitForTimeout(400);
     await page.locator("#root").screenshot({ path: `${out}/intro.png` });
-    await game.getByRole("button", { name: /Welcome home/ }).click();
+    await game.getByRole("button", { name: /Welcome home/ }).click(); await game.getByRole("button", { name: "Zoom out" }).click(); await page.waitForTimeout(1200); // tests click furniture in the whole-house view
     await page.waitForTimeout(wait * 1000);
     await page.locator("#root").screenshot({ path: `${out}/shot.png` });
     if (errors.length) console.log("ERRORS:\n" + errors.join("\n"));

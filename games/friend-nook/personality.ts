@@ -2,6 +2,7 @@
  * how it talks); its Generation decides how strong that character is. Gen 1 = strongest, Gen 6 = mildest.
  * Personality only changes behaviour and flavour. It never changes prices, odds, rewards, or who may play. */
 import type { NeedKey } from "./sim.js";
+import { HEIRLOOM } from "./heirlooms.js";
 
 export type Temperament = Readonly<{
   family: string;
@@ -49,7 +50,11 @@ export const TEMPERAMENTS: Readonly<Record<string, Temperament>> = {
 export const BALANCED: Temperament = { family: "Unknown", title: "Easygoing", blurb: "Takes life as it comes.", loves: ["ball", "tv"], dislikes: [], decay: {}, speed: 1,
   voice: { hello: ["Hi there!"], idle: ["What a nice house.", "La la la."], love: ["Yay!"], nope: ["Not now."], hungry: "I'm hungry.", tired: "I'm sleepy.", bored: "I'm bored.", grubby: "I need a wash.", lonely: "Play with me?" } };
 
-export const temperamentFor = (family: string | null): Temperament => (family && TEMPERAMENTS[family]) || BALANCED;
+/** The family's temperament; every family also loves its own heirloom. */
+export const temperamentFor = (family: string | null): Temperament => {
+  const t = (family && TEMPERAMENTS[family]) || BALANCED, h = family ? HEIRLOOM[family] : undefined;
+  return h ? { ...t, loves: [...t.loves, h.action.id] } : t;
+};
 
 /** Character strength 0…1 from the Generation: Gen 1 → 1.0 … Gen 6 → 0.17; unknown → 0.5. */
 export const strengthOf = (generation: number | null) => (generation && generation >= 1 && generation <= 6 ? (7 - generation) / 6 : .5);

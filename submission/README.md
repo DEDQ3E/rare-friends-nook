@@ -20,7 +20,7 @@ Your Generations Friend lives in a cozy isometric house like a Sim, and everythi
 
 ## What did you build?
 
-A life sim with one star. The selected Friend moves into a 12 × 10 tile pixel house with a bedroom, a bathroom, a kitchen, a living room and a dining area, shown in isometric cut-away view with a day and night cycle. It has five needs (hunger, energy, fun, hygiene, social) and 31 things to do on 27 kinds of furniture: sleep, stargaze, bathe, cook, snack, eat dinner with you, watch TV, play video games, read, dance to the record player, play ball, paint, play the arcade and more. Click furniture to choose an action, or leave it alone and watch it choose by itself.
+A life sim with one star. The selected Friend moves into a 12 × 10 tile pixel house with a bedroom, a bathroom, a kitchen, a living room and a dining area, shown in isometric cut-away view with a day and night cycle. It has five needs (hunger, energy, fun, hygiene, social) and 31 things to do on 27 kinds of furniture: sleep, stargaze, bathe, cook, snack, eat dinner with you, watch TV, play video games, read, dance to the record player, play ball, paint, play the arcade and more. Click furniture to choose an action, or leave it alone and watch it choose by itself. The game opens close on the Friend, with the camera following it; the whole house is one tap away.
 
 The house is alive: the TV shows three channels and a video game, fish swim, the record turns, the pan sizzles, steam rises, bubbles pop in the bath, and the house has its own composed, synthesized soundtrack: a marimba morning, a swinging vibraphone afternoon, a lo-fi Rhodes evening, a music-box lullaby at night and a disco record to dance to, plus a sound for every activity. A hint always points to one thing in the house that raises the lowest need. Gift Boxes (the SDK chance game) give keepsakes for the hutch, and Buy mode adds furniture you place yourself. Everything lives inside the SDK's 960 × 640 container, with a compact layout for phones.
 
@@ -32,6 +32,7 @@ The Friend is the only character, and the game is about who it is.
 - **Family = temperament.** Each of the nine families has its own loves, dislikes, need rates, walking speed, voice lines and a signature idle: a Hoverer floats and naps, a Skeleton rattles and wakes up at night, a Sparkling twinkles and lives in the bath, an Asymmetry zigzags between toys and the arcade, a Colossus moves slowly and owns the sofa, a Hollow wants books and quiet. It may refuse what it dislikes ("Water? On my bones? No.").
 - **Generation = character strength.** One read-only `generation(tokenId)` call on the Generations contract sets how strong the character is, from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more about what they love, refuse more often, gesture more and speak more expressively. Every generation plays the full game.
 - **The token itself = what makes it unique.** From the sprite seed the SDK returns, the game derives a nickname, a favourite colour (its blanket, cushion and living-room rug take that colour), a personal favourite activity outside its family's loves, a favourite snack, a birthday, a catchphrase and one of twelve quirks with real effects (chatterbox, quiet one, night snacker, early bird, sleepyhead, neat freak, collector, hummer, bookworm, speedy, sky watcher, cuddle bug). A quirk can even overrule the family: a Bookworm Mask reads although Masks dislike books. Two Hoverers are different Friends.
+- **A family heirloom.** Each family brings one piece of its own into the house, at the front of the living room, with an activity only that family has and loves: a Skeleton rattles a tune on a bone xylophone, a Hoverer floats on its cloud cushion, a Sparkling dances under the mirror ball. There are nine family heirlooms, one per family.
 - **A voice.** Speech is voiced as a babble of syllables whose pitch and timbre come from the family (a deep slow Colossus, an airy Hoverer, a clacky Skeleton), more expressive with stronger generations.
 - **A relationship.** A *Meet your Friend* card opens first; a diary records what it chose by itself, what it refused and which wishes you granted; friendship levels go from Stranger to Forever Friend.
 
@@ -51,6 +52,20 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 | Sparkling | Style Icon | bath, mirror, outfits, gifts, vanity | toys | hygiene drops faster |
 | Hollow | Introvert | reading, books, stargazing, aquarium, painting | dancing, games, arcade | social drops slower |
 
+![The nine family heirlooms, drawn by the game](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/heirlooms.png)
+
+| Family | Heirloom | Activity |
+|---|---|---|
+| Skeleton | Bone xylophone | Rattle out a tune |
+| Mask | Mask stand | Try on a mask |
+| Family | Family photo table | Look at family photos |
+| Cellular | Cell garden | Tend the cell garden |
+| Asymmetry | Wobbly tower | Stack the wobbly tower |
+| Hoverer | Cloud cushion | Float on the cloud |
+| Colossus | Old boulder seat | Sit on the old boulder |
+| Sparkling | Mirror ball | Dance under the mirror ball |
+| Hollow | Quiet lantern | Sit by the quiet lantern |
+
 ## Ten real Friends, ten characters
 
 Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK runtime (wallet flow, fresh ownership check, sandboxed iframe) for a fixed list of ten real Generations Friends, with their artwork, family, seed and generation read **live from Robinhood mainnet**; only the wallet account and the ownership answers are mocked, as in `friendsdk test`. Eight of the nine families, generations 1 to 6, and two pairs from one family. Each card below is the game's own *Meet your Friend* card; then each Friend was left alone at 3× for about four in-game hours.
@@ -59,22 +74,26 @@ Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK r
 
 | Friend | Family · generation | Nickname | Temperament · strength | Favourite thing | Colour | Quirk | Chose by itself (first 4 in-game hours) |
 |---|---|---|---|---|---|---|---|
-| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Play video games, Snack at the bar, Dance ♥ |
-| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Cook a meal ♥, Play with toys, Nap |
-| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Play with toys ♥, Cook a meal, Dance ♥ |
-| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Play video games ♥, Snack at the bar, Play video games ♥, Nap |
-| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Play with toys, Nap ♥, Snack at the bar |
-| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Daydream ♥, Cook a meal |
-| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Cook a meal, Take a bath ♥, Read |
-| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Watch TV ♥, Grab a snack ♥, Nap |
-| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Watch TV ♥, Snack at the bar, Watch TV ♥ |
-| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Play with toys, Cook a meal, Nap |
+| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Dance ♥, Cook a meal, Try on a mask ♥ |
+| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Cook a meal ♥, Read, Snack at the bar ♥ |
+| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Play video games ♥, Play video games ♥ |
+| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Play with toys ♥, Cook a meal ♥ |
+| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Play video games, Snack at the bar, Nap ♥ |
+| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Watch TV ♥, Cook a meal |
+| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Dance under the mirror ball ♥, Cook a meal, Nap |
+| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Rattle out a tune ♥, Cook a meal, Nap |
+| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Watch TV ♥, Grab a snack ♥ |
+| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Play video games, Look at family photos ♥, Snack at the bar, Look at family photos ♥ |
 
-♥ = something it loves. The two Asymmetries share a family but not a life: Veluri (Gen 1, Legendary) is an early bird who wants to stargaze; Robo (Gen 5, Gentle) raids the fridge at night and loves to cook. Yeps, a Colossus Sky watcher, went straight to the window to daydream. Each house takes its Friend's colour (blanket, cushion, rug):
+♥ = something it loves. Four of them went to their family heirloom on their own: Kikosh (Sparkling) danced under the mirror ball, Daluno (Skeleton) rattled out a tune on the bone xylophone, Rox (Mask) tried on the masks and Luli (Family) looked at the family photos twice. The two Asymmetries share a family but not a life: Robo (Gen 5) cooked, its personal favourite, while Veluri (Gen 1) stuck to video games. Each house takes its Friend's colour (blanket, cushion, rug), and the game opens close on the Friend:
 
 ![The same house, ten different lives](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-life.png)
 
 ## How RF is spent, and the economy
+
+Four RF sinks, all simulated in the preview: **Gift Boxes** (1 RF, the SDK chance game: one of five keepsakes, 0.9165 RF back on average if sold), **food** (snacks and meals the Friend eats), **clothes** and **furniture** (Buy mode). Only keepsakes pay RF back. Personality never changes prices, odds or rewards.
+
+<details><summary><b>Prices, keepsake odds and session statistics</b></summary>
 
 | Loop | Player pays | Player gets back | Where the rest goes |
 |---|---|---|---|
@@ -99,15 +118,21 @@ Friendship from a gift grows with character strength (×1 to ×1.5), is ×1.5 fo
 
 Why players keep spending: food runs out (a Foodie eats faster), furniture opens new activities its family loves (a Hoverer lights up at the telescope), outfits are fitted to its own body, and wishes and friendship reward looking after it. Personality never changes prices, odds or rewards.
 
+</details>
+
 ## What would be on-chain?
 
 Nothing in this build; no transaction is ever sent. The Gift Box needs no new contract: a deployment of the SDK's `ChanceGame` with this `game.json` (immutable price and outcome table).
+
+<details><summary><b>How the Gift Box, food, clothes and furniture would work on chain</b></summary>
 
 - `buy` pays RF from the Friend's canonical NFT wallet and mints Gift Boxes into it; each purchase reserves the 5 RF top prize.
 - `play` burns a box and commits the opening; a sponsor pays the Dice fee, the oracle records one random word, and anyone can `settle`: the keepsake is minted as an ERC-1155 reward into the canonical NFT wallet.
 - `redeem` burns a keepsake for its fixed RF, back into the same wallet, with no expiry.
 
 The hutch would read the Friend wallet's keepsake balances. Food, clothes and furniture would be RF purchases into the Friend wallet with the 50% burn / 50% rewards split, which needs a custom RF integration; needs, the clock, friendship and the house layout need storage that FriendSDK v0.1.2 does not supply.
+
+</details>
 
 ## How does it use randomness?
 
@@ -140,7 +165,7 @@ On Windows, `play.bat` serves the prebuilt `docs/` folder on http://localhost:41
 - Keep its five needs up. The panel names the lowest need and points (with an arrow in the house) to one thing that raises it; one tap sends your Friend there.
 - Leave it alone and it lives its own life, choosing by need and by taste. Grant its wishes (thought bubbles) for friendship; it may refuse things it dislikes.
 - Pet it, talk to it, open Gift Boxes with it. Buy food, clothes and furniture; place furniture anywhere free (arrows move it, `R` rotates).
-- Time runs at pause, 1× (a day is 8 minutes) or 3×. Zoom in to follow your Friend. Settings: volume, music, reduced motion.
+- Time runs at pause, 1× (a day is 8 minutes) or 3×. The camera follows your Friend close up; zoom out for the whole house (Buy mode zooms out by itself). Settings: volume, music, reduced motion.
 
 ## Costs and rewards
 
@@ -148,12 +173,18 @@ Preview balance: 20 RF (simulated, from the SDK). Gift Box 1 RF (odds and values
 
 ## What have you tested?
 
+Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound, phone sizes and 60 fps; ten real Friends were played live from mainnet; a docs check ties every number here to the code.
+
+<details><summary><b>All checks</b></summary>
+
 - `npm run typecheck`, `npm run check` (`friendsdk check`: valid, expected reward 0.9165 RF, maximum 5 RF), `npm test` (`friendsdk test`: PASS at 960 px).
 - Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
 - **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots and GIF use the same live reads for #7730.
 - **Music:** `tests/music.mjs` records every track straight from the game's audio graph to check the mix (similar loudness across tracks, no clipping).
 - `tests/docs.mjs` checks that every price, odd and value in this file and the README matches `game.json` and the code.
 - Rules pass: canonical artwork never transformed, no wallet code, no storage, no parent-page access, everything simulated and labelled, purchases ignored while the runtime is paused.
+
+</details>
 
 ## Known limitations
 

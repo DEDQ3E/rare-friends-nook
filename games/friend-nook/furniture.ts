@@ -2,6 +2,7 @@
  * position in the starting house; `Builder.place` moves (and mirrors) it for Buy mode. */
 import { Builder, S, project, type Part } from "./iso.js";
 import { CATALOG } from "./catalog.js";
+import { HEIRLOOMS } from "./heirlooms.js";
 import { FX, drawBurners, drawRecord, drawTv } from "./fx.js";
 
 export type Pose = Readonly<{ i: number; j: number; z: number; face: readonly [number, number]; lie?: boolean }>;
@@ -216,7 +217,7 @@ export const FURNITURE: readonly FurnitureDef[] = [
     build: b => b.custom(6.8, 7.5, .2, .2, 6, drawBall) },
 ];
 
-export const DEF: Readonly<Record<string, FurnitureDef>> = Object.fromEntries([...FURNITURE, ...CATALOG.map(c => c.def)].map(f => [f.id, f]));
+export const DEF: Readonly<Record<string, FurnitureDef>> = Object.fromEntries([...FURNITURE, ...CATALOG.map(c => c.def), ...HEIRLOOMS.map(h => h.def)].map(f => [f.id, f]));
 
 /** A piece standing in the house. */
 export type Placed = { uid: string; def: string; i: number; j: number; swap: boolean };

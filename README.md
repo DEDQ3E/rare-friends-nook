@@ -25,12 +25,16 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
 - **The Friend:** its canonical Generations frames in four facings, never recoloured, rotated or reshaped;
   clothes fitted to its own silhouette. Needs (hunger, energy, fun, hygiene, social), free will, wishes,
   refusals, a diary of its own choices, friendship levels, a family voice, a signature idle.
+- **Family heirlooms:** nine family heirlooms, one per family, move in with the Friend (a bone xylophone for a
+  Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…), each with an activity its family loves.
 - **Hints:** the lowest need, and one thing in the house that raises it, with an arrow and a one-tap button.
 - **Sound:** a composed soundtrack for each time of day (marimba morning, vibraphone-and-Rhodes swing, lo-fi
   evening with vinyl crackle, a music-box lullaby in 3/4) and a disco record to dance to, a sound for every activity,
   footsteps by floor, finches, an owl; all synthesized with Web Audio.
 - **Economy (simulated):** Gift Box on the SDK chance game (1 RF, five keepsakes worth 0.9165 RF on average when
   sold back), food, clothes and Buy-mode furniture as RF sinks. Details in [submission/README.md](submission/README.md).
+
+![The nine family heirlooms](media/heirlooms.png)
 
 ## Ten real Friends
 

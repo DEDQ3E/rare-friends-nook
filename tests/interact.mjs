@@ -9,7 +9,7 @@ await testGame("./games/friend-nook", {
   check: async ({ page, game }) => {
     const errors = []; page.on("pageerror", e => errors.push(String(e)));
     await game.getByRole("button", { name: /character card/ }).waitFor({ timeout: 60000 });
-    await game.getByRole("button", { name: /Welcome home/ }).click();
+    await game.getByRole("button", { name: /Welcome home/ }).click(); await game.getByRole("button", { name: "Zoom out" }).click(); await page.waitForTimeout(1200); // tests click furniture in the whole-house view
     const canvas = game.locator("canvas");
     k = (await canvas.boundingBox()).width / 960;
     const shot = async name => { await page.waitForTimeout(250); await page.locator("#root").screenshot({ path: `${out}/${name}.png` }); };

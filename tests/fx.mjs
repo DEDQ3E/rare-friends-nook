@@ -8,7 +8,7 @@ await testGame("./games/friend-nook", {
   check: async ({ page, game }) => {
     const errors = []; page.on("pageerror", e => errors.push(String(e)));
     await game.getByRole("button", { name: /character card/ }).waitFor({ timeout: 60000 });
-    await game.getByRole("button", { name: /Welcome home/ }).click();
+    await game.getByRole("button", { name: /Welcome home/ }).click(); await game.getByRole("button", { name: "Zoom out" }).click(); await page.waitForTimeout(1200); // tests click furniture in the whole-house view
     const canvas = game.locator("canvas"); box = await canvas.boundingBox(); k = box.width / 960;
     await game.getByRole("button", { name: "Got it" }).click().catch(() => {});
     // the test browser asks for reduced motion; switch it off to see particles

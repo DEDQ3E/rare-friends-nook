@@ -7,6 +7,7 @@ import { CATALOG } from "../games/friend-nook/catalog.js";
 import { WARDROBE } from "../games/friend-nook/wardrobe.js";
 import { KEEPSAKES } from "../games/friend-nook/keepsakes.js";
 import { QUIRKS } from "../games/friend-nook/traits.js";
+import { HEIRLOOMS } from "../games/friend-nook/heirlooms.js";
 
 const game = JSON.parse(readFileSync("games/friend-nook/game.json", "utf8")) as { price: string; outcomes: { name: string; chanceBps: number; reward: string }[] };
 const index = readFileSync("games/friend-nook/index.tsx", "utf8"), engine = readFileSync("games/friend-nook/engine.ts", "utf8");
@@ -55,8 +56,12 @@ expect(engine.includes("const stock: Stock = { snacks: 3, meals: 2 };"), "starti
 inDocs("3 snacks and 2 meals", ["submission/README.md"]);
 // content counts
 const furnitureKinds = new Set([...FURNITURE, ...CATALOG.map(c => c.def)].filter(f => ACTIONS.some(a => a.on.includes(f.id))).map(f => f.id));
-inDocs(`${ACTIONS.length} things to do on ${furnitureKinds.size} kinds of furniture`, ["submission/README.md"]);
-inDocs(`${ACTIONS.length} activities`, ["README.md"]);
+const everyday = ACTIONS.filter(a => !a.on.some(o => o.startsWith("heirloom-"))); // heirlooms are counted on their own
+inDocs(`${everyday.length} things to do on ${furnitureKinds.size} kinds of furniture`, ["submission/README.md"]);
+inDocs(`${everyday.length} activities`, ["README.md"]);
+const WORDS0 = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+inDocs(`${WORDS0[HEIRLOOMS.length]} family heirlooms`);
+for (const h of HEIRLOOMS) inDocs(`| ${h.family} | ${h.def.name} | ${h.action.label} |`, ["submission/README.md"]);
 const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen"];
 inDocs(`one of ${WORDS[QUIRKS.length]} quirks`, ["submission/README.md"]);
 for (const q of QUIRKS) inDocs(q.label.toLowerCase(), ["submission/README.md"]);

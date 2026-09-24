@@ -166,3 +166,7 @@ kbd{border:2px solid var(--line);padding:0 4px;background:#fffaf0;font:inherit;f
 @container (max-width: 720px) { .fn-intro-head img{width:58px;height:63px} .fn-intro h2{font-size:15px} .fn-mine{font-size:10px} .fn-chip{font-size:9px;padding:2px 5px} .fn-meter{width:140px} }
 @container (max-width: 720px) { .fn-intro .fn-mine{columns:2;column-gap:14px} .fn-intro-note{display:none} .fn-intro .fn-temper{font-size:10px} .fn-intro .fn-sub{font-size:10px;margin:2px 0} .fn-intro .fn-chips{margin:4px 0} }
 @container (max-width: 420px) { .fn-intro .fn-mine{columns:1} .fn-intro .fn-chips{display:none} }
+
+/* the family's heirloom line on the Meet card */
+.fn-heir { margin: 6px 0 2px; font-size: 12px; line-height: 1.35; }
+@container (max-width: 720px) { .fn-heir { font-size: 10px; margin: 3px 0 1px; } }

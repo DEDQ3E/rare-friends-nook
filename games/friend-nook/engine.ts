@@ -9,6 +9,7 @@ import { ICONS, drawFriend, drawIconBubble, feetRow, topRow, type Pixmap } from 
 import type { Facing, Outfit } from "./wardrobe.js";
 import { FX } from "./fx.js";
 import { drawPixmap } from "./art.js";
+import { HEIRLOOM, HEIRLOOMS, HEIRLOOM_AT } from "./heirlooms.js";
 
 /** Particles per action: where they come from (default coordinates of the used piece, or the Friend) and what. */
 type Emit = Readonly<{ at?: readonly [number, number, number]; kind: "bubble" | "steam" | "icon" | "dot" | "drip" | "hop"; icon?: string; colors?: readonly string[]; every: number }>;
@@ -28,6 +29,7 @@ const EMIT: Readonly<Record<string, Emit>> = {
   pet: { kind: "icon", icon: "heart", every: .5 }, keepsakes: { at: [8.4, 9.45, 24], kind: "icon", icon: "sparkle", every: .6 },
   daydream: { kind: "icon", icon: "cloud", every: 1.4 }, snack: { kind: "icon", icon: "apple", every: 1.2 },
   dinner: { kind: "steam", every: .35 },
+  ...Object.fromEntries(HEIRLOOMS.filter(h => h.emit).map(h => [h.action.id, h.emit!])),
 };
 /** Things held while doing an action (drawn beside the Friend, never over its artwork's outline). */
 const PROPS: Readonly<Record<string, string>> = { read: "book", book: "book", bar: "apple", snack: "apple", games: "pad", paint: "brush" };
@@ -77,7 +79,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   const blocked = new Uint8Array(GW * GH);
   let sprites: FriendSprites | null = null, outfit: Outfit = {};
   let temper: Temperament = BALANCED, strength = .5, quirk: string | null = null, humIn = 1;
-  let paused = false, speed = 1, reduced = false, zoom = 1;
+  let paused = false, speed = 1, reduced = false, zoom = 1, zoomTo = 1, heirloomFor: string | null = null;
   let minute = 8 * 60;                      // Day 1, 08:00
   const needs: Needs = { hunger: 72, energy: 80, fun: 60, hygiene: 85, social: 55 };
   const stock: Stock = { snacks: 3, meals: 2 };
@@ -396,11 +398,14 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       else if (wish) show(ACTION[wish.action].icon as keyof typeof ICONS, 3, true);
       if (!bubble && mood(needs) < 35) show(Math.random() < .5 ? "dots" : "sweat", 2.5);
     }
-    // camera follows the Friend when zoomed in
-    const [fx, fy] = project(fr.i, fr.j, 20), tx = zoom > 1 ? fx : HOME[0], ty = zoom > 1 ? fy : HOME[1];
+  }
+  /** The camera glides to its zoom and, zoomed in, follows the Friend (runs even while game time is stopped). */
+  function camera(dt: number) {
+    const [fx, fy] = project(fr.i, fr.j, 20), tx = zoomTo > 1 ? fx : HOME[0], ty = zoomTo > 1 ? fy : HOME[1];
     const k = reduced ? 1 : Math.min(1, dt * 6);
+    zoom += (zoomTo - zoom) * k; if (Math.abs(zoomTo - zoom) < .002) zoom = zoomTo;
     cam.x += (tx - cam.x) * k; cam.y += (ty - cam.y) * k;
-    if (zoom > 1) { cam.x = clamp(cam.x, -150, 190); cam.y = clamp(cam.y, 40, 150); }
+    if (zoomTo > 1) { cam.x = clamp(cam.x, -150, 190); cam.y = clamp(cam.y, 40, 150); }
   }
 
   /* ---------- drawing ---------- */
@@ -561,7 +566,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   function frame(now: number) {
     if (destroyed) return;
     const dt = Math.min(.1, (now - last) / 1000); last = now;
-    if (!paused) { t += dt; fr.clock += dt; if (speed > 0) update(dt); }
+    if (!paused) { t += dt; fr.clock += dt; if (speed > 0) update(dt); camera(dt); }
     draw();
     raf = requestAnimationFrame(frame);
   }
@@ -591,12 +596,17 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   return {
     setSprites(s: FriendSprites) { sprites = s; },
     setOutfit(o: Outfit) { outfit = o; },
-    setCharacter(temperament: Temperament, s: number, q: string | null = null) { temper = temperament; strength = s; quirk = q; },
+    setCharacter(temperament: Temperament, s: number, q: string | null = null) {
+      temper = temperament; strength = s; quirk = q;
+      // the family's heirloom moves in with the Friend (once; the player may move it or put it away later)
+      const h = HEIRLOOM[temperament.family];
+      if (h && !heirloomFor) { heirloomFor = temperament.family; placed = placed.filter(p => !p.def.startsWith("heirloom-")); placed.push({ uid: "heirloom", def: h.def.id, i: HEIRLOOM_AT[0], j: HEIRLOOM_AT[1], swap: false }); rebuild(); }
+    },
     setAccent(a: { top: string; left: string; right: string; light: string }) { FX.accent = a; rebuild(); },
     setPaused(v: boolean) { paused = v; if (v) move = { x: 0, y: 0 }; },
     setSpeed(v: number) { speed = v; },
     setReducedMotion(v: boolean) { reduced = v; },
-    setZoom(z: number) { zoom = z; },
+    setZoom(z: number) { zoomTo = z; },
     setMove(x: number, y: number) { move = { x, y }; },
     setHover(uid: string | null) { hover = uid; },
     pick,

@@ -16,7 +16,7 @@ Full submission: [`submissions/friend-nook/README.md`](https://github.com/DEDQ3E
 
 ## What did you build?
 
-A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitchen, living and dining room) in isometric cut-away view with day and night, five needs and 31 things to do on 27 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself. The house is alive (TV channels and a video game, swimming fish, a turning record, steam, bath bubbles) with a composed, synthesized soundtrack for each time of day (marimba morning, vibraphone swing, lo-fi evening, music-box lullaby, a disco record) and a sound for every activity. A hint always points to one thing that raises the lowest need.
+A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitchen, living and dining room) in isometric cut-away view with day and night, five needs and 31 things to do on 27 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself; the camera opens close on your Friend. The house is alive (TV channels and a video game, swimming fish, a turning record, steam, bath bubbles) with a composed, synthesized soundtrack for each time of day (marimba morning, vibraphone swing, lo-fi evening, music-box lullaby, a disco record) and a sound for every activity. A hint always points to one thing that raises the lowest need.
 
 ## How does it use Rare Friends?
 
@@ -24,6 +24,7 @@ A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitche
 - **Family = temperament:** loves, dislikes, need rates, speed, voice lines and a signature idle per family. A Hoverer floats and naps, a Skeleton wakes at night, an Asymmetry zigzags between toys and the arcade. It may refuse what it dislikes.
 - **Generation = character strength:** one read-only `generation(tokenId)` call sets it from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more, refuse more, gesture and speak more expressively.
 - **The token itself:** from its sprite seed come a nickname, a favourite colour (its blanket, cushion and rug), a personal favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects (night snacker, early bird, bookworm, sky watcher, cuddle bug…). Two Hoverers are different Friends.
+- **A family heirloom:** each family brings one piece of its own (nine family heirlooms: a bone xylophone for a Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…) with an activity only that family has.
 - **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, a diary of its own choices and friendship levels.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
@@ -31,6 +32,8 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 **Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Their own *Meet your Friend* cards, and what each chose by itself, are in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
 
 ![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
+
+![The nine family heirlooms](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/heirlooms.png)
 
 ## How RF is spent, and the economy
 

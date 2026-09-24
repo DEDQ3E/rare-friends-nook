@@ -37,9 +37,7 @@ try {
     // leave it alone at 3×: whatever it does now is its own choice
     await game.getByRole("button", { name: "Speed 3×" }).click();
     await page.waitForTimeout(26000);
-    await game.getByRole("button", { name: "Zoom in" }).click(); await page.waitForTimeout(1600);
-    await root.screenshot({ path: `${out}/${id}-life.png` });
-    await game.getByRole("button", { name: "Zoom out" }).click(); await page.waitForTimeout(400);
+    await root.screenshot({ path: `${out}/${id}-life.png` }); // the game opens close to the Friend
     await game.getByRole("button", { name: "Open your Friend's character card" }).click();
     const diary = (await game.locator(".fn-diary li").allInnerTexts()).reverse().map(s => s.replace(/^\S+\s+\S+\s+/, "").trim());
     row.chose = diary.filter(s => / — its own choice/.test(s)).map(s => s.replace(" — its own choice", ""));

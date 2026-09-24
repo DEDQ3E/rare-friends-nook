@@ -136,6 +136,10 @@ const ACTIVITY: Readonly<Record<string, { loop?: Loop; every?: number; one?: str
   sleep: { every: 3.4, one: "snore", music: "soft" }, nap: { every: 3.4, one: "snore", music: "soft" },
   ball: { every: .55, one: "bounce" }, dress: { every: 1, one: "rustle" }, keepsakes: { every: 1.5, one: "twinkle" },
   sit: {}, lounge: {}, talk: {}, pet: {}, gift: {},
+  // family heirlooms
+  xylo: { every: .28, one: "xylo", duck: .5 }, mask: { every: 1.1, one: "rustle" }, photos: { every: 2.6, one: "chime" },
+  cells: { every: .8, one: "bubble" }, tower: { every: .6, one: "block" }, cloud: { every: 2.2, one: "twinkle", music: "soft" },
+  boulder: {}, mirrorball: { music: "record" }, lantern: { every: 3, one: "twinkle", music: "soft" },
 };
 
 export function createSoundscape() {
@@ -353,6 +357,11 @@ export function createSoundscape() {
       case "puff": burst(t, .3, .06 * L, o, "lowpass", 500, .7, brown); break;
       case "hum": { const f = midi(from(ch) + 12); tone(t, f, .32, .025 * L, o, "triangle", f * (Math.random() < .5 ? 1.06 : .95), .04); break; }
       case "chime": musicbox(t, ch[1] + 24, .05 * L, o); musicbox(t + .12, ch[ch.length - 1] + 24, .05 * L, o); break;
+      case "xylo": { // a bone xylophone: dry marimba notes walking the current chord
+        const notes = ch.map(n => n + 24), k = pianoStep++ % (notes.length * 2 - 2), idx = k < notes.length ? k : notes.length * 2 - 2 - k;
+        marimba(t, notes[idx], .06 * L, o); burst(t, .012, .03 * L, o, "bandpass", 2600, 3, white, 1, .001); break;
+      }
+      case "block": tone(t, 520 + Math.random() * 180, .06, .05 * L, o, "triangle", 380, .002); burst(t, .02, .03 * L, o, "bandpass", 1800, 2, white, 1, .001); break;
     }
   }
   function ambience() {
@@ -442,7 +451,7 @@ export function createSoundscape() {
     const a = id ? ACTIVITY[id] : undefined;
     startLoop(a?.loop ?? "none");
     nextOne = ctx.currentTime + .3;
-    if (id === "sit" || id === "lounge") one("puff");
+    if (id === "sit" || id === "lounge" || id === "boulder" || id === "cloud") one("puff");
     if (id === "pet" || id === "gift") one("chime");
     syncMusic();
   }
