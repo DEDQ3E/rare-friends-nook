@@ -117,7 +117,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`18b148f`](https://github.com/DEDQ3E/rare-friends-nook/tree/18b148f25b2dec7765b468cd3715fa74db8a6f14)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`e19f88d`](https://github.com/DEDQ3E/rare-friends-nook/tree/e19f88d82b4affb594f649405bf7b8e04e9f4c84)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
 
 ## Playable demo / how to run
 
