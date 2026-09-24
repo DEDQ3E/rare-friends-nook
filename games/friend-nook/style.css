@@ -141,3 +141,11 @@ kbd{border:2px solid var(--line);padding:0 4px;background:#fffaf0;font:inherit;f
 .fn-settings{display:flex;flex-direction:column;gap:6px;font-size:12px}
 .fn-settings input,.fn-settings select{font:inherit;vertical-align:middle}
 @container (max-width: 720px) { .fn-bond{display:none!important} .fn-hint{bottom:38px;max-width:70%;font-size:9px;padding:3px 6px} }
+.fn-low span{color:#a33f3c}
+.fn-hintbtn{display:flex;align-items:center;gap:6px;width:100%;margin-top:5px;padding:3px 6px;background:#fff1c9;border:2px solid var(--line);font:inherit;font-size:11px;color:var(--ink);cursor:pointer;text-align:left}
+.fn-hintbtn:hover:not(:disabled){background:#ffe7a3}
+.fn-hintbtn:disabled{cursor:default;opacity:.85}
+.fn-hintbtn img{image-rendering:pixelated;width:18px;height:18px;flex:none}
+.fn-hintbtn em{font-style:normal;color:#a33f3c}
+@container (max-width: 720px) { .fn-hintbtn{font-size:9px;padding:2px 4px;margin-top:3px}.fn-hintbtn img{width:12px;height:12px}.fn-hintbtn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} }
+@container (max-width: 420px) { .fn-hintbtn span{display:none} }

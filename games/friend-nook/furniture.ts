@@ -2,6 +2,7 @@
  * position in the starting house; `Builder.place` moves (and mirrors) it for Buy mode. */
 import { Builder, S, project, type Part } from "./iso.js";
 import { CATALOG } from "./catalog.js";
+import { drawBurners, drawRecord, drawTv } from "./fx.js";
 
 export type Pose = Readonly<{ i: number; j: number; z: number; face: readonly [number, number]; lie?: boolean }>;
 export type FurnitureDef = Readonly<{
@@ -90,7 +91,7 @@ export const FURNITURE: readonly FurnitureDef[] = [
   { id: "plant-bed", name: "Potted plant", origin: [.13, .05], foot: [.13, .05, .69, .61], spots: [], build: b => plant(b, .13, .05) },
   /* ---------------- bathroom ---------------- */
   { id: "bathtub", name: "Bathtub", origin: [5.15, .1], foot: [5.15, .1, 7.0, 1.1], spots: [[6.05, 1.6]], wall: true,
-    pose: { i: 6.05, j: .6, z: 4, face: [1, 1] },
+    pose: { i: 6.05, j: .55, z: -1, face: [1, 1] },
     build: b => {
       const i = 5.15, j = .1, w = 1.85, d = 1.0;
       b.box(i, j, w, d, 9, WHT); b.tp(i + .12, j + .12, i + w - .12, j + d - .12, 9.01, "#8FC6DE"); b.tp(i + .12, j + .12, i + w - .12, j + .28, 9.02, "#B5DCEC");
@@ -118,7 +119,7 @@ export const FURNITURE: readonly FurnitureDef[] = [
       b.fj(j + d, i + .85, i + 1.7, 1.5, h - 2.3, "#3A3A44"); b.fj(j + d + THIN, i + .95, i + 1.6, 3.5, 8.5, "#1E2A4A");
       for (let n = 0; n < 4; n++) b.fj(j + d + THIN, i + .9 + n * .21, i + .98 + n * .21, 9.3, 10.2, "#D2D2DE");
       b.tp(i + .85, j + .1, i + 1.7, j + .8, h + .25, "#3A3A44");
-      for (const [a, c] of [[.95, .2], [1.35, .2], [.95, .5], [1.35, .5]]) b.tp(i + a, j + c, i + a + .25, j + c + .22, h + .3, "#5B5B66");
+      b.tpFx(i + .9, j + .15, i + 1.65, j + .75, h + .3, drawBurners);
       b.box(i + 1.3, j + .45, .3, .3, 2.5, RED, h + .3);
       b.tp(i + 1.9, j + .18, i + 2.55, j + .72, h + .25, "#8B99A6"); b.tp(i + 1.97, j + .24, i + 2.48, j + .66, h + .3, "#6E7B86");
       b.box(i + 2.18, j + .08, .08, .08, 4, STEEL, h); b.box(i + 2.18, j + .08, .08, .28, .8, STEEL, h + 3.6);
@@ -167,7 +168,7 @@ export const FURNITURE: readonly FurnitureDef[] = [
       const i = .12, j = 6.2, w = .62, d = 1.8;
       b.box(i, j, w, d, 7, DK); b.fi(i + w, j + .08, j + .85, 1.2, 6, "#8A5A3A"); b.fi(i + w, j + .95, j + d - .08, 1.2, 6, "#8A5A3A");
       b.fi(i + w + THIN, j + .45, j + .55, 3, 4, "#F2C94C"); b.fi(i + w + THIN, j + 1.35, j + 1.45, 3, 4, "#F2C94C");
-      b.box(i + .25, j + .8, .2, .2, 1.2, BLK, 7); b.box(i + .3, j + .1, .12, 1.6, 11, BLK, 8.2); b.fi(i + .42, j + .18, j + 1.62, 9.2, 18.2, "#6FC3DF"); b.fi(i + .42 + THIN, j + .3, j + .7, 15, 17, "#A8E0F0");
+      b.box(i + .25, j + .8, .2, .2, 1.2, BLK, 7); b.box(i + .3, j + .1, .12, 1.6, 11, BLK, 8.2); b.fiFx(i + .42, j + .18, j + 1.62, 9.2, 18.2, drawTv);
       b.box(i + .3, j + 1.2, .25, .3, 1, WHT, 7); b.box(i + .36, j + 1.0, .14, .12, .6, RED, 7);
     } },
   { id: "sofa", name: "Sofa", origin: [3.2, 6.1], foot: [3.2, 6.1, 4.25, 8.1], spots: [[2.95, 6.85], [2.95, 7.55]],
@@ -207,7 +208,7 @@ export const FURNITURE: readonly FurnitureDef[] = [
     build: b => {
       const i = 5.2, j = 5.12, w = .75, d = .5;
       b.box(i, j, w, d, 8, WOOD); b.fj(j + d, i + .06, i + w - .06, 1.5, 7, "#A57A4F"); b.fj(j + d + THIN, i + .33, i + .42, 4, 5, "#F2C94C");
-      b.box(i + .08, j + .06, .6, .4, 1.2, BLK, 8); b.tp(i + .16, j + .1, i + .5, j + .42, 9.3, "#23232B"); b.tp(i + .28, j + .2, i + .38, j + .3, 9.35, "#E07A5F"); b.box(i + .56, j + .1, .05, .3, .8, STEEL, 9.2);
+      b.box(i + .08, j + .06, .6, .4, 1.2, BLK, 8); b.tpFx(i + .16, j + .1, i + .5, j + .42, 9.3, drawRecord); b.box(i + .56, j + .1, .05, .3, .8, STEEL, 9.2);
     } },
   { id: "plant-living", name: "Potted plant", origin: [.12, 5.12], foot: [.12, 5.12, .78, 5.78], spots: [], build: b => plant(b, .12, 5.12, 1.15) },
   { id: "ball", name: "Ball", origin: [6.8, 7.5], foot: [6.8, 7.5, 7.0, 7.7], spots: [[6.3, 8.1]],

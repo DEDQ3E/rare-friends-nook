@@ -9,6 +9,8 @@
 export const HW = 18, HH = 9; // half tile width / height in logical pixels
 
 export type Pt = readonly [number, number];
+/** Maps (u, v) in [0, 1]² on a face to a screen point; u runs along the face, v up (or across, on tops). */
+export type QuadAt = (u: number, v: number) => Pt;
 export const project = (i: number, j: number, z = 0): Pt => [(i - j) * HW, (i + j) * HH - z];
 /** Screen point (relative to the world origin) → floor tile coordinates at height z. */
 export function unproject(x: number, y: number, z = 0): { i: number; j: number } {
@@ -90,6 +92,26 @@ export class Builder {
     const P = project;
     this.push(iw, iw + THIN, a, b, z0, z1, [{ pts: flat([P(iw, a, z0), P(iw, b, z0), P(iw, b, z1), P(iw, a, z1)]), fill, stroke: false }]);
   }
+  /** Animated face on the +i side at i = ip (drawn every frame by `draw`). */
+  fiFx(ip: number, j0: number, j1: number, z0: number, z1: number, draw: (ctx: CanvasRenderingContext2D, at: QuadAt) => void) {
+    if (this.swap) this.planeFx("j", this.oj + ip - this.bi, this.oi + j0 - this.bj, this.oi + j1 - this.bj, z0, z1, draw);
+    else this.planeFx("i", this.oi + ip - this.bi, this.oj + j0 - this.bj, this.oj + j1 - this.bj, z0, z1, draw);
+  }
+  /** Animated face on the +j side at j = jp. */
+  fjFx(jp: number, i0: number, i1: number, z0: number, z1: number, draw: (ctx: CanvasRenderingContext2D, at: QuadAt) => void) {
+    if (this.swap) this.planeFx("i", this.oi + jp - this.bj, this.oj + i0 - this.bi, this.oj + i1 - this.bi, z0, z1, draw);
+    else this.planeFx("j", this.oj + jp - this.bj, this.oi + i0 - this.bi, this.oi + i1 - this.bi, z0, z1, draw);
+  }
+  private planeFx(axis: "i" | "j", w: number, a: number, b: number, z0: number, z1: number, draw: (ctx: CanvasRenderingContext2D, at: QuadAt) => void) {
+    const at: QuadAt = axis === "j" ? (u, v) => project(a + (b - a) * u, w, z0 + (z1 - z0) * v) : (u, v) => project(w, a + (b - a) * u, z0 + (z1 - z0) * v);
+    if (axis === "j") this.push(Math.min(a, b), Math.max(a, b), w, w + THIN, z0, z1, [], ctx => draw(ctx, at));
+    else this.push(w, w + THIN, Math.min(a, b), Math.max(a, b), z0, z1, [], ctx => draw(ctx, at));
+  }
+  /** Animated plate lying on top of something at height z. */
+  tpFx(i0: number, j0: number, i1: number, j1: number, z: number, draw: (ctx: CanvasRenderingContext2D, at: QuadAt) => void) {
+    const [a, b, w, d] = this.tx(i0, j0, i1 - i0, j1 - j0), at: QuadAt = (u, v) => project(a + w * u, b + d * v, z);
+    this.push(a, a + w, b, b + d, z, z + THIN, [], ctx => draw(ctx, at));
+  }
   /** A flat plate lying on top of something at height z. */
   tp(i0: number, j0: number, i1: number, j1: number, z: number, fill: string) {
     const [a, b, w, d] = this.tx(i0, j0, i1 - i0, j1 - j0), P = project;
@@ -147,6 +169,18 @@ export function insertionIndex(sorted: readonly Part[], p: Part): number {
     if (before(q, p)) after = k; else if (k < first) first = k;
   }
   return after < first ? first : after + 1;
+}
+
+/** The sorted scene with a moving part (the Friend) in it. When the static order leaves no valid slot
+ * (something it must follow comes after something it must precede), only that stretch is re-sorted. */
+export function withMoving(sorted: readonly Part[], p: Part): Part[] {
+  let after = -1, first = sorted.length;
+  for (let k = 0; k < sorted.length; k++) {
+    const q = sorted[k]; if (!overlap(p, q)) continue;
+    if (before(q, p)) after = k; else if (k < first) first = k;
+  }
+  if (after < first) return [...sorted.slice(0, after + 1), p, ...sorted.slice(after + 1)];
+  return [...sorted.slice(0, first), ...depthSort([...sorted.slice(first, after + 1), p]), ...sorted.slice(after + 1)];
 }
 
 export function makePart(i0: number, i1: number, j0: number, j1: number, z0: number, z1: number, owner: string | null, custom?: Part["custom"]): Part {

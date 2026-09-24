@@ -1,12 +1,38 @@
 /** Friend Nook engine: camera, rendering, walking (A* on half-tile cells), picking, and the life simulation
  * loop (needs, actions, free will, wishes, voice). React only shows panels and the HUD around it. */
-import { Builder, depthSort, fillPoly, insertionIndex, lit, makePart, pointInPoly, project, unproject, type Part } from "./iso.js";
+import { Builder, depthSort, fillPoly, lit, withMoving, makePart, pointInPoly, project, unproject, type Part } from "./iso.js";
 import { CELL, COLS, GH, GW, ROWS, buildStructure, drawShell, edgeOpen, roomAt, type Room, type Sky } from "./house.js";
 import { DEF, buildPlaced, footprint, placePoint, starterHouse, setBallLift, setHutchItems, type Placed } from "./furniture.js";
 import { ACTION, ACTIONS, DAY_MINUTES, GAME_MINUTES_PER_SECOND, NEEDS, actionsOn, clamp, darkness, decayNeeds, desire, isNight, mood, type ActionDef, type NeedKey, type Needs, type Stock } from "./sim.js";
 import { BALANCED, preference, refuseChance, type Temperament } from "./personality.js";
 import { ICONS, drawFriend, drawIconBubble, feetRow, topRow, type Pixmap } from "./art.js";
 import type { Facing, Outfit } from "./wardrobe.js";
+import { FX } from "./fx.js";
+import { drawPixmap } from "./art.js";
+
+/** Particles per action: where they come from (default coordinates of the used piece, or the Friend) and what. */
+type Emit = Readonly<{ at?: readonly [number, number, number]; kind: "bubble" | "steam" | "icon" | "dot" | "drip" | "hop"; icon?: string; colors?: readonly string[]; every: number }>;
+const EMIT: Readonly<Record<string, Emit>> = {
+  bath: { kind: "bubble", every: .18 },
+  cook: { at: [9.57, .66, 17], kind: "steam", every: .22 },
+  dance: { at: [5.57, 5.37, 11], kind: "icon", icon: "note", every: .55 },
+  piano: { at: [.5, .25, 12], kind: "icon", icon: "note", every: .45 },
+  wash: { at: [7.37, .3, 13], kind: "drip", colors: ["#6EC6FF", "#BFE4FF"], every: .08 },
+  toys: { at: [2.82, 1.5, 8], kind: "hop", colors: ["#E07A5F", "#F2C94C", "#4F7CAC", "#7FB069"], every: .35 },
+  arcade: { at: [.4, .72, 26], kind: "dot", colors: ["#FF5AD1", "#7FCF4F", "#FFD23F", "#6FC3DF"], every: .2 },
+  games: { at: [.54, 7.1, 16], kind: "dot", colors: ["#FFD23F", "#FFFFFF", "#E07A5F"], every: .3 },
+  paint: { at: [.3, .16, 15], kind: "dot", colors: ["#E07A5F", "#8FC0E0", "#F2C94C", "#7FB069", "#8E7CC3"], every: .25 },
+  fish: { at: [.6, .25, 22], kind: "bubble", every: .4 },
+  primp: { kind: "icon", icon: "sparkle", every: .6 }, admire: { kind: "icon", icon: "sparkle", every: .6 },
+  stargaze: { kind: "dot", colors: ["#FFF3B0", "#FFFFFF"], every: .3 }, telescope: { kind: "dot", colors: ["#FFF3B0", "#FFFFFF"], every: .25 },
+  pet: { kind: "icon", icon: "heart", every: .5 }, keepsakes: { at: [8.4, 9.45, 24], kind: "icon", icon: "sparkle", every: .6 },
+  daydream: { kind: "icon", icon: "cloud", every: 1.4 }, snack: { kind: "icon", icon: "apple", every: 1.2 },
+  dinner: { kind: "steam", every: .35 },
+};
+/** Things held while doing an action (drawn beside the Friend, never over its artwork's outline). */
+const PROPS: Readonly<Record<string, string>> = { read: "book", book: "book", bar: "apple", snack: "apple", games: "pad", paint: "brush" };
+type Particle = { x: number; y: number; vx: number; vy: number; life: number; max: number; kind: Emit["kind"]; icon?: Pixmap; color?: string; r: number };
+const ARROW: Pixmap = { palette: { k: "#3A2A1E", y: "#FFD23F", w: "#FFF3B0" }, rows: ["..kkkkk..", "..kwyyk..", "..kyyyk..", "..kyyyk..", "kkkyyykkk", ".kyyyyyk.", "..kyyyk..", "...kyk...", "....k...."] };
 
 export type FriendSprites = Readonly<{ walk: Readonly<Record<Facing, readonly (readonly string[])[]>>; idle: Readonly<Record<Facing, readonly (readonly string[])[]>> }>;
 export type EngineEvent =
@@ -67,6 +93,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   let placing: { def: string; i: number; j: number; swap: boolean; valid: boolean; uid: string | null; original: Placed | null } | null = null;
   let ghostParts: Part[] = [];
   let bought = 0;
+  let particles: Particle[] = [], emitIn = 0, hintUid: string | null = null;
+  const tops = new Map<string, { x: number; y: number }>();
 
   /* ---------- furniture → parts and blocked cells ---------- */
   function rebuild() {
@@ -74,6 +102,10 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     buildStructure(b);
     for (const p of placed) buildPlaced(b, p);
     parts = depthSort(b.parts);
+    tops.clear();
+    const span = new Map<string, { x0: number; x1: number; y: number }>();
+    for (const p of parts) { if (!p.owner) continue; const q = span.get(p.owner); if (!q) span.set(p.owner, { x0: p.x0, x1: p.x1, y: p.y0 }); else { q.x0 = Math.min(q.x0, p.x0); q.x1 = Math.max(q.x1, p.x1); q.y = Math.min(q.y, p.y0); } }
+    for (const [uid, q] of span) tops.set(uid, { x: (q.x0 + q.x1) / 2, y: q.y });
     blocked.fill(0);
     for (const p of placed) {
       if (p.def === "ball") continue;
@@ -310,6 +342,27 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       if (doing.left <= 0 || full) finish();
     }
     if (temper.family === "Mask" && !doing && !fr.moving && !reduced && Math.random() < dt * (.25 + .35 * strength)) fr.facing = fr.facing === "left" ? "right" : fr.facing === "right" ? "down" : "left";
+    // particles from what the Friend is doing
+    for (const p of particles) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.kind === "hop" || p.kind === "drip") p.vy += 90 * dt; if (p.kind === "steam") p.r += 3 * dt; }
+    particles = particles.filter(p => p.life > 0);
+    const em = doing?.phase === "do" ? EMIT[doing.action.id] : undefined;
+    if (em && !reduced) {
+      emitIn -= dt;
+      if (emitIn <= 0) {
+        emitIn = em.every;
+        const target = doing?.target ? placedById(doing.target) : null;
+        let x: number, y: number;
+        if (em.at && target) { const [pi, pj] = placePoint(target, em.at[0], em.at[1]); [x, y] = project(pi, pj, em.at[2]); }
+        else { const [hx, hy] = headPoint(); x = hx; y = em.kind === "bubble" ? project(fr.i, fr.j, 8)[1] : em.kind === "steam" ? project(fr.i, fr.j, fr.z + 12)[1] : hy; }
+        const rnd = (a: number) => (Math.random() - .5) * a, color = em.colors ? em.colors[Math.floor(Math.random() * em.colors.length)] : undefined;
+        if (em.kind === "bubble") particles.push({ x: x + rnd(26), y, vx: rnd(4), vy: -10 - Math.random() * 8, life: 1.2, max: 1.2, kind: "bubble", r: 1 + Math.random() * 1.4 });
+        else if (em.kind === "steam") particles.push({ x: x + rnd(6), y: y - 2, vx: rnd(4), vy: -9, life: 1.8, max: 1.8, kind: "steam", r: 1.5 });
+        else if (em.kind === "icon") particles.push({ x: x + rnd(18), y: y - 6, vx: rnd(8), vy: -12, life: 1.6, max: 1.6, kind: "icon", icon: ICONS[em.icon ?? "note"], r: 0 });
+        else if (em.kind === "drip") particles.push({ x: x + rnd(2), y, vx: 0, vy: 4, life: .35, max: .35, kind: "drip", color, r: .8 });
+        else if (em.kind === "hop") particles.push({ x: x + rnd(10), y, vx: rnd(30), vy: -48 - Math.random() * 20, life: 1, max: 1, kind: "hop", color, r: 1.6 });
+        else particles.push({ x: x + rnd(22), y: y + rnd(10), vx: rnd(10), vy: -6 - Math.random() * 6, life: .9, max: .9, kind: "dot", color, r: 1 });
+      }
+    }
     // free will
     if (!doing && !fr.path.length && !(move.x || move.y)) {
       idleFor += dt * Math.min(3, speed);
@@ -391,6 +444,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       drawFriend(c, rows, 0, 0, outfit, facing, fr.clock, fr.moving);
     }
     c.restore();
+    const prop = doing?.phase === "do" ? PROPS[doing.action.id] : undefined;
+    if (prop && !fr.lie) { const left = fr.facing === "left"; drawPixmap(c, ICONS[prop], Math.round(x + off.dx + (left ? -20 : 11)), Math.round(y + off.dy - 17), 1); }
     // family flourishes around (never on) the Friend: Sparkling twinkles, Family hearts
     if (!reduced && !fr.lie && !doing && !fr.moving) {
       const top = y + off.dy - (feet - topRow(rows) + 1) * SPRITE;
@@ -432,12 +487,28 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       const f = footprint({ uid: "ghost", def: placing.def, i: placing.i, j: placing.j, swap: placing.swap }), P = project;
       fillPoly(g, [...P(f[0], f[1], .6), ...P(f[2], f[1], .6), ...P(f[2], f[3], .6), ...P(f[0], f[3], .6)], placing.valid ? "rgba(127,176,105,.55)" : "rgba(224,72,72,.5)", false);
     }
-    const me = friendPart(), at = insertionIndex(parts, me);
-    drawOrder = [...parts.slice(0, at), me, ...parts.slice(at)];
+    FX.t = t; FX.dark = k; FX.calm = reduced; FX.acts.clear(); if (doing?.phase === "do") FX.acts.add(doing.action.id);
+    drawOrder = withMoving(parts, friendPart());
     for (const p of drawOrder) {
       if (p.custom) { p.custom(g, p); continue; }
       const hi = hover !== null && p.owner === hover;
       for (const poly of p.polys) fillPoly(g, poly.pts, lit(hi ? brighten(poly.fill) : poly.fill, k), poly.stroke);
+    }
+    for (const p of particles) {
+      const a = Math.max(0, Math.min(1, p.life / p.max * 1.4)); g.globalAlpha = a;
+      if (p.kind === "icon" && p.icon) drawPixmap(g, p.icon, Math.round(p.x - 4), Math.round(p.y - 4), 1);
+      else if (p.kind === "bubble") { g.strokeStyle = "#FFFFFF"; g.lineWidth = .6; g.beginPath(); g.arc(p.x, p.y, p.r, 0, Math.PI * 2); g.stroke(); }
+      else if (p.kind === "steam") { g.fillStyle = "rgba(255,255,255,.55)"; g.beginPath(); g.arc(p.x, p.y, p.r, 0, Math.PI * 2); g.fill(); }
+      else { g.fillStyle = p.color ?? "#FFFFFF"; g.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); }
+    }
+    g.globalAlpha = 1;
+    if (fr.bath) { // foam on the water around the Friend
+      const [x, wy] = project(fr.i, fr.j, 9.2);
+      for (let n = 0; n < 9; n++) { const fx = x - 16 + n * 4, bob = reduced ? 0 : Math.sin(fr.clock * 2 + n) * .6; g.fillStyle = lit(n % 3 ? "#FFFFFF" : "#DCEFF3", k * .6); g.beginPath(); g.ellipse(fx, wy + (n % 2) * 1.5 + bob, 3.2, 2, 0, 0, Math.PI * 2); g.fill(); }
+    }
+    if (hintUid && !placing) {
+      const anchor = hintUid === "friend" ? (() => { const [hx, hy] = headPoint(); return { x: hx, y: hy - 16 }; })() : tops.get(hintUid);
+      if (anchor) drawPixmap(g, ARROW, Math.round(anchor.x - 4), Math.round(anchor.y - 14 - (reduced ? 0 : Math.abs(Math.sin(t * 4)) * 4)), 1);
     }
     if (placing) { g.globalAlpha = placing.valid ? .85 : .5; for (const p of ghostParts) { if (p.custom) { p.custom(g, p); continue; } for (const poly of p.polys) fillPoly(g, poly.pts, poly.fill, poly.stroke); } g.globalAlpha = 1; }
     // bubbles and speech in screen space
@@ -520,6 +591,18 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       updateGhost();
     },
     placeAt,
+    /** Things that raise a need right now: [{ uid (or "friend"), action }]. */
+    hintOptions(need: NeedKey) {
+      const out: { uid: string; action: string }[] = [];
+      for (const p of placed) for (const a of actionsOn(p.def, minute)) {
+        if (a.panel || (a.uses === "snack" && stock.snacks <= 0) || (a.uses === "meal" && stock.meals <= 0)) continue;
+        const gain = (a.rates?.[need] ?? 0) * a.minutes / 60 + (a.done?.[need] ?? 0) + (a.withYou && need === "social" ? 4 * a.minutes / 60 : 0);
+        if (gain >= 8 && !out.some(o => o.action === a.id && (a.seat || o.uid === p.uid))) out.push({ uid: p.uid, action: a.id });
+      }
+      if (need === "social") { out.push({ uid: "friend", action: "pet" }); out.push({ uid: "friend", action: "talk" }); }
+      return out;
+    },
+    setHint(uid: string | null) { hintUid = uid; },
     nudgePlacing(di: number, dj: number) { if (placing) { placing.i += di; placing.j += dj; updateGhost(); } },
     rotatePlacing() { if (placing) { placing.swap = !placing.swap; updateGhost(); } },
     isPlacing() { return !!placing; },

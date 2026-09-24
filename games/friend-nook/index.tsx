@@ -9,7 +9,7 @@ import { GENERATION_SPRITE_MANIFEST, createFriendReader, spriteFrame } from "@ra
 import { GENERATION_ELIGIBILITY_ABI } from "@rarefriends/friendsdk/identity";
 import { createFriendPublicClient } from "@rarefriends/friendsdk/wallet";
 import { createEngine, pieceThumb, type Engine, type EngineEvent, type FriendSprites, type View } from "./engine.js";
-import { ACTION, NEEDS, NEED_LABEL, clockText, moodLabel, type ActionDef } from "./sim.js";
+import { ACTION, NEEDS, NEED_LABEL, clockText, moodLabel, type ActionDef, type NeedKey } from "./sim.js";
 import { BOND_LEVELS, BOND_TITLES, STRENGTH_LABEL, bondLevel, preference, strengthOf, temperamentFor } from "./personality.js";
 import { DEF } from "./furniture.js";
 import { ROOM_NAME } from "./house.js";
@@ -58,6 +58,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [volume, setVolume] = useState(80), [motionPref, setMotionPref] = useState<"auto" | "on" | "off">("auto");
   const [hintClosed, setHintClosed] = useState(false);
   const lastLevel = useRef(0);
+  const [hint, setHint] = useState<{ need: NeedKey; uid: string | null; action: string | null } | null>(null);
   const locked = useRef(false), epoch = useRef(0);
   const viewRef = useRef<View | null>(null); viewRef.current = view;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -159,6 +160,24 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   useEffect(() => { engine.current?.setReducedMotion(lessMotion); }, [lessMotion, ready]);
   useEffect(() => { sound.current?.setVolume(.65 * volume / 80); }, [volume]);
   useEffect(() => { const t = window.setTimeout(() => setHintClosed(true), 12000); return () => window.clearTimeout(t); }, []);
+  // hint: the lowest need, and one random thing in the house that raises it (kept until that need changes)
+  useEffect(() => {
+    const e = engine.current; if (!view || !e) return;
+    const low = NEEDS.reduce((a, b) => (view.needs[b] < view.needs[a] ? b : a));
+    if (view.needs[low] >= 65) { if (hint) setHint(null); return; }
+    const options = e.hintOptions(low);
+    const still = hint && hint.need === low && (hint.uid === null ? options.length === 0 : options.some(o => o.uid === hint.uid && o.action === hint.action));
+    if (still) return;
+    const pick = options.length ? options[Math.floor(Math.random() * options.length)] : null;
+    setHint({ need: low, uid: pick?.uid ?? null, action: pick?.action ?? null });
+  }, [view]); // eslint-disable-line react-hooks/exhaustive-deps
+  const hintBusy = !!hint?.action && view?.action === hint.action;
+  useEffect(() => { engine.current?.setHint(hint?.uid && !hintBusy ? hint.uid : null); }, [hint, hintBusy]);
+  function followHint() {
+    if (!hint) return;
+    if (!hint.action) { setPanel("shop"); return; }
+    const a = ACTION[hint.action]; if (a) doAction(a, hint.uid === "friend" ? null : hint.uid);
+  }
   // friendship level-ups
   const level = bondLevel(view?.friendship ?? 0);
   useEffect(() => {
@@ -392,7 +411,11 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
       {/* bottom left: needs */}
       {v && <div className="fn-card fn-needs" aria-label="Needs">
-        {NEEDS.map(k => <div key={k} className="fn-need" title={NEED_LABEL[k]}><img src={icon[NEED_ICON[k]]} alt="" /><span>{NEED_LABEL[k]}</span><i role="meter" aria-label={NEED_LABEL[k]} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v.needs[k])}><b style={{ width: `${v.needs[k]}%`, background: NEED_COLOR(v.needs[k]) }} /></i></div>)}
+        {NEEDS.map(k => <div key={k} className={`fn-need${hint?.need === k ? " fn-low" : ""}`} title={NEED_LABEL[k]}><img src={icon[NEED_ICON[k]]} alt="" /><span>{NEED_LABEL[k]}</span><i role="meter" aria-label={NEED_LABEL[k]} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v.needs[k])}><b style={{ width: `${v.needs[k]}%`, background: NEED_COLOR(v.needs[k]) }} /></i></div>)}
+        {hint && <button type="button" className="fn-hintbtn" onClick={followHint} disabled={paused || hintBusy} title="Suggested by the game">
+          <img src={icon[hint.action ? ACTION[hint.action].icon : "apple"]} alt="" />
+          <span><em>{NEED_LABEL[hint.need]} is low</em> {hintBusy ? "— on it!" : hint.action ? <>→ {ACTION[hint.action].label.toLowerCase()}{hint.uid && hint.uid !== "friend" ? ` · ${DEF[engine.current?.pieceById(hint.uid)?.def ?? ""]?.name ?? ""}` : ""}</> : "→ buy food in the shop"}</span>
+        </button>}
         <div className="fn-mood">Mood: <strong>{moodLabel(v.mood)}</strong>{v.wish && <span className="fn-wish" title="Current wish"> · wishes to <img src={icon[ACTION[v.wish].icon]} alt="" /> {ACTION[v.wish].label.toLowerCase()}</span>}</div>
       </div>}
 
