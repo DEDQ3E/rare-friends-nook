@@ -81,15 +81,16 @@ npm run docs       # every number in the docs matches game.json and the code
 ```
 
 Browser checks (need `npm install --no-save playwright` and `npx playwright install chromium`):
-`node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`.
+`node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`.
 Real Friends read live from mainnet: `node tests/friends.mjs` (also needs `pngjs`). Music to WAV: `node tests/music.mjs`.
-Demo video with sound: `node tests/video.mjs` (Microsoft Edge). README media: `node tests/media.mjs` (also needs `gifenc` and `pngjs`).
+Demo video with sound: `node tests/video.mjs` (Microsoft Edge). README media: `node tests/media.mjs` (also needs `gifenc` and `pngjs`); the heirloom sheet: `node tests/heirlooms.mjs`.
 
 ## Layout
 
 `games/friend-nook/`: `index.tsx` (React adapter and UI), `engine.ts` (camera, rendering, walking, free will),
 `iso.ts` (projection and depth sorting), `house.ts`, `furniture.ts`, `catalog.ts`, `fx.ts` (living furniture),
-`sim.ts` (needs and actions), `personality.ts` (families), `traits.ts` (per-token traits), `audio.ts`,
+`sim.ts` (needs and actions), `personality.ts` (families), `traits.ts` (per-token traits), `heirlooms.ts` (family
+heirlooms), `audio.ts`,
 `keepsakes.ts`, `art.ts`, `wardrobe.ts` + `fit.ts` (clothes fitted to any Friend), `game.json` (Gift Box odds).
 Design notes: [DESIGN.md](DESIGN.md).
 

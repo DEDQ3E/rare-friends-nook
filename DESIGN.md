@@ -34,11 +34,11 @@ neighbour is used.
 | 6 | Sink and mirror | Wash up / Admire self | Hygiene, Fun |
 | 7 | Stove | Cook a meal (uses a meal) | Hunger ++ |
 | 8 | Fridge | Grab a snack (uses a snack) | Hunger + |
-| 9 | Breakfast bar | Eat at the bar | Hunger |
+| 9 | Breakfast bar | Snack at the bar | Hunger |
 | 10 | Dining table | Family dinner with you | Hunger, Social |
 | 11 | TV | Watch TV / Play games | Fun |
-| 12 | Sofa | Sit / Nap | Energy, Fun |
-| 13 | Bookshelf | Pick a book | Fun |
+| 12 | Sofa | Relax / Nap | Energy, Fun |
+| 13 | Bookshelf | Browse books | Fun |
 | 14 | Reading chair | Read | Fun |
 | 15 | Record player | Dance | Fun |
 | 16 | Ball | Play ball with you | Fun, Social |
@@ -47,29 +47,31 @@ neighbour is used.
 
 ## Needs
 
-Hunger, Energy, Fun, Hygiene, Social: 0–100, decaying per in-game hour. Mood is their weighted average
-plus temperament modifiers. One in-game day lasts about 8 real minutes at 1× speed (pause, 1×, 3×).
+Hunger, Energy, Fun, Hygiene, Social: 0–100, decaying per in-game hour. Mood mixes their average with the
+lowest need; the family's temperament changes how fast each need drops. One in-game day lasts about 8 real minutes at 1× speed (pause, 1×, 3×).
 
 ## Character (the core)
 
 | Family | Temperament | Loves | Dislikes | Quirk |
 |---|---|---|---|---|
-| Skeleton | Night owl | stargazing, TV at night, milk | baths | more energy at night |
-| Mask | Performer | mirror, wardrobe, dancing | reading | mood swings faster |
-| Family | Homebody | family dinner, pets, gifts | being alone | Social drops faster |
-| Cellular | Foodie | cooking, snacks | skipping meals | Hunger drops faster |
-| Asymmetry | Chaos gremlin | toys, dancing, games | sitting still | Fun drops faster |
-| Hoverer | Dreamer | window seat, sleep | chores | sleeps longer |
-| Colossus | Gentle giant | sofa, big meals | small chairs | moves slowly |
-| Sparkling | Style icon | bath, mirror, outfits, gifts | mess | Hygiene matters more |
-| Hollow | Introvert | books, reading chair | dancing, loud TV | Social drops slower |
+| Skeleton | Night Owl | stargazing, TV, snacks, telescope | baths | more energy at night |
+| Mask | Performer | mirror, wardrobe, dancing, vanity, painting | reading | fun and social drop faster |
+| Family | Homebody | family dinner, pets, talks, ball, piano | — | social drops faster |
+| Cellular | Foodie | cooking, snacks, dinner, aquarium | — | hunger drops faster |
+| Asymmetry | Chaos Gremlin | toys, dancing, games, ball, arcade, piano | relaxing, reading, bean bag | fastest walker |
+| Hoverer | Dreamer | stargazing, sleep, naps, telescope | cooking | energy drops faster |
+| Colossus | Gentle Giant | sofa, TV, dinner, naps, bean bag | bar stools, toys | slowest walker |
+| Sparkling | Style Icon | bath, mirror, outfits, gifts, vanity | toys | hygiene drops faster |
+| Hollow | Introvert | reading, books, stargazing, aquarium, painting | dancing, games, arcade | social drops slower |
+
+Every family also loves its own heirloom (below).
 
 - **Generation = character strength.** Gen 1 is the strongest (bigger preferences, more refusals of
   disliked actions, a signature idle), Gen 6 the mildest. Every generation plays the full game.
 - **Free will.** When the player gives no orders, the Friend picks what to do by need urgency × taste.
 - **Refusals.** Ordering a disliked action can get a "Nope" (chance grows with character strength).
 - **Wishes.** A thought bubble shows a wish drawn from the Friend's likes. Fulfilling it gives
-  Friendship points; Friendship levels unlock furniture and titles.
+  Friendship points; Friendship levels are titles, from Stranger to Forever Friend.
 - **Voice.** Short speech lines and emotes per family (talk, idle, reactions to gifts and food).
 - **The token itself.** Each trait is its own hash of the sprite seed and token ID: nickname, favourite colour
   (blanket, cushion, rug), a favourite activity outside the family's loves, snack, birthday, catchphrase and one
@@ -86,18 +88,19 @@ plus temperament modifiers. One in-game day lasts about 8 real minutes at 1× sp
 
 - Click / tap an object: action menu; the Friend walks there and does it.
 - Click / tap the floor: walk there. Arrows / WASD: walk; E: use the nearest object; Esc: close.
-- Mouse wheel / pinch or the zoom button: two zoom levels.
+- The zoom button: close up (the camera follows the Friend; the game starts here) or the whole house.
+- Buy mode: arrows move the piece, R rotates, Enter places, Esc cancels.
 
 ## Economy ($RAREFRIENDS, simulated in the preview)
 
-- **Gift Box** (the SDK chance game, `game.json`): 1 RF. Opens one keepsake of five rarity tiers. Kept
-  keepsakes sit on the hutch and give a Friendship bonus; any keepsake can be sold back for RF (redeem).
+- **Gift Box** (the SDK chance game, `game.json`): 1 RF. Opens one keepsake of five rarity tiers, which gives
+  Friendship when opened. Kept keepsakes stand in the hutch; any keepsake can be sold back for RF (redeem).
 - **Shop** (simulated RF spend): snacks and meals (consumed by the fridge and the stove), clothes, and
   furniture/decor for Buy mode. Spent RF is split 50% burned, 50% to Friend rewards (simulated, labeled).
 - Every price and odd shown in the UI is read from code or `game.json`; tests check the docs against them.
 
 ## Scope for the vibeathon
 
-House, camera, walking, depth sorting; needs and clock; 18 interactions; 9 temperaments with
-generation strength, wishes, refusals and voice lines; shop, wardrobe, Gift Box; Buy mode with a small
-decor catalog; mobile layout; tests. No storage exists in the SDK sandbox: progress resets on reload.
+House, camera, walking, depth sorting; needs and clock; 31 activities on 27 kinds of furniture plus nine
+family heirlooms; 9 temperaments with generation strength, per-token traits, wishes, refusals and voice lines;
+shop, wardrobe, Gift Box; Buy mode with a nine-piece catalog; mobile layout; tests. No storage exists in the SDK sandbox: progress resets on reload.
