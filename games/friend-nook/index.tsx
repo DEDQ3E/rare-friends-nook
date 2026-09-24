@@ -10,7 +10,7 @@ import { GENERATION_ELIGIBILITY_ABI } from "@rarefriends/friendsdk/identity";
 import { createFriendPublicClient } from "@rarefriends/friendsdk/wallet";
 import { createEngine, pieceThumb, type Engine, type EngineEvent, type FriendSprites, type View } from "./engine.js";
 import { ACTION, NEEDS, NEED_LABEL, clockText, moodLabel, type ActionDef } from "./sim.js";
-import { STRENGTH_LABEL, preference, strengthOf, temperamentFor } from "./personality.js";
+import { BOND_LEVELS, BOND_TITLES, STRENGTH_LABEL, bondLevel, preference, strengthOf, temperamentFor } from "./personality.js";
 import { DEF } from "./furniture.js";
 import { ROOM_NAME } from "./house.js";
 import { ICONS, drawFriend, pixmapUrl } from "./art.js";
@@ -54,6 +54,9 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [placing, setPlacing] = useState<{ def: string; move: string | null } | null>(null);
   const [bought, setBought] = useState<ReadonlyMap<string, string>>(() => new Map()); // uid → catalog id
   const [portraitPhone, setPortraitPhone] = useState(false), [rotateClosed, setRotateClosed] = useState(false);
+  const [volume, setVolume] = useState(80), [motionPref, setMotionPref] = useState<"auto" | "on" | "off">("auto");
+  const [hintClosed, setHintClosed] = useState(false);
+  const lastLevel = useRef(0);
   const locked = useRef(false), epoch = useRef(0);
   const viewRef = useRef<View | null>(null); viewRef.current = view;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -151,7 +154,16 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   useEffect(() => { engine.current?.setPaused(paused); if (paused) setMenu(null); }, [paused, ready]);
   useEffect(() => { engine.current?.setSpeed(speed); }, [speed, ready]);
   useEffect(() => { engine.current?.setZoom(zoomed ? 1.7 : 1); }, [zoomed, ready]);
-  useEffect(() => { engine.current?.setReducedMotion(reducedMotion); }, [reducedMotion, ready]);
+  const lessMotion = motionPref === "auto" ? reducedMotion : motionPref === "on";
+  useEffect(() => { engine.current?.setReducedMotion(lessMotion); }, [lessMotion, ready]);
+  useEffect(() => { sound.current?.setVolume(.65 * volume / 80); }, [volume]);
+  useEffect(() => { const t = window.setTimeout(() => setHintClosed(true), 12000); return () => window.clearTimeout(t); }, []);
+  // friendship level-ups
+  const level = bondLevel(view?.friendship ?? 0);
+  useEffect(() => {
+    if (level > lastLevel.current) { engine.current?.say(`We're ${BOND_TITLES[level].toLowerCase()}s now!`); engine.current?.emote("sparkle", 2.5); play("reward", .6); note(`Friendship level ${level + 1}: ${BOND_TITLES[level]}`); }
+    lastLevel.current = level;
+  }, [level]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (ready && generation !== undefined && !greeted && engine.current) { setGreeted(true); window.setTimeout(() => engine.current?.greet(), 700); } }, [ready, generation, greeted]);
 
   /* ---------- input ---------- */
@@ -352,14 +364,14 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const doingLabel = v?.action ? ACTION[v.action]?.label : v?.walking ? "Walking" : "Idle";
 
   return (
-    <div className={`fn-root${reducedMotion ? " fn-reduced" : ""}`}>
+    <div className={`fn-root${lessMotion ? " fn-reduced" : ""}`}>
       <canvas ref={canvasRef} className="fn-canvas" width={960} height={640} aria-label="Your Friend's house. Click furniture to choose an action, click the floor to walk, or use the arrow keys."
         onPointerDown={onCanvasDown} onPointerMove={onCanvasMove} onPointerLeave={() => engine.current?.setHover(null)} />
 
       {/* top left: who this Friend is */}
       <button type="button" className="fn-card fn-id" onClick={() => setPanel("profile")} aria-label="Open your Friend's character card">
         {portrait && <img src={portrait} width={40} height={44} alt="" />}
-        <span><strong>Friend #{friendId.toString()}</strong><small>{family ?? "…"} · {genText} · {temper.title}</small><small className="fn-doing">{doingLabel}{v ? ` · ${ROOM_NAME[v.room]}` : ""}</small></span>
+        <span><strong>Friend #{friendId.toString()}</strong><small>{family ?? "…"} · {genText} · {temper.title}</small><small className="fn-bond">♥ {BOND_TITLES[level]}</small><small className="fn-doing">{doingLabel}{v ? ` · ${ROOM_NAME[v.room]}` : ""}</small></span>
       </button>
 
       {/* top right: money and tools */}
@@ -385,6 +397,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
       </div>}
 
       {toast && <div className="fn-toast" role="status">{toast}</div>}
+      {!hintClosed && !panel && !placing && <div className="fn-card fn-hint" role="status"><span>Click furniture to pick an activity, the floor to walk. Leave your Friend alone to see its character.</span><button type="button" className="fn-btn fn-small" onClick={() => setHintClosed(true)}>Got it</button></div>}
       {portraitPhone && !rotateClosed && <div className="fn-card fn-rotate" role="status">Turn your phone sideways for a bigger house <button type="button" className="fn-btn fn-small" onClick={() => setRotateClosed(true)}>OK</button></div>}
       {placing && <div className="fn-card fn-placebar" role="toolbar" aria-label="Placing furniture">
         <span>{placing.move ? "Moving" : "Placing"} <strong>{CATALOG_DEF[placing.def]?.def.name}</strong>{!placing.move && <> · {CATALOG_DEF[placing.def]?.price} RF</>}</span>
@@ -422,7 +435,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               <dt>Loves</dt><dd>{temper.loves.map(id => ACTION[id]?.label).filter(Boolean).join(", ") || "—"}</dd>
               <dt>Dislikes</dt><dd>{temper.dislikes.map(id => ACTION[id]?.label).filter(Boolean).join(", ") || "Nothing, really"}</dd>
               <dt>Needs that drop faster</dt><dd>{Object.entries(temper.decay).filter(([, m]) => (m ?? 1) > 1).map(([k]) => NEED_LABEL[k as keyof typeof NEED_LABEL]).join(", ") || "—"}{temper.nightOwl ? " · awake at night" : ""}</dd>
-              <dt>Friendship</dt><dd>{v?.friendship ?? 0} points</dd>
+              <dt>Friendship</dt><dd>{BOND_TITLES[level]} (level {level + 1}) · {v?.friendship ?? 0} points{level < BOND_LEVELS.length - 1 ? ` · next at ${BOND_LEVELS[level + 1]}` : ""}</dd>
             </dl>
             <h3>Diary</h3>
             {diary.length ? <ul className="fn-diary">{diary.slice(0, 12).map((d, n) => <li key={n}><small>{d.at}</small> {d.text}</li>)}</ul> : <p className="fn-sub">Leave your Friend alone for a bit: what it chooses by itself shows up here.</p>}
@@ -501,6 +514,11 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               <li>RF, purchases and rewards are simulated in this preview. A reload starts a fresh session.</li>
               <li>On a phone, open the preview in your wallet app's browser (for example MetaMask → Browser) and turn the phone sideways.</li>
             </ul>
+            <h3>Settings</h3>
+            <div className="fn-settings">
+              <label>Sound volume <input type="range" min={0} max={100} step={5} value={volume} onChange={e => setVolume(Number(e.target.value))} aria-label="Sound volume" /> {volume}%</label>
+              <label>Reduce motion <select value={motionPref} onChange={e => setMotionPref(e.target.value as "auto" | "on" | "off")} aria-label="Reduce motion"><option value="auto">Follow system ({reducedMotion ? "on" : "off"})</option><option value="on">On</option><option value="off">Off</option></select></label>
+            </div>
           </>}
         </section>
       </div>}

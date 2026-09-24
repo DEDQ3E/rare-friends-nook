@@ -63,3 +63,8 @@ export function preference(t: Temperament, strength: number, action: string): nu
 }
 /** Chance to refuse an ordered action it dislikes. */
 export const refuseChance = (t: Temperament, strength: number, action: string) => (t.dislikes.includes(action) ? .2 + .45 * strength : 0);
+
+/** Friendship: points from actions, wishes, gifts and new furniture it loves. Levels are titles only. */
+export const BOND_LEVELS = [0, 15, 40, 80, 140, 220, 320, 450, 600, 800] as const;
+export const BOND_TITLES = ["Stranger", "Acquaintance", "Buddy", "Pal", "Good Friend", "Close Friend", "Best Friend", "Soulmate", "Family", "Forever Friend"] as const;
+export const bondLevel = (points: number) => { let l = 0; for (let i = 0; i < BOND_LEVELS.length; i++) if (points >= BOND_LEVELS[i]) l = i; return l; };
