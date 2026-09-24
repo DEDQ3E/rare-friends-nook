@@ -56,7 +56,7 @@ Paid outcomes only through the SDK chance game (Gift Box). Browser randomness on
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`e19f88d`](https://github.com/DEDQ3E/rare-friends-nook/tree/e19f88d82b4affb594f649405bf7b8e04e9f4c84)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`219f429`](https://github.com/DEDQ3E/rare-friends-nook/tree/219f4295303817d437bf0612adc8d89d7f27d8b0)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
