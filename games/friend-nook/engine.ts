@@ -305,6 +305,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       if (a.withYou) needs.social = clamp(needs.social + 4 * gm / 60);
       doing.left -= gm;
       if (a.id === "ball") setBallLift(Math.abs(Math.sin(t * 5)) * 10);
+      if (a.sleep && (!bubble || t > bubble.until) && Math.floor(t) % 4 === 0) show("zzz", 2);
       const full = a.sleep && needs.energy >= 99 && !(a.id === "sleep" && isNight(minute));
       if (doing.left <= 0 || full) finish();
     }
@@ -374,16 +375,16 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   }
   function friendPart(): Part {
     const r = .2;
-    return makePart(fr.i - r, fr.i + r, fr.j - r, fr.j + r, fr.z, fr.z + (fr.lie ? 10 : 30), "friend", drawFriendNow);
+    return makePart(fr.i - r, fr.i + r, fr.j - r, fr.j + r, fr.z, fr.z + 30, "friend", drawFriendNow);
   }
   function drawFriendNow(c: CanvasRenderingContext2D) {
     const { rows, facing } = frameRows(); if (!rows.length) return;
     const [x, y] = project(fr.i, fr.j, fr.z), off = friendOffset(), feet = feetRow(rows);
     if (!fr.lie && !fr.bath) { c.fillStyle = "rgba(0,0,0,.18)"; c.beginPath(); c.ellipse(x, project(fr.i, fr.j, fr.z)[1], 11, 3.6, 0, 0, Math.PI * 2); c.fill(); }
     c.save();
-    if (fr.lie) {
-      c.translate(Math.round(x), Math.round(y - 4)); c.rotate(-Math.PI / 2); c.scale(SPRITE, SPRITE);
-      drawFriend(c, rows, -8, -8, outfit, "down", fr.clock, false);
+    if (fr.lie) { // resting upright in bed (the canonical artwork is never rotated or changed)
+      c.translate(Math.round(x - 8 * SPRITE), Math.round(y + 3 - (feet + 1) * SPRITE)); c.scale(SPRITE, SPRITE);
+      drawFriend(c, rows, 0, 0, outfit, "down", fr.clock, false);
     } else {
       c.translate(Math.round(x + off.dx - 8 * SPRITE), Math.round(y + off.dy - (feet + 1) * SPRITE));
       c.scale(SPRITE, SPRITE);
@@ -403,7 +404,6 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   }
   function headPoint(): [number, number] {
     const { rows } = frameRows(), [x, y] = project(fr.i, fr.j, fr.z);
-    if (fr.lie) return [x, y - 26];
     const top = rows.length ? topRow(rows) : 2, feet = rows.length ? feetRow(rows) : 15;
     return [x, y - (feet - top + 2) * SPRITE];
   }
@@ -520,6 +520,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       updateGhost();
     },
     placeAt,
+    nudgePlacing(di: number, dj: number) { if (placing) { placing.i += di; placing.j += dj; updateGhost(); } },
     rotatePlacing() { if (placing) { placing.swap = !placing.swap; updateGhost(); } },
     isPlacing() { return !!placing; },
     placingValid() { return !!placing?.valid; },

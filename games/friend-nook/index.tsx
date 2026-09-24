@@ -51,7 +51,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [reveal, setReveal] = useState<GamePlay | null>(null);
   const [diary, setDiary] = useState<readonly { at: string; text: string }[]>([]);
   const [giftsOpened, setGiftsOpened] = useState(0);
-  const [placing, setPlacing] = useState<{ def: string; move: string | null } | null>(null);
+  const [placing, setPlacing] = useState<{ def: string; move: string | null; free: boolean } | null>(null);
+  const [storage, setStorage] = useState<Readonly<Record<string, number>>>({});
   const [bought, setBought] = useState<ReadonlyMap<string, string>>(() => new Map()); // uid → catalog id
   const [portraitPhone, setPortraitPhone] = useState(false), [rotateClosed, setRotateClosed] = useState(false);
   const [volume, setVolume] = useState(80), [motionPref, setMotionPref] = useState<"auto" | "on" | "off">("auto");
@@ -197,7 +198,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
   const held = useRef(new Set<string>());
   useEffect(() => {
-    if (paused || panel) { held.current.clear(); engine.current?.setMove(0, 0); return; }
+    if (paused || panel || placing) { held.current.clear(); engine.current?.setMove(0, 0); return; }
     const MAP: Record<string, [number, number]> = { ArrowLeft: [-1, 0], KeyA: [-1, 0], ArrowRight: [1, 0], KeyD: [1, 0], ArrowUp: [0, -1], KeyW: [0, -1], ArrowDown: [0, 1], KeyS: [0, 1] };
     const push = () => { let x = 0, y = 0; for (const k of held.current) { x += MAP[k][0]; y += MAP[k][1]; } engine.current?.setMove(Math.sign(x), Math.sign(y)); };
     const typing = (e: KeyboardEvent) => { const el = e.target as HTMLElement | null; return !!el && ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName); };
@@ -215,7 +216,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     const stop = () => { held.current.clear(); push(); };
     window.addEventListener("keydown", down); window.addEventListener("keyup", up); window.addEventListener("blur", stop); document.addEventListener("visibilitychange", stop);
     return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); window.removeEventListener("blur", stop); document.removeEventListener("visibilitychange", stop); stop(); };
-  }, [paused, panel]);
+  }, [paused, panel, !!placing]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!panel) return;
     const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setPanel(null); };
@@ -229,6 +230,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
   /* ---------- simulated shop spend (wardrobe for now) ---------- */
   function buyWear(item: WearItem) {
+    if (paused) return;
     const cost = BigInt(item.price) * 10n ** 18n;
     if (balance < cost) { flash("Not enough RF (simulated)."); play("impact", .4); return; }
     setSpent(s => s + cost); setOwned(o => new Set([...o, item.id])); setOutfit(o => ({ ...o, [item.slot]: item.id }));
@@ -289,22 +291,25 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   }, [hutchKey, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ---------- Buy mode (simulated RF spend: 50% burned, 50% to Friend rewards) ---------- */
-  function startBuy(id: string) {
-    const item = CATALOG_DEF[id]; if (!item) return;
+  function startBuy(id: string, free = false) {
+    const item = CATALOG_DEF[id]; if (!item || paused) return;
+    if (free) { setPanel(null); setMenu(null); setPlacing({ def: id, move: null, free: true }); engine.current?.startPlacing(id); return; }
     if (balance < BigInt(item.price) * RF) { flash("Not enough RF (simulated)."); play("impact", .4); return; }
-    setPanel(null); setMenu(null); setPlacing({ def: id, move: null }); engine.current?.startPlacing(id); play("select", .4);
+    setPanel(null); setMenu(null); setPlacing({ def: id, move: null, free: false }); engine.current?.startPlacing(id); play("select", .4);
   }
   function startMove(uid: string) {
     const piece = engine.current?.pieceById(uid); if (!piece) return;
-    setMenu(null); setPlacing({ def: piece.def, move: uid }); engine.current?.startPlacing(piece.def, uid);
+    if (paused) return;
+    setMenu(null); setPlacing({ def: piece.def, move: uid, free: true }); engine.current?.startPlacing(piece.def, uid);
   }
   function confirmPlace() {
-    if (!placing || !engine.current) return;
+    if (!placing || !engine.current || paused) return;
     const item = CATALOG_DEF[placing.def];
-    if (!placing.move && balance < BigInt(item.price) * RF) { flash("Not enough RF (simulated)."); return; }
+    if (!placing.free && balance < BigInt(item.price) * RF) { flash("Not enough RF (simulated)."); return; }
     const uid = engine.current.confirmPlacing();
     if (!uid) { flash("It doesn't fit there. Try a free spot (green)."); play("impact", .3); return; }
-    if (!placing.move) {
+    if (placing.free && !placing.move) { setBought(m => new Map(m).set(uid, placing.def)); setStorage(s => ({ ...s, [placing.def]: Math.max(0, (s[placing.def] ?? 0) - 1) })); play("select", .4); }
+    else if (!placing.move) {
       const cost = BigInt(item.price) * RF;
       setSpent(s => s + cost); setBought(m => new Map(m).set(uid, placing.def)); play("purchase");
       flash(`${item.def.name} bought: ${formatGameAmount(cost / 2n, 18)} RF burned, ${formatGameAmount(cost / 2n, 18)} RF to Friend rewards (simulated).`);
@@ -316,16 +321,17 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     setPlacing(null);
   }
   function cancelPlace() { engine.current?.cancelPlacing(); setPlacing(null); }
-  function sellPiece(uid: string) {
-    const id = bought.get(uid); if (!id) return;
-    const back = BigInt(CATALOG_DEF[id].price) * RF / 2n;
-    engine.current?.removePiece(uid); setSpent(s => s - back); setBought(m => { const n = new Map(m); n.delete(uid); return n; });
-    setMenu(null); play("reward", .5); flash(`${CATALOG_DEF[id].def.name} sold back for ${rfText(back)} (half price, simulated).`);
+  function putAway(uid: string) {
+    const id = bought.get(uid); if (!id || paused) return;
+    engine.current?.removePiece(uid); setBought(m => { const n = new Map(m); n.delete(uid); return n; }); setStorage(s => ({ ...s, [id]: (s[id] ?? 0) + 1 }));
+    setMenu(null); play("select", .4); flash(`${CATALOG_DEF[id].def.name} put away. Place it again for free from Buy mode.`);
   }
   useEffect(() => {
     if (!placing) return;
     const key = (e: KeyboardEvent) => {
-      if (e.code === "KeyR") { e.preventDefault(); engine.current?.rotatePlacing(); }
+      const nudge: Record<string, [number, number]> = { ArrowLeft: [-.25, 0], ArrowRight: [.25, 0], ArrowUp: [0, -.25], ArrowDown: [0, .25] };
+      if (nudge[e.code]) { e.preventDefault(); engine.current?.nudgePlacing(...nudge[e.code]); }
+      else if (e.code === "KeyR") { e.preventDefault(); engine.current?.rotatePlacing(); }
       else if (e.code === "Enter") { e.preventDefault(); confirmPlace(); }
       else if (e.code === "Escape") { e.preventDefault(); cancelPlace(); }
     };
@@ -400,7 +406,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
       {!hintClosed && !panel && !placing && <div className="fn-card fn-hint" role="status"><span>Click furniture to pick an activity, the floor to walk. Leave your Friend alone to see its character.</span><button type="button" className="fn-btn fn-small" onClick={() => setHintClosed(true)}>Got it</button></div>}
       {portraitPhone && !rotateClosed && <div className="fn-card fn-rotate" role="status">Turn your phone sideways for a bigger house <button type="button" className="fn-btn fn-small" onClick={() => setRotateClosed(true)}>OK</button></div>}
       {placing && <div className="fn-card fn-placebar" role="toolbar" aria-label="Placing furniture">
-        <span>{placing.move ? "Moving" : "Placing"} <strong>{CATALOG_DEF[placing.def]?.def.name}</strong>{!placing.move && <> · {CATALOG_DEF[placing.def]?.price} RF</>}</span>
+        <span>{placing.move ? "Moving" : "Placing"} <strong>{CATALOG_DEF[placing.def]?.def.name}</strong>{!placing.free && <> · {CATALOG_DEF[placing.def]?.price} RF</>}</span>
         <button type="button" className="fn-btn fn-small" onClick={() => engine.current?.rotatePlacing()}>Rotate (R)</button>
         <button type="button" className="fn-btn fn-small" onClick={confirmPlace}>Place here</button>
         <button type="button" className="fn-btn fn-small fn-plain" onClick={cancelPlace}>Cancel</button>
@@ -418,7 +424,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
         })}
         {menu.kind === "object" && bought.has(menu.uid) && <>
           <button type="button" role="menuitem" className="fn-item" onClick={() => startMove(menu.uid)}><img src={icon.sofa} alt="" />Move</button>
-          <button type="button" role="menuitem" className="fn-item" onClick={() => sellPiece(menu.uid)}><img src={icon.gift} alt="" />Sell back<small>{rfText(BigInt(CATALOG_DEF[bought.get(menu.uid)!].price) * RF / 2n)}</small></button>
+          <button type="button" role="menuitem" className="fn-item" onClick={() => putAway(menu.uid)}><img src={icon.gift} alt="" />Put away<small>to storage</small></button>
         </>}
         <button type="button" className="fn-item fn-cancel" onClick={() => setMenu(null)}>Close</button>
       </div>}
@@ -483,8 +489,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
           {panel === "shop" && <>
             <h2>Shop</h2><p className="fn-sub">Simulated RF. Food is used by the fridge (snacks) and the stove or dinner table (meals).</p>
             <div className="fn-grid">
-              <button type="button" className="fn-tile" onClick={() => { const cost = 10n ** 18n; if (balance < cost) { flash("Not enough RF (simulated)."); return; } setSpent(s => s + cost); engine.current?.addStock(4, 0); play("purchase"); flash("4 snacks added (1 RF, simulated)."); }}><img src={icon.apple} alt="" /><strong>Snack pack ×4</strong><small>1 RF · you have {v?.stock.snacks ?? 0}</small></button>
-              <button type="button" className="fn-tile" onClick={() => { const cost = 2n * 10n ** 18n; if (balance < cost) { flash("Not enough RF (simulated)."); return; } setSpent(s => s + cost); engine.current?.addStock(0, 3); play("purchase"); flash("3 meals added (2 RF, simulated)."); }}><img src={icon.pot} alt="" /><strong>Groceries ×3 meals</strong><small>2 RF · you have {v?.stock.meals ?? 0}</small></button>
+              <button type="button" className="fn-tile" disabled={paused} onClick={() => { const cost = 10n ** 18n; if (balance < cost) { flash("Not enough RF (simulated)."); return; } setSpent(s => s + cost); engine.current?.addStock(4, 0); play("purchase"); flash("4 snacks added (1 RF, simulated)."); }}><img src={icon.apple} alt="" /><strong>Snack pack ×4</strong><small>1 RF · you have {v?.stock.snacks ?? 0}</small></button>
+              <button type="button" className="fn-tile" disabled={paused} onClick={() => { const cost = 2n * 10n ** 18n; if (balance < cost) { flash("Not enough RF (simulated)."); return; } setSpent(s => s + cost); engine.current?.addStock(0, 3); play("purchase"); flash("3 meals added (2 RF, simulated)."); }}><img src={icon.pot} alt="" /><strong>Groceries ×3 meals</strong><small>2 RF · you have {v?.stock.meals ?? 0}</small></button>
               <button type="button" className="fn-tile" onClick={() => setPanel("wardrobe")}><img src={icon.hat} alt="" /><strong>Clothes</strong><small>Open the wardrobe</small></button>
             </div>
           </>}
@@ -502,7 +508,9 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
                 {void acts}
               </button>;
             })}</div>
-            <p className="fn-note">Click a free spot to place it (green = fits). R rotates, Esc cancels. Bought pieces can be moved or sold back for half price.</p>
+            {Object.entries(storage).some(([, n]) => n > 0) && <><h3>In storage (free to place)</h3><div className="fn-grid">{Object.entries(storage).filter(([, n]) => n > 0).map(([id, n]) =>
+              <button key={id} type="button" className="fn-tile" onClick={() => startBuy(id, true)}>{catalogPreview[id] && <img src={catalogPreview[id]} width={72} height={60} alt="" />}<strong>{CATALOG_DEF[id].def.name}</strong><small>×{n} · place for free</small></button>)}</div></>}
+            <p className="fn-note">Click a free spot to place it (green = fits). Arrows move it, R rotates, Enter places, Esc cancels. Bought pieces can be moved or put away into storage; RF spent on furniture is not refunded.</p>
           </>}
           {panel === "help" && <>
             <h2>How to play</h2>
