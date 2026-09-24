@@ -2,3 +2,6 @@
 * text=auto eol=lf
 *.png binary
 *.tgz binary
+
+# Windows batch files need CRLF
+*.bat text eol=crlf
