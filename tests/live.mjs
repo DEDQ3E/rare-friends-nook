@@ -70,17 +70,17 @@ async function install(page, origin, id, errors) {
 }
 
 /** Build the game once and serve it; `open(id, viewport)` connects, picks that Friend and waits for the game. */
-export async function liveRuntime() {
+export async function liveRuntime({ launch = {} } = {}) {
   const temp = mkdtempSync(join(tmpdir(), "nook-live-"));
   const build = await buildGame(resolve("./games/friend-nook"), { outdir: join(temp, "dist") });
   const server = createGameServer(build.outdir);
   await new Promise(res => server.listen(0, "127.0.0.1", res));
   const origin = `http://127.0.0.1:${server.address().port}`;
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(launch);
   return {
-    async open(id, { width = 1000, height = 760 } = {}) {
+    async open(id, { width = 1000, height = 760, scale = 1 } = {}) {
       const errors = [];
-      const context = await browser.newContext({ viewport: { width, height }, hasTouch: width < 500 });
+      const context = await browser.newContext({ viewport: { width, height }, hasTouch: width < 500, deviceScaleFactor: scale });
       const page = await context.newPage(); page.setDefaultTimeout(90000);
       page.on("pageerror", e => errors.push(String(e)));
       await install(page, origin, id, errors);
