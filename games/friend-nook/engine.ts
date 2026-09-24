@@ -184,6 +184,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     const stand = path.length ? path[path.length - 1] : [fr.i, fr.j] as [number, number];
     doing = { action: a, target: target.uid, phase: "walk", left: a.minutes, spot: [stand[0], stand[1]], seat: DEF[target.def].pose ? target : null, loved, auto: !fromPlayer };
     idleFor = 0;
+    if (!path.length) begin(); // already standing at the spot
     return true;
   }
 
@@ -316,7 +317,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     // wishes
     wishIn -= gm;
     if (!wish && wishIn <= 0) {
-      const pool = ACTIONS.filter(a => temper.loves.includes(a.id) && !a.panel && placed.some(p => a.on.includes(p.def)) && (!a.when || (a.when === "night") === isNight(minute)));
+      const h = (minute % DAY_MINUTES) / 60, bedtime = h >= 20 || h < 2;
+      const pool = ACTIONS.filter(a => temper.loves.includes(a.id) && !a.panel && a.id !== doing?.action.id && (a.id !== "sleep" || bedtime) && placed.some(p => a.on.includes(p.def)) && (!a.when || (a.when === "night") === isNight(minute)));
       const choice = pool.length ? pool[Math.floor(Math.random() * pool.length)] : ACTION.ball;
       wish = { action: choice.id, until: minute + 6 * 60 }; onEvent({ type: "wish", action: choice.id }); show(choice.icon as keyof typeof ICONS, 3.5, true);
     }
