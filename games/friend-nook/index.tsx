@@ -9,7 +9,7 @@ import { GENERATION_SPRITE_MANIFEST, createFriendReader, spriteFrame } from "@ra
 import { GENERATION_ELIGIBILITY_ABI } from "@rarefriends/friendsdk/identity";
 import { createFriendPublicClient } from "@rarefriends/friendsdk/wallet";
 import { createEngine, pieceThumb, type Engine, type EngineEvent, type FriendSprites, type View } from "./engine.js";
-import { ACTION, NEEDS, NEED_LABEL, clockText, moodLabel, type ActionDef, type NeedKey } from "./sim.js";
+import { ACTION, NEEDS, NEED_LABEL, clockText, hourOf, moodLabel, type ActionDef, type NeedKey } from "./sim.js";
 import { BOND_LEVELS, BOND_TITLES, STRENGTH_LABEL, bondLevel, preference, strengthOf, temperamentFor } from "./personality.js";
 import { DEF } from "./furniture.js";
 import { ROOM_NAME } from "./house.js";
@@ -17,6 +17,7 @@ import { ICONS, drawFriend, pixmapUrl } from "./art.js";
 import { SLOTS, SLOT_LABEL, WARDROBE, type Facing, type Outfit, type Slot, type WearItem } from "./wardrobe.js";
 import { GIFT_LOVERS, KEEPSAKES } from "./keepsakes.js";
 import { CATALOG, CATALOG_DEF } from "./catalog.js";
+import { createSoundscape, voiceFor, type Soundscape } from "./audio.js";
 import "./style.css";
 
 const rfText = (value: bigint) => `${formatGameAmount(value, 18)} RF`;
@@ -64,6 +65,9 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engine = useRef<Engine | null>(null);
   const sound = useRef<FriendSoundKit | null>(null);
+  const scape = useRef<Soundscape | null>(null);
+  const [musicOn, setMusicOn] = useState(true);
+  const voiceRef = useRef(voiceFor(null, .5));
   const mutedRef = useRef(false);
   const toastTimer = useRef(0);
 
@@ -79,12 +83,13 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     let alive = true;
     sound.current = createFriendSoundKit({ muted: true });
     if (!mutedRef.current) sound.current.setMuted(false);
+    scape.current = createSoundscape(); scape.current.setMuted(mutedRef.current);
     setSnapshot(null);
     client.read().then(v => { if (alive) setSnapshot(v); }).catch(cause => { if (alive) setLoadError(cause instanceof Error ? cause.message : "Could not load the game."); });
     const q = window.matchMedia("(prefers-reduced-motion: reduce)"), upd = () => setReducedMotion(q.matches); upd(); q.addEventListener("change", upd);
-    const first = () => { if (!mutedRef.current) void sound.current?.unlock(); window.removeEventListener("pointerdown", first, true); window.removeEventListener("keydown", first, true); };
+    const first = () => { if (!mutedRef.current) { void sound.current?.unlock(); void scape.current?.unlock(); } window.removeEventListener("pointerdown", first, true); window.removeEventListener("keydown", first, true); };
     window.addEventListener("pointerdown", first, true); window.addEventListener("keydown", first, true);
-    return () => { alive = false; q.removeEventListener("change", upd); window.removeEventListener("pointerdown", first, true); window.removeEventListener("keydown", first, true); sound.current?.dispose(); sound.current = null; };
+    return () => { alive = false; q.removeEventListener("change", upd); window.removeEventListener("pointerdown", first, true); window.removeEventListener("keydown", first, true); sound.current?.dispose(); sound.current = null; scape.current?.dispose(); scape.current = null; };
   }, [client, friendId, attempt]);
 
   useEffect(() => {
@@ -125,6 +130,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
   /* ---------- engine ---------- */
   const onEvent = useCallback((e: EngineEvent) => {
+    if (e.type === "step") { scape.current?.step(e.surface); return; }
+    if (e.type === "speech") scape.current?.babble(e.text, voiceRef.current);
     if (e.type === "start" && e.auto) note(`${ACTION[e.action].label} — its own choice${e.loved ? " (loves it)" : ""}`);
     if (e.type === "start" && !e.auto && e.disliked) note(`${ACTION[e.action].label} — did it for you, grudgingly`);
     if (e.type === "refuse") note(`Refused: ${ACTION[e.action].label.toLowerCase()}`);
@@ -156,9 +163,15 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   useEffect(() => { engine.current?.setPaused(paused); if (paused) setMenu(null); }, [paused, ready]);
   useEffect(() => { engine.current?.setSpeed(speed); }, [speed, ready]);
   useEffect(() => { engine.current?.setZoom(zoomed ? 1.7 : 1); }, [zoomed, ready]);
+  voiceRef.current = voiceFor(family, strength);
+  useEffect(() => { scape.current?.setActivity(view?.active ?? null); }, [view?.active]);
+  const hourNow = view ? hourOf(view.minute) : 8;
+  useEffect(() => { scape.current?.setHour(hourNow); }, [hourNow]);
+  useEffect(() => { scape.current?.setPaused(paused); }, [paused]);
+  useEffect(() => { scape.current?.setMusic(musicOn); }, [musicOn]);
   const lessMotion = motionPref === "auto" ? reducedMotion : motionPref === "on";
   useEffect(() => { engine.current?.setReducedMotion(lessMotion); }, [lessMotion, ready]);
-  useEffect(() => { sound.current?.setVolume(.65 * volume / 80); }, [volume]);
+  useEffect(() => { sound.current?.setVolume(.65 * volume / 80); scape.current?.setVolume(.8 * volume / 80); }, [volume]);
   useEffect(() => { const t = window.setTimeout(() => setHintClosed(true), 12000); return () => window.clearTimeout(t); }, []);
   // hint: the lowest need, and one random thing in the house that raises it (kept until that need changes)
   useEffect(() => {
@@ -243,8 +256,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   }, [panel]);
 
   function toggleSound() {
-    const next = !muted; setMuted(next); mutedRef.current = next; sound.current?.setMuted(next);
-    if (!next) { void sound.current?.unlock(); sound.current?.play("select", { volume: .4 }); }
+    const next = !muted; setMuted(next); mutedRef.current = next; sound.current?.setMuted(next); scape.current?.setMuted(next);
+    if (!next) { void sound.current?.unlock(); void scape.current?.unlock(); sound.current?.play("select", { volume: .4 }); }
   }
 
   /* ---------- simulated shop spend (wardrobe for now) ---------- */
@@ -547,6 +560,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
             </ul>
             <h3>Settings</h3>
             <div className="fn-settings">
+              <label><input type="checkbox" checked={musicOn} onChange={e => setMusicOn(e.target.checked)} /> Music (a cozy tune that follows the time of day)</label>
               <label>Sound volume <input type="range" min={0} max={100} step={5} value={volume} onChange={e => setVolume(Number(e.target.value))} aria-label="Sound volume" /> {volume}%</label>
               <label>Reduce motion <select value={motionPref} onChange={e => setMotionPref(e.target.value as "auto" | "on" | "off")} aria-label="Reduce motion"><option value="auto">Follow system ({reducedMotion ? "on" : "off"})</option><option value="on">On</option><option value="off">Off</option></select></label>
             </div>

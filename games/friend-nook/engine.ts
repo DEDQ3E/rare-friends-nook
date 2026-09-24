@@ -45,7 +45,8 @@ export type EngineEvent =
   | { type: "start"; action: string; auto: boolean; loved: boolean; disliked: boolean }
   | { type: "done"; action: string; loved: boolean }
   | { type: "blocked" }
-  | { type: "placed"; uid: string; def: string };
+  | { type: "placed"; uid: string; def: string }
+  | { type: "step"; surface: "wood" | "carpet" | "tile" };
 export type Pick =
   | { kind: "friend"; x: number; y: number }
   | { kind: "object"; uid: string; def: string; x: number; y: number }
@@ -53,7 +54,7 @@ export type Pick =
   | { kind: "none"; x: number; y: number };
 export type View = Readonly<{
   needs: Readonly<Needs>; minute: number; mood: number; action: string | null; walking: boolean;
-  wish: string | null; friendship: number; stock: Readonly<Stock>; room: Room; speed: number;
+  wish: string | null; friendship: number; stock: Readonly<Stock>; room: Room; speed: number; active: string | null;
 }>;
 
 const VIEW_W = 480, VIEW_H = 320;           // logical viewport (the 960 × 640 frame at 2×)
@@ -93,7 +94,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   let placing: { def: string; i: number; j: number; swap: boolean; valid: boolean; uid: string | null; original: Placed | null } | null = null;
   let ghostParts: Part[] = [];
   let bought = 0;
-  let particles: Particle[] = [], emitIn = 0, hintUid: string | null = null;
+  let particles: Particle[] = [], emitIn = 0, hintUid: string | null = null, stepIn = 0;
   const tops = new Map<string, { x: number; y: number }>();
 
   /* ---------- furniture → parts and blocked cells ---------- */
@@ -342,6 +343,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       if (doing.left <= 0 || full) finish();
     }
     if (temper.family === "Mask" && !doing && !fr.moving && !reduced && Math.random() < dt * (.25 + .35 * strength)) fr.facing = fr.facing === "left" ? "right" : fr.facing === "right" ? "down" : "left";
+    // footsteps
+    if (fr.moving) { stepIn -= dt * Math.min(2, speed); if (stepIn <= 0) { stepIn = .3 / temper.speed; const r = roomAt(fr.i, fr.j); onEvent({ type: "step", surface: r === "bedroom" ? "carpet" : r === "bathroom" || r === "kitchen" ? "tile" : "wood" }); } }
     // particles from what the Friend is doing
     for (const p of particles) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.kind === "hop" || p.kind === "drip") p.vy += 90 * dt; if (p.kind === "steam") p.r += 3 * dt; }
     particles = particles.filter(p => p.life > 0);
@@ -626,7 +629,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     boostNeed(k: NeedKey, v: number) { needs[k] = clamp(needs[k] + v); },
     preferenceOf(id: string) { return preference(temper, strength, id); },
     view(): View {
-      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed };
+      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null };
     },
     /** CSS position of the Friend's head inside the canvas box (for menus). */
     friendAnchor(): { x: number; y: number } {
