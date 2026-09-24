@@ -2,7 +2,7 @@
  * position in the starting house; `Builder.place` moves (and mirrors) it for Buy mode. */
 import { Builder, S, project, type Part } from "./iso.js";
 import { CATALOG } from "./catalog.js";
-import { drawBurners, drawRecord, drawTv } from "./fx.js";
+import { FX, drawBurners, drawRecord, drawTv } from "./fx.js";
 
 export type Pose = Readonly<{ i: number; j: number; z: number; face: readonly [number, number]; lie?: boolean }>;
 export type FurnitureDef = Readonly<{
@@ -64,8 +64,8 @@ export const FURNITURE: readonly FurnitureDef[] = [
       b.box(i, j, .18, .12, 19, DK); b.box(i, j + W - .12, .18, .12, 19, DK); b.box(i, j + .12, .14, W - .24, 15, WOOD, 2); b.box(i, j, .18, W, 1.5, DK, 19);
       b.box(i + L - .14, j, .14, .12, 9, DK); b.box(i + L - .14, j + W - .12, .14, .12, 9, DK); b.box(i + L - .12, j + .12, .1, W - .24, 5, WOOD, 2);
       b.box(i + .18, j + .05, L - .32, W - .1, 3, WOOD, 2); b.box(i + .2, j + .08, L - .36, W - .16, 3, WHT, 5);
-      b.box(i + .95, j + .06, L - 1.1, W - .12, 1.3, PURP, 8); b.box(i + .95, j + .06, .28, W - .12, 1.5, S("#B3A5E0", "#9C8BD0", "#8472BC"), 8.1);
-      b.fj(j + W - .06, i + 1.25, i + L - .15, 6.5, 9.3, "#7462A8");
+      const A = FX.accent; b.box(i + .95, j + .06, L - 1.1, W - .12, 1.3, S(A.top, A.left, A.right), 8); b.box(i + .95, j + .06, .28, W - .12, 1.5, S(A.light, A.top, A.left), 8.1);
+      b.fj(j + W - .06, i + 1.25, i + L - .15, 6.5, 9.3, A.left);
       b.box(i + .3, j + .18, .5, .58, 2.4, WHT, 8); b.box(i + .3, j + .84, .5, .58, 2.4, WHT, 8);
     } },
   { id: "nightstand", name: "Nightstand", origin: [.12, 2.45], foot: [.12, 2.45, .74, 3.05], spots: [], wall: true,
@@ -85,8 +85,9 @@ export const FURNITURE: readonly FurnitureDef[] = [
     build: b => {
       const i = .12, j = 3.05, w = .62, d = 1.4;
       b.box(i, j, w, d, 6, WOOD); b.fi(i + w, j + .06, j + d / 2 - .03, 1.2, 5, "#A57A4F"); b.fi(i + w, j + d / 2 + .03, j + d - .06, 1.2, 5, "#A57A4F");
+      const A = FX.accent;
       b.box(i + .02, j + .03, w - .04, d - .06, 1.6, PINK, 6);
-      b.box(i + .04, j + .1, .22, .42, 3.5, S("#FFF6E6", "#EFE2CC", "#DCCBAF"), 7.6); b.box(i + .04, j + .85, .22, .42, 3.5, S("#B3A5E0", "#9C8BD0", "#8472BC"), 7.6);
+      b.box(i + .04, j + .1, .22, .42, 3.5, S("#FFF6E6", "#EFE2CC", "#DCCBAF"), 7.6); b.box(i + .04, j + .85, .22, .42, 3.5, S(A.light, A.top, A.left), 7.6);
     } },
   { id: "plant-bed", name: "Potted plant", origin: [.13, .05], foot: [.13, .05, .69, .61], spots: [], build: b => plant(b, .13, .05) },
   /* ---------------- bathroom ---------------- */

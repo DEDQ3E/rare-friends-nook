@@ -18,6 +18,7 @@ import { SLOTS, SLOT_LABEL, WARDROBE, type Facing, type Outfit, type Slot, type 
 import { GIFT_LOVERS, KEEPSAKES } from "./keepsakes.js";
 import { CATALOG, CATALOG_DEF } from "./catalog.js";
 import { createSoundscape, voiceFor, type Soundscape } from "./audio.js";
+import { personalize, traitsFor } from "./traits.js";
 import "./style.css";
 
 const rfText = (value: bigint) => `${formatGameAmount(value, 18)} RF`;
@@ -25,6 +26,7 @@ type Menu = { kind: "object"; uid: string; def: string; x: number; y: number } |
 type Panel = "profile" | "wardrobe" | "keepsakes" | "gift" | "shop" | "buy" | "help" | null;
 const RF = 10n ** 18n;
 const FACINGS: readonly Facing[] = ["right", "left", "up", "down"];
+const DEF_OFFERS = (action: string) => ["bed", "wardrobe", "windowseat", "toychest", "bathtub", "bathsink", "counter", "fridge", "stool", "chair-n", "tv", "sofa", "bookshelf", "armchair", "record", "ball", "hutch"].some(d => ACTION[action]?.on.includes(d));
 const ACTIONS_ON = (def: string) => Object.values(ACTION).filter(a => a.on.includes(def)).map(a => a.id);
 const pickOne = (lines: readonly string[]) => lines[Math.floor(Math.random() * lines.length)];
 const NEED_ICON = { hunger: "apple", energy: "zzz", fun: "star", hygiene: "drop", social: "heart" } as const;
@@ -34,6 +36,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [snapshot, setSnapshot] = useState<GameSnapshot | null>(null);
   const [sprites, setSprites] = useState<FriendSprites | null>(null);
   const [family, setFamily] = useState<string | null>(null);
+  const [seed, setSeed] = useState<number | null>(null);
+  const [introDone, setIntroDone] = useState(false);
   const [generation, setGeneration] = useState<number | null | undefined>(undefined);
   const [loadError, setLoadError] = useState(""), [attempt, setAttempt] = useState(0);
   const [view, setView] = useState<View | null>(null);
@@ -71,7 +75,10 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const mutedRef = useRef(false);
   const toastTimer = useRef(0);
 
-  const temper = temperamentFor(family);
+  const familyTemper = temperamentFor(family);
+  const traits = useMemo(() => (seed === null ? null : traitsFor(friendId, seed, familyTemper)), [friendId, seed, familyTemper]);
+  const temper = useMemo(() => personalize(familyTemper, traits), [familyTemper, traits]);
+  const nick = traits?.nickname ?? `Friend #${friendId.toString()}`;
   const strength = strengthOf(generation ?? null);
   const balance = snapshot ? snapshot.rfBalance - spent : 0n;
 
@@ -96,7 +103,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     let alive = true; setSprites(null); setLoadError("");
     createFriendReader().read(friendId).then(art => {
       if (!alive) return;
-      setFamily(art.familyName);
+      setFamily(art.familyName); setSeed(art.seed);
       const clip = (facing: Facing, walking: boolean) => Array.from({ length: 8 }, (_, i) => spriteFrame(art, facing, walking, i, "right").frame.rows);
       const walk = Object.fromEntries(FACINGS.map(f => [f, clip(f, true)])) as Record<Facing, string[][]>;
       const idle = Object.fromEntries(FACINGS.map(f => [f, clip(f, false)])) as Record<Facing, string[][]>;
@@ -131,6 +138,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   /* ---------- engine ---------- */
   const onEvent = useCallback((e: EngineEvent) => {
     if (e.type === "step") { scape.current?.step(e.surface); return; }
+    if (e.type === "hum") { scape.current?.sfx("hum"); return; }
     if (e.type === "speech") scape.current?.babble(e.text, voiceRef.current);
     if (e.type === "start" && e.auto) note(`${ACTION[e.action].label} — its own choice${e.loved ? " (loves it)" : ""}`);
     if (e.type === "start" && !e.auto && e.disliked) note(`${ACTION[e.action].label} — did it for you, grudgingly`);
@@ -158,7 +166,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     return () => { ro.disconnect(); window.clearInterval(tick); e.destroy(); engine.current = null; };
   }, [ready]);
   useEffect(() => { if (sprites) engine.current?.setSprites(sprites); }, [sprites, ready]);
-  useEffect(() => { engine.current?.setCharacter(temper, strength); }, [temper, strength, ready]);
+  useEffect(() => { engine.current?.setCharacter(temper, strength, traits?.quirk.id ?? null); }, [temper, strength, traits, ready]);
+  useEffect(() => { if (traits) engine.current?.setAccent(traits.accent); }, [traits, ready]);
   useEffect(() => { engine.current?.setOutfit(outfit); }, [outfit, ready]);
   useEffect(() => { engine.current?.setPaused(paused); if (paused) setMenu(null); }, [paused, ready]);
   useEffect(() => { engine.current?.setSpeed(speed); }, [speed, ready]);
@@ -197,7 +206,9 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (level > lastLevel.current) { engine.current?.say(`We're ${BOND_TITLES[level].toLowerCase()}s now!`); engine.current?.emote("sparkle", 2.5); play("reward", .6); note(`Friendship level ${level + 1}: ${BOND_TITLES[level]}`); }
     lastLevel.current = level;
   }, [level]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (ready && generation !== undefined && !greeted && engine.current) { setGreeted(true); window.setTimeout(() => engine.current?.greet(), 700); } }, [ready, generation, greeted]);
+  useEffect(() => { if (ready && introDone && !greeted && engine.current) { setGreeted(true); window.setTimeout(() => engine.current?.greet(), 500); } }, [ready, introDone, greeted]);
+  const showIntro = ready && !introDone && generation !== undefined && !!traits;
+  useEffect(() => { if (showIntro) engine.current?.setPaused(true); else engine.current?.setPaused(paused); }, [showIntro, paused]);
 
   /* ---------- input ---------- */
   function onCanvasDown(ev: ReactPointerEvent<HTMLCanvasElement>) {
@@ -303,7 +314,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     const k = KEEPSAKES[settled.outcomeId - 1];
     setReveal(settled); setGiftsOpened(n => n + 1);
     play(settled.outcomeId >= 5 ? "reveal-legendary" : settled.outcomeId >= 3 ? "reveal-rare" : "reveal-common");
-    const lover = GIFT_LOVERS.has(temper.family), bond = Math.round(k.bond * (lover ? 1.5 : 1) * (1 + strength * .5));
+    const lover = GIFT_LOVERS.has(temper.family), bond = Math.round(k.bond * (lover ? 1.5 : 1) * (traits?.quirk.id === "collector" ? 1.5 : 1) * (1 + strength * .5));
     engine.current?.addFriendship(bond); engine.current?.boostNeed("social", 10 + k.bond); engine.current?.boostNeed("fun", 6);
     engine.current?.emote(settled.outcomeId >= 3 ? "sparkle" : "heart", 2.6);
     engine.current?.say(lover ? `A ${k.name.toLowerCase()}! ${temper.voice.love[0]}` : settled.outcomeId >= 4 ? `A ${k.name.toLowerCase()}... wow.` : `Oh, a ${k.name.toLowerCase()}. Thank you!`);
@@ -378,6 +389,11 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   }, [sprites, outfit]);
   const icon = useMemo(() => Object.fromEntries(Object.entries(ICONS).map(([k, v]) => [k, pixmapUrl(v, 3)])), []);
   const keepIcon = useMemo(() => KEEPSAKES.map(k => pixmapUrl(k.icon, 4)), []);
+  const bigPortrait = useMemo(() => {
+    if (!sprites) return "";
+    const c = document.createElement("canvas"); c.width = 96; c.height = 104; const g = c.getContext("2d"); if (!g) return "";
+    g.imageSmoothingEnabled = false; g.scale(5, 5); drawFriend(g, sprites.idle.down[0], 1.6, 2.4, outfit, "down", 0, false); return c.toDataURL();
+  }, [sprites, outfit]);
   const catalogPreview = useMemo(() => Object.fromEntries(CATALOG.map(c => [c.def.id, pieceThumb(c.def.id)])), []);
   const wearPreview = useMemo(() => {
     const out: Record<string, string> = {}; if (!sprites) return out;
@@ -409,7 +425,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
       {/* top left: who this Friend is */}
       <button type="button" className="fn-card fn-id" onClick={() => setPanel("profile")} aria-label="Open your Friend's character card">
         {portrait && <img src={portrait} width={40} height={44} alt="" />}
-        <span><strong>Friend #{friendId.toString()}</strong><small>{family ?? "…"} · {genText} · {temper.title}</small><small className="fn-bond">♥ {BOND_TITLES[level]}</small><small className="fn-doing">{doingLabel}{v ? ` · ${ROOM_NAME[v.room]}` : ""}</small></span>
+        <span><strong>{nick} <small className="fn-token">#{friendId.toString()}</small></strong><small>{family ?? "…"} · {genText} · {temper.title}</small><small className="fn-bond">♥ {BOND_TITLES[level]}</small><small className="fn-doing">{doingLabel}{v ? ` · ${ROOM_NAME[v.room]}` : ""}</small></span>
       </button>
 
       {/* top right: money and tools */}
@@ -440,6 +456,36 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
       {toast && <div className="fn-toast" role="status">{toast}</div>}
       {!hintClosed && !panel && !placing && <div className="fn-card fn-hint" role="status"><span>Click furniture to pick an activity, the floor to walk. Leave your Friend alone to see its character.</span><button type="button" className="fn-btn fn-small" onClick={() => setHintClosed(true)}>Got it</button></div>}
+      {showIntro && traits && <div className="fn-overlay fn-intro-wrap">
+        <section className="fn-panel fn-intro" role="dialog" aria-modal="true" aria-label={`Meet ${nick}`}>
+          <div className="fn-intro-head">
+            {bigPortrait && <img src={bigPortrait} width={96} height={104} alt="" style={{ background: traits.accent.light }} />}
+            <div>
+              <p className="fn-sub">Meet your Friend</p>
+              <h2>{nick}</h2>
+              <p className="fn-sub">Friend #{friendId.toString()} · {family ?? "Unknown"} family · {genText}</p>
+              <p className="fn-temper"><strong>{temper.title}</strong> — {temper.blurb}</p>
+              <div className="fn-meter" role="meter" aria-label="Character strength" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(strength * 100)}><b style={{ width: `${Math.round(strength * 100)}%` }} /></div>
+              <small>Character strength: {STRENGTH_LABEL(strength)} ({genText}; Gen 1 is the strongest)</small>
+            </div>
+          </div>
+          <div className="fn-chips">
+            <span className="fn-chip fn-love">♥ Loves: {familyTemper.loves.map(id => ACTION[id]?.label).filter(Boolean).slice(0, 4).join(", ")}</span>
+            <span className="fn-chip fn-hate">✕ Dislikes: {familyTemper.dislikes.map(id => ACTION[id]?.label).filter(Boolean).join(", ") || "nothing, really"}</span>
+          </div>
+          <p className="fn-sub">Only {nick} has these:</p>
+          <ul className="fn-mine">
+            <li><strong>Favourite thing:</strong> {ACTION[traits.favorite]?.label}</li>
+            <li><strong>Favourite colour:</strong> <i className="fn-swatch" style={{ background: traits.accent.top }} /> {traits.accent.name}</li>
+            <li><strong>Favourite snack:</strong> {traits.snack}</li>
+            <li><strong>Birthday:</strong> {traits.birthday.label}</li>
+            <li><strong>Quirk:</strong> {traits.quirk.label} — {traits.quirk.blurb}</li>
+            <li><strong>Says:</strong> “{traits.catchphrase}”</li>
+          </ul>
+          <p className="fn-note fn-intro-note">Family and generation come from the NFT; the rest is read from its own sprite seed, so every Friend is different. Character only changes behaviour, never prices, odds or rewards.</p>
+          <div className="fn-row"><button type="button" className="fn-btn" ref={el => el?.focus({ preventScroll: true })} onClick={() => { setIntroDone(true); play("select", .5); }}>Welcome home, {nick}!</button></div>
+        </section>
+      </div>}
       {portraitPhone && !rotateClosed && <div className="fn-card fn-rotate" role="status">Turn your phone sideways for a bigger house <button type="button" className="fn-btn fn-small" onClick={() => setRotateClosed(true)}>OK</button></div>}
       {placing && <div className="fn-card fn-placebar" role="toolbar" aria-label="Placing furniture">
         <span>{placing.move ? "Moving" : "Placing"} <strong>{CATALOG_DEF[placing.def]?.def.name}</strong>{!placing.free && <> · {CATALOG_DEF[placing.def]?.price} RF</>}</span>
@@ -450,7 +496,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
       {/* action menu next to the clicked thing */}
       {menu && menuOpen && <div className="fn-menu" style={{ left: Math.min(Math.max(menu.x, 90), 870), top: Math.min(Math.max(menu.y, 60), 560) }} role="menu">
-        <p>{menu.kind === "friend" ? `Friend #${friendId.toString()}` : DEF[menu.def].name}</p>
+        <p>{menu.kind === "friend" ? `${nick} (Friend #${friendId.toString()})` : DEF[menu.def].name}</p>
         {menuActions.map(a => {
           const pref = preference(temper, strength, a.id), tag = pref > 1.3 ? "loves" : pref < .8 ? "dislikes" : "";
           return <button key={a.id} type="button" role="menuitem" className="fn-item" onClick={() => doAction(a, menu.kind === "object" ? menu.uid : null)}>
@@ -470,13 +516,20 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
           <button type="button" className="fn-close" onClick={() => setPanel(null)} aria-label="Close">×</button>
           {panel === "profile" && <>
             <h2>{temper.title}</h2>
-            <p className="fn-sub">Friend #{friendId.toString()} · {family ?? "Unknown"} family · {genText}</p>
+            <p className="fn-sub">{nick} · Friend #{friendId.toString()} · {family ?? "Unknown"} family · {genText}</p>
             <p>{temper.blurb}</p>
             <dl className="fn-traits">
               <dt>Character strength</dt><dd>{STRENGTH_LABEL(strength)} ({Math.round(strength * 100)}%) — Gen 1 is the strongest, Gen 6 the mildest.</dd>
               <dt>Loves</dt><dd>{temper.loves.map(id => ACTION[id]?.label).filter(Boolean).join(", ") || "—"}</dd>
               <dt>Dislikes</dt><dd>{temper.dislikes.map(id => ACTION[id]?.label).filter(Boolean).join(", ") || "Nothing, really"}</dd>
               <dt>Needs that drop faster</dt><dd>{Object.entries(temper.decay).filter(([, m]) => (m ?? 1) > 1).map(([k]) => NEED_LABEL[k as keyof typeof NEED_LABEL]).join(", ") || "—"}{temper.nightOwl ? " · awake at night" : ""}</dd>
+              {traits && <><dt>Nickname</dt><dd>{traits.nickname}</dd>
+              <dt>Favourite thing</dt><dd>{ACTION[traits.favorite]?.label ?? traits.favorite}{!DEF_OFFERS(traits.favorite) && " (find it in Buy mode)"}</dd>
+              <dt>Favourite colour</dt><dd><i className="fn-swatch" style={{ background: traits.accent.top }} /> {traits.accent.name} — its blanket, cushion and rug</dd>
+              <dt>Favourite snack</dt><dd>{traits.snack}</dd>
+              <dt>Birthday</dt><dd>{traits.birthday.label}</dd>
+              <dt>Quirk</dt><dd>{traits.quirk.label}: {traits.quirk.blurb}</dd>
+              <dt>Catchphrase</dt><dd>“{traits.catchphrase}”</dd></>}
               <dt>Friendship</dt><dd>{BOND_TITLES[level]} (level {level + 1}) · {v?.friendship ?? 0} points{level < BOND_LEVELS.length - 1 ? ` · next at ${BOND_LEVELS[level + 1]}` : ""}</dd>
             </dl>
             <h3>Diary</h3>

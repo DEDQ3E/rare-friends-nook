@@ -8,6 +8,7 @@ await testGame("./games/friend-nook", {
   check: async ({ page, game }) => {
     const errors = []; page.on("pageerror", e => errors.push(String(e)));
     await game.getByRole("button", { name: /character card/ }).waitFor({ timeout: 60000 });
+    await game.getByRole("button", { name: /Welcome home/ }).click();
     const canvas = game.locator("canvas"); box = await canvas.boundingBox(); k = box.width / 960;
     await game.getByRole("button", { name: "Got it" }).click().catch(() => {});
     // the test browser asks for reduced motion; switch it off to see particles

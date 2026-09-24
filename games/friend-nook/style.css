@@ -149,3 +149,20 @@ kbd{border:2px solid var(--line);padding:0 4px;background:#fffaf0;font:inherit;f
 .fn-hintbtn em{font-style:normal;color:#a33f3c}
 @container (max-width: 720px) { .fn-hintbtn{font-size:9px;padding:2px 4px;margin-top:3px}.fn-hintbtn img{width:12px;height:12px}.fn-hintbtn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} }
 @container (max-width: 420px) { .fn-hintbtn span{display:none} }
+.fn-token{display:inline!important;font-size:10px!important;color:#7a5a3e!important}
+.fn-swatch{display:inline-block;width:12px;height:12px;border:2px solid var(--line);vertical-align:-2px}
+.fn-intro-wrap{z-index:20}
+.fn-intro{width:min(600px,calc(100% - 12px))}
+.fn-intro-head{display:flex;gap:14px;align-items:flex-start}
+.fn-intro-head img{image-rendering:pixelated;border:3px solid var(--line);flex:none}
+.fn-intro h2{font-size:22px;margin:0}
+.fn-temper{margin:4px 0;font-size:12px}
+.fn-meter{height:9px;background:#e6d6bf;border:2px solid var(--line);margin:4px 0 2px;width:220px;max-width:100%}
+.fn-meter b{display:block;height:100%;background:#c0504d}
+.fn-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.fn-chip{font-size:11px;padding:3px 8px;border:2px solid var(--line)}
+.fn-love{background:#ffd6e0}.fn-hate{background:#e6d6bf}
+.fn-mine{font-size:12px;margin:4px 0;padding-left:18px}.fn-mine li{margin:2px 0}
+@container (max-width: 720px) { .fn-intro-head img{width:58px;height:63px} .fn-intro h2{font-size:15px} .fn-mine{font-size:10px} .fn-chip{font-size:9px;padding:2px 5px} .fn-meter{width:140px} }
+@container (max-width: 720px) { .fn-intro .fn-mine{columns:2;column-gap:14px} .fn-intro-note{display:none} .fn-intro .fn-temper{font-size:10px} .fn-intro .fn-sub{font-size:10px;margin:2px 0} .fn-intro .fn-chips{margin:4px 0} }
+@container (max-width: 420px) { .fn-intro .fn-mine{columns:1} .fn-intro .fn-chips{display:none} }

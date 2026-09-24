@@ -1,6 +1,7 @@
 /** The house shell: floors, back walls, windows and wall decor (drawn flat, behind everything), plus the
  * interior walls, door frames and the cut-away front walls (depth-sorted parts), and the walking grid. */
 import { Builder, S, fillPoly, lit, project, type Pt, type Shade } from "./iso.js";
+import { FX } from "./fx.js";
 
 export const COLS = 12, ROWS = 10, WALL_H = 44;
 export type Room = "bedroom" | "bathroom" | "kitchen" | "living" | "dining";
@@ -77,7 +78,7 @@ export function drawShell(ctx: CanvasRenderingContext2D, k: number, sky: Sky) {
   const rug = (i: number, j: number, w: number, d: number, c: string) => tile(i, j, i + w, j + d, c, .4);
   rug(1.3, 2.7, 2.5, 1.9, "#F4D35E"); rug(1.5, 2.9, 2.1, 1.5, "#F7E08F"); rug(1.7, 3.1, 1.7, 1.1, "#F4D35E");
   rug(5.3, 1.25, 1.5, .6, "#7FB069"); rug(5.4, 1.33, 1.3, .44, "#97C47F");
-  rug(1.2, 5.8, 3.1, 2.9, "#C0504D"); rug(1.4, 6, 2.7, 2.5, "#E07A5F"); rug(1.8, 6.4, 1.9, 1.7, "#EE9A7F");
+  rug(1.2, 5.8, 3.1, 2.9, FX.accent.right); rug(1.4, 6, 2.7, 2.5, FX.accent.top); rug(1.8, 6.4, 1.9, 1.7, FX.accent.light);
   rug(8.9, 6.0, 2.9, 2.9, "#8E7CC3"); rug(9.1, 6.2, 2.5, 2.5, "#A897D6");
   rug(5.3, 7.0, 2.1, 1.9, "#7FB0C9"); rug(5.45, 7.15, 1.8, 1.6, "#9CC7DB");
 }

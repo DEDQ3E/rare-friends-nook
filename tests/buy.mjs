@@ -8,6 +8,7 @@ await testGame("./games/friend-nook", {
   check: async ({ page, game }) => {
     const errors = []; page.on("pageerror", e => errors.push(String(e)));
     await game.getByRole("button", { name: /character card/ }).waitFor({ timeout: 60000 });
+    await game.getByRole("button", { name: /Welcome home/ }).click();
     const canvas = game.locator("canvas"); k = (await canvas.boundingBox()).width / 960;
     const shot = async name => { await page.waitForTimeout(300); await page.locator("#root").screenshot({ path: `${out}/${name}.png` }); };
     await game.getByRole("button", { name: /Buy mode/ }).click();

@@ -46,7 +46,8 @@ export type EngineEvent =
   | { type: "done"; action: string; loved: boolean }
   | { type: "blocked" }
   | { type: "placed"; uid: string; def: string }
-  | { type: "step"; surface: "wood" | "carpet" | "tile" };
+  | { type: "step"; surface: "wood" | "carpet" | "tile" }
+  | { type: "hum" };
 export type Pick =
   | { kind: "friend"; x: number; y: number }
   | { kind: "object"; uid: string; def: string; x: number; y: number }
@@ -75,7 +76,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   let parts: Part[] = [];
   const blocked = new Uint8Array(GW * GH);
   let sprites: FriendSprites | null = null, outfit: Outfit = {};
-  let temper: Temperament = BALANCED, strength = .5;
+  let temper: Temperament = BALANCED, strength = .5, quirk: string | null = null, humIn = 1;
   let paused = false, speed = 1, reduced = false, zoom = 1;
   let minute = 8 * 60;                      // Day 1, 08:00
   const needs: Needs = { hunger: 72, energy: 80, fun: 60, hygiene: 85, social: 55 };
@@ -255,7 +256,9 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     const seen = new Set<string>();
     for (const p of placed) for (const a of actionsOn(p.def, minute)) {
       const key = a.id + (a.seat ? "" : p.uid); if (seen.has(key)) continue; seen.add(key);
-      const v = desire(a, needs, temper, strength, minute, stock); if (v > 0) options.push({ a, uid: p.uid, v });
+      let v = desire(a, needs, temper, strength, minute, stock);
+      if (quirk === "nightsnacker" && isNight(minute) && (a.id === "snack" || a.id === "bar")) v *= 2.5;
+      if (v > 0) options.push({ a, uid: p.uid, v });
     }
     if (!options.length) return;
     options.sort((x, y) => y.v - x.v);
@@ -339,10 +342,13 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       doing.left -= gm;
       if (a.id === "ball") setBallLift(Math.abs(Math.sin(t * 5)) * 10);
       if (a.sleep && (!bubble || t > bubble.until) && Math.floor(t) % 4 === 0) show("zzz", 2);
-      const full = a.sleep && needs.energy >= 99 && !(a.id === "sleep" && isNight(minute));
+      const h = (minute % DAY_MINUTES) / 60, dawn = quirk === "earlybird" && a.id === "sleep" && h >= 5.5 && h < 9 && needs.energy > 55;
+      const full = dawn || (a.sleep && needs.energy >= 99 && !(a.id === "sleep" && isNight(minute)));
       if (doing.left <= 0 || full) finish();
     }
     if (temper.family === "Mask" && !doing && !fr.moving && !reduced && Math.random() < dt * (.25 + .35 * strength)) fr.facing = fr.facing === "left" ? "right" : fr.facing === "right" ? "down" : "left";
+    // the Hummer hums while it walks
+    if (quirk === "hummer" && fr.moving && !reduced) { humIn -= dt; if (humIn <= 0) { humIn = 1.1 + Math.random(); const [hx, hy] = headPoint(); particles.push({ x: hx + 8, y: hy - 4, vx: 4, vy: -10, life: 1.4, max: 1.4, kind: "icon", icon: ICONS.note, r: 0 }); onEvent({ type: "hum" }); } }
     // footsteps
     if (fr.moving) { stepIn -= dt * Math.min(2, speed); if (stepIn <= 0) { stepIn = .3 / temper.speed; const r = roomAt(fr.i, fr.j); onEvent({ type: "step", surface: r === "bedroom" ? "carpet" : r === "bathroom" || r === "kitchen" ? "tile" : "wood" }); } }
     // particles from what the Friend is doing
@@ -383,7 +389,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     // voice
     voiceIn -= dt;
     if (voiceIn <= 0) {
-      voiceIn = 35 + Math.random() * 40;
+      voiceIn = (35 + Math.random() * 40) * (quirk === "chatterbox" ? .5 : quirk === "quiet" ? 2 : 1);
       const low = NEEDS.filter(k => needs[k] < 25).sort((a, b) => needs[a] - needs[b])[0];
       const line = low ? { hunger: temper.voice.hungry, energy: temper.voice.tired, fun: temper.voice.bored, hygiene: temper.voice.grubby, social: temper.voice.lonely }[low] : pickLine(temper.voice.idle);
       if (!low || (lastLow[low] ?? -1e9) < minute - 120) { if (low) lastLow[low] = minute; say(line); }
@@ -585,7 +591,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   return {
     setSprites(s: FriendSprites) { sprites = s; },
     setOutfit(o: Outfit) { outfit = o; },
-    setCharacter(temperament: Temperament, s: number) { temper = temperament; strength = s; },
+    setCharacter(temperament: Temperament, s: number, q: string | null = null) { temper = temperament; strength = s; quirk = q; },
+    setAccent(a: { top: string; left: string; right: string; light: string }) { FX.accent = a; rebuild(); },
     setPaused(v: boolean) { paused = v; if (v) move = { x: 0, y: 0 }; },
     setSpeed(v: number) { speed = v; },
     setReducedMotion(v: boolean) { reduced = v; },

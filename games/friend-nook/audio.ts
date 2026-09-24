@@ -163,6 +163,7 @@ export function createSoundscape() {
       case "bounce": tone(t, 180, .12, .09 * L, o, "sine", 70); break;
       case "rustle": burst(t, .25, .04 * L, o, "bandpass", 1600, .8); break;
       case "puff": burst(t, .3, .06 * L, o, "lowpass", 500, .7, brown); break;
+      case "hum": tone(t, midi([67, 69, 71, 72, 74][Math.floor(Math.random() * 5)]), .35, .025 * L, o, "sine"); break;
       case "chime": pluck(t, 76, .06 * L, o, .8); pluck(t + .12, 83, .06 * L, o, 1); break;
     }
   }
@@ -227,7 +228,7 @@ export function createSoundscape() {
         tone(t, f, gap * .8, .05, sfxBus, v.wave, f * (last ? (text.trim().endsWith("?") ? 1.3 : .85) : 1.04), .01);
       }
     },
-    sfx(name: "bubble" | "puff" | "chime" | "twinkle" | "bounce" | "rustle") { one(name); },
+    sfx(name: "bubble" | "puff" | "chime" | "twinkle" | "bounce" | "rustle" | "hum") { one(name); },
     dispose() {
       window.clearInterval(timer); stopLoop(); document.removeEventListener("visibilitychange", onVisibility);
       if (ctx) void ctx.close(); ctx = null; playing = [];
