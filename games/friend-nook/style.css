@@ -33,6 +33,10 @@
 .fn-need b{display:block;height:100%;transition:width .25s}
 .fn-reduced .fn-need b{transition:none}
 .fn-mood{font-size:11px;margin-top:4px;color:#7a5a3e}
+.fn-happy{font-weight:bold;margin:0 0 5px;padding-bottom:5px;border-bottom:2px dashed #e6d6bf}
+.fn-happy img{display:block}
+.fn-happy i{height:11px}
+.fn-happy em{font-style:normal;min-width:20px;text-align:right}
 .fn-mood strong{color:var(--ink)}
 .fn-wish img{image-rendering:pixelated;width:14px;height:14px;vertical-align:-3px}
 .fn-time{right:10px;bottom:10px;display:flex;align-items:center;gap:6px;padding:5px 6px 5px 10px}
@@ -110,6 +114,7 @@ kbd{border:2px solid var(--line);padding:0 4px;background:#fffaf0;font:inherit;f
   .fn-need img{display:block}
   .fn-need span{display:none}
   .fn-need i{height:7px;border-width:1px}
+  .fn-happy{margin:0 0 2px;padding-bottom:2px;border-bottom-width:1px}.fn-happy i{height:8px}.fn-happy em{font-size:9px;min-width:14px}
   .fn-mood{font-size:9px;margin-top:2px}.fn-wish{display:none}
   .fn-time{right:6px;bottom:6px;padding:2px 3px 2px 6px;gap:3px;border-width:2px}
   .fn-time span{font-size:10px}

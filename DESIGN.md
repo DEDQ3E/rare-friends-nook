@@ -47,7 +47,7 @@ neighbour is used.
 
 ## Needs
 
-Hunger, Energy, Fun, Hygiene, Social: 0–100, decaying per in-game hour. Mood mixes their average with the
+Hunger, Energy, Fun, Hygiene, Social: 0–100, decaying per in-game hour. Happiness (0–100, shown as its own meter) mixes their average with the
 lowest need; the family's temperament changes how fast each need drops. One in-game day lasts about 8 real minutes at 1× speed (pause, 1×, 3×).
 
 ## Character (the core)

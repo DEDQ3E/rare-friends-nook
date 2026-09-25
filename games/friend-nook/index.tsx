@@ -443,12 +443,13 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
       {/* bottom left: needs */}
       {v && <div className="fn-card fn-needs" aria-label="Needs">
+        <div className="fn-need fn-happy" title="Happiness: the average of its needs, pulled down by the lowest"><img src={icon.sparkle} alt="" /><span>Happiness</span><i role="meter" aria-label="Happiness" aria-valuemin={0} aria-valuemax={100} aria-valuenow={v.mood}><b style={{ width: `${v.mood}%`, background: NEED_COLOR(v.mood) }} /></i><em>{v.mood}</em></div>
         {NEEDS.map(k => <div key={k} className={`fn-need${hint?.need === k ? " fn-low" : ""}`} title={NEED_LABEL[k]}><img src={icon[NEED_ICON[k]]} alt="" /><span>{NEED_LABEL[k]}</span><i role="meter" aria-label={NEED_LABEL[k]} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v.needs[k])}><b style={{ width: `${v.needs[k]}%`, background: NEED_COLOR(v.needs[k]) }} /></i></div>)}
         {hint && <button type="button" className="fn-hintbtn" onClick={followHint} disabled={paused || hintBusy} title="Suggested by the game">
           <img src={icon[hint.action ? ACTION[hint.action].icon : "apple"]} alt="" />
           <span><em>{NEED_LABEL[hint.need]} is low</em> {hintBusy ? "— on it!" : hint.action ? <>→ {ACTION[hint.action].label.toLowerCase()}{hint.uid && hint.uid !== "friend" ? ` · ${DEF[engine.current?.pieceById(hint.uid)?.def ?? ""]?.name ?? ""}` : ""}</> : "→ buy food in the shop"}</span>
         </button>}
-        <div className="fn-mood">Mood: <strong>{moodLabel(v.mood)}</strong>{v.wish && <span className="fn-wish" title="Current wish"> · wishes to <img src={icon[ACTION[v.wish].icon]} alt="" /> {ACTION[v.wish].label.toLowerCase()}</span>}</div>
+        <div className="fn-mood">Feeling <strong>{moodLabel(v.mood)}</strong>{v.wish && <span className="fn-wish" title="Current wish"> · wishes to <img src={icon[ACTION[v.wish].icon]} alt="" /> {ACTION[v.wish].label.toLowerCase()}</span>}</div>
       </div>}
 
       {/* bottom right: time */}
