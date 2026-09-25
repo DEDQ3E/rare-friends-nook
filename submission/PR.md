@@ -22,7 +22,7 @@ Full submission: [`submissions/friend-nook/README.md`](https://github.com/DEDQ3E
 
 A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitchen, living and dining room) in isometric cut-away view with day and night, five needs and 31 things to do on 27 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself; the camera opens close on your Friend. The house is alive (TV channels and a video game, swimming fish, a turning record, steam, bath bubbles) with a composed, synthesized soundtrack for each time of day (marimba morning, vibraphone swing, lo-fi evening, music-box lullaby, a disco record) and a sound for every activity. A hint always points to one thing that raises the lowest need.
 
-**The Rare Friends home loop, playable today.** The [Rare Friends site](https://rarefriends.com/) describes Friends whose happiness grows through play, gifts of food, toys and decorations, and homes upgraded with furniture, plants and play spaces. Friend Nook is that loop in one house: keep your Friend happy, feed it, give it Gift Box keepsakes, and upgrade its home in Buy mode (a big plant, a toy piano, an arcade cabinet, an aquarium…). It is a virtual pet and familiar care game, two of the game types the Vibeathon page lists, with the Friend's own character as the star.
+**The Rare Friends home loop, playable today.** The [Rare Friends site](https://rarefriends.com/) describes Friends whose happiness grows through play, gifts of food, toys and decorations, and homes upgraded with furniture, plants and play spaces. Friend Nook is that loop in one house: raise your Friend's Happiness meter (its five needs in one number), feed it, give it Gift Box keepsakes, and upgrade its home in Buy mode (a big plant, a toy piano, an arcade cabinet, an aquarium…). It is a virtual pet and familiar care game, two of the game types the Vibeathon page lists, with the Friend's own character as the star.
 
 ## How does it use Rare Friends?
 
@@ -62,7 +62,7 @@ Paid outcomes only through the SDK chance game (Gift Box). Browser randomness on
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`643120f`](https://github.com/DEDQ3E/rare-friends-nook/tree/643120fce7eb3787f71812f668eada9fea248085)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`0275297`](https://github.com/DEDQ3E/rare-friends-nook/tree/0275297f9b6b3d85973f09789b7adfd5a1a044d7)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
