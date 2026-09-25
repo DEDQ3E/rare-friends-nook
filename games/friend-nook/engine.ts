@@ -79,6 +79,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   const blocked = new Uint8Array(GW * GH);
   let sprites: FriendSprites | null = null, outfit: Outfit = {};
   let temper: Temperament = BALANCED, strength = .5, quirk: string | null = null, humIn = 1;
+  let clean = false; // a meme snapshot: no arrow, bubble or speech
   let paused = false, speed = 1, reduced = false, zoom = 1, zoomTo = 1, heirloomFor: string | null = null;
   let minute = 8 * 60;                      // Day 1, 08:00
   const needs: Needs = { hunger: 72, energy: 80, fun: 60, hygiene: 85, social: 55 };
@@ -540,13 +541,14 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       else { g.fillStyle = p.color ?? "#FFFFFF"; g.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); }
     }
     g.globalAlpha = 1;
-    if (hintUid && !placing) {
+    if (hintUid && !placing && !clean) {
       const anchor = hintUid === "friend" ? (() => { const [hx, hy] = headPoint(); return { x: hx, y: hy - 16 }; })() : tops.get(hintUid);
       if (anchor) drawPixmap(g, ARROW, Math.round(anchor.x - 4), Math.round(anchor.y - 14 - (reduced ? 0 : Math.abs(Math.sin(t * 4)) * 4)), 1);
     }
     if (placing) { g.globalAlpha = placing.valid ? .85 : .5; for (const p of ghostParts) { if (p.custom) { p.custom(g, p); continue; } for (const poly of p.polys) fillPoly(g, poly.pts, poly.fill, poly.stroke); } g.globalAlpha = 1; }
     // bubbles and speech in screen space
     g.setTransform(1, 0, 0, 1, 0, 0);
+    if (clean) return;
     const [hx, hy] = headPoint(), [sx, sy] = toScreen(hx, hy - 4);
     if (bubble && t < bubble.until) {
       g.save(); g.translate(sx, sy); const bs = Math.max(2, Math.round(scale)); g.scale(bs, bs); drawIconBubble(g, bubble.icon, 0, 0, bubble.thought); g.restore();
@@ -667,6 +669,15 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     preferenceOf(id: string) { return preference(temper, strength, id); },
     view(): View {
       return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null };
+    },
+    /** Meme mode: a clean picture of the Friend and the room around it, cut from the current view. */
+    snapshot(): HTMLCanvasElement {
+      clean = true; draw(); clean = false;
+      const [hx, hy] = headPoint(), [sx, sy] = toScreen(hx, hy), k = zoom * scale;
+      const cw = Math.round(Math.min(canvas.width, 130 * k)), ch = Math.round(Math.min(canvas.height, cw * .8));
+      const x = clamp(Math.round(sx - cw / 2), 0, canvas.width - cw), y = clamp(Math.round(sy + 12 * k - ch / 2), 0, canvas.height - ch);
+      const c = document.createElement("canvas"); c.width = cw; c.height = ch; c.getContext("2d")?.drawImage(canvas, x, y, cw, ch, 0, 0, cw, ch);
+      return c;
     },
     /** CSS position of the Friend's head inside the canvas box (for menus). */
     friendAnchor(): { x: number; y: number } {

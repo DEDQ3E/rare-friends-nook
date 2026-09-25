@@ -8,6 +8,7 @@ import { WARDROBE } from "../games/friend-nook/wardrobe.js";
 import { KEEPSAKES } from "../games/friend-nook/keepsakes.js";
 import { QUIRKS } from "../games/friend-nook/traits.js";
 import { HEIRLOOMS } from "../games/friend-nook/heirlooms.js";
+import { MEME_TEMPLATES } from "../games/friend-nook/memes.js";
 
 const game = JSON.parse(readFileSync("games/friend-nook/game.json", "utf8")) as { price: string; outcomes: { name: string; chanceBps: number; reward: string }[] };
 const index = readFileSync("games/friend-nook/index.tsx", "utf8"), engine = readFileSync("games/friend-nook/engine.ts", "utf8");
@@ -67,6 +68,8 @@ inDocs(`one of ${WORDS[QUIRKS.length]} quirks`, ["submission/README.md"]);
 for (const q of QUIRKS) inDocs(q.label.toLowerCase(), ["submission/README.md"]);
 // the ten-Friend table is the one tests/friends.mjs recorded
 inDocs(readFileSync("media/friends.md", "utf8").trim(), ["submission/README.md"]);
+inDocs(`${WORDS[MEME_TEMPLATES]} meme templates`);
+expect(readFileSync("submission/PR.md", "utf8").includes(`${WORDS[MEME_TEMPLATES]} meme templates`), "PR.md should say the meme template count");
 
 console.log(failures ? `${failures} mismatch(es)` : "docs match the code");
 process.exit(failures ? 1 : 0);

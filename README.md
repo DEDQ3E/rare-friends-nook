@@ -52,7 +52,7 @@ The full table (what each chose by itself) is in [submission/README.md](submissi
 ## Controls
 
 Click or tap furniture to pick an action, click the floor to walk. Arrows / WASD walk, `E` uses the nearest
-thing, `F` talks to your Friend, `Esc` closes. In Buy mode: arrows move the piece, `R` rotates, `Enter` places.
+thing, `F` talks to your Friend, `Esc` closes. The camera button makes a random meme about your Friend (one of fifteen meme templates). In Buy mode: arrows move the piece, `R` rotates, `Enter` places.
 Time: pause, 1× (a day lasts 8 minutes), 3×. Settings (`?`): volume, music, reduced motion.
 
 ## Requirements

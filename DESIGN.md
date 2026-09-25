@@ -89,6 +89,8 @@ Every family also loves its own heirloom (below).
 - Click / tap an object: action menu; the Friend walks there and does it.
 - Click / tap the floor: walk there. Arrows / WASD: walk; E: use the nearest object; Esc: close.
 - The zoom button: close up (the camera follows the Friend; the game starts here) or the whole house.
+- The camera button: meme mode, a random two-line caption written from the Friend's own character (voice, temperament,
+  quirk, heirloom, needs, current activity) over a clean snapshot of it; *Another meme* rolls again.
 - Buy mode: arrows move the piece, R rotates, Enter places, Esc cancels.
 
 ## Economy ($RAREFRIENDS, simulated in the preview)

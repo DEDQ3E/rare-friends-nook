@@ -47,6 +47,7 @@ export const ICONS: Readonly<Record<string, Pixmap>> = {
   zzz: { palette: { k: "#3A3D6E" }, rows: ["kkkk.....", "..k......", ".k.......", "kkkk.....", "....kkk..", ".....k...", "....kkk..", ".........", "........."] },
   hat: { palette: { k, a: "#8E7CC3", b: "#FFD23F" }, rows: ["....k....", "...kak...", "...kak...", "..kaaak..", "..kbbbk..", ".kaaaaak.", "kkkkkkkkk", ".........", "........."] },
   star: { palette: { y: "#FFD23F", o: "#FF9A3C" }, rows: ["....y....", "....y....", "...yyy...", "yyyyoyyyy", ".yyoooyy.", "..yyoyy..", "..yy.yy..", ".yy...yy.", "........."] },
+  camera: { palette: { k: "#1c1c1c", b: "#5B6770", l: "#7FC8F8", w: "#FFFFFF", r: "#E07A5F" }, rows: [".........", "..kkk....", "kkkkkkkkk", "kbbkkkbrk", "kbklwkbbk", "kbkllkbbk", "kbbkkkbbk", "kkkkkkkkk", "........."] },
   cloud: { palette: { c: "#FFFFFF", s: "#B7CDE6" }, rows: [".........", "...cc....", "..cccc.c.", ".cccccccc", "ccccccccc", "sssssssss", ".........", ".........", "........."] },
   toy: { palette: { r: "#E07A5F", y: "#F2C94C", b: "#4F7CAC" }, rows: ["...yyy...", "..yyyyy..", "..yyyyy..", "...yyy...", "rrrr.bbbb", "rrrr.bbbb", "rrrr.bbbb", "rrrr.bbbb", "........."] },
   bath: { palette: { w: "#FFFFFF", b: "#7FB6CE", k: "#8B99A6" }, rows: [".b..b....", "..b..b.b.", ".........", "kkkkkkkkk", "kbbbbbbbk", "kwwwwwwwk", ".kwwwwwk.", "..k...k..", "........."] },

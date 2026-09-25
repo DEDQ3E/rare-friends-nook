@@ -19,12 +19,13 @@ import { GIFT_LOVERS, KEEPSAKES } from "./keepsakes.js";
 import { CATALOG, CATALOG_DEF } from "./catalog.js";
 import { createSoundscape, voiceFor, type Soundscape } from "./audio.js";
 import { personalize, traitsFor } from "./traits.js";
+import { randomMeme, renderMeme, type Meme } from "./memes.js";
 import { HEIRLOOM } from "./heirlooms.js";
 import "./style.css";
 
 const rfText = (value: bigint) => `${formatGameAmount(value, 18)} RF`;
 type Menu = { kind: "object"; uid: string; def: string; x: number; y: number } | { kind: "friend"; x: number; y: number } | null;
-type Panel = "profile" | "wardrobe" | "keepsakes" | "gift" | "shop" | "buy" | "help" | null;
+type Panel = "meme" | "profile" | "wardrobe" | "keepsakes" | "gift" | "shop" | "buy" | "help" | null;
 const RF = 10n ** 18n;
 const FACINGS: readonly Facing[] = ["right", "left", "up", "down"];
 const DEF_OFFERS = (action: string) => ["bed", "wardrobe", "windowseat", "toychest", "bathtub", "bathsink", "counter", "fridge", "stool", "chair-n", "tv", "sofa", "bookshelf", "armchair", "record", "ball", "hutch"].some(d => ACTION[action]?.on.includes(d));
@@ -44,6 +45,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [view, setView] = useState<View | null>(null);
   const [menu, setMenu] = useState<Menu>(null);
   const [panel, setPanel] = useState<Panel>(null);
+  const [meme, setMeme] = useState<{ meme: Meme; url: string } | null>(null);
   const [toast, setToast] = useState("");
   const [speed, setSpeed] = useState(1);
   const [zoomed, setZoomed] = useState(true); // the Friend is the star: start close, the whole house is one tap away
@@ -417,6 +419,13 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const v = view;
   const menuActions = menu?.kind === "object" ? (engine.current?.menuFor(menu.def) ?? []) : menu?.kind === "friend" ? [ACTION.pet, ACTION.talk, ACTION.gift] : [];
   const menuOpen = !!menu && !paused && !placing && (menuActions.length > 0 || (menu.kind === "object" && bought.has(menu.uid)));
+  /** Meme mode: a random caption from this Friend's own character over a clean snapshot of it. */
+  function makeMeme() {
+    const e = engine.current; if (!e || !v || placing || paused) return;
+    setMenu(null);
+    const next = randomMeme({ nick, temper, traits, strengthLabel: STRENGTH_LABEL(strength), generation: generation ?? null, needs: v.needs, mood: v.mood, action: v.action, heirloom: heirloom?.def.name ?? null }, meme?.meme.template);
+    setMeme({ meme: next, url: renderMeme(e.snapshot(), next, `${nick} #${friendId.toString()} · Friend Nook`) }); setPanel("meme");
+  }
   const genText = generation === undefined ? "Gen …" : generation === null ? "Gen ?" : `Gen ${generation}`;
   const doingLabel = v?.action ? ACTION[v.action]?.label : v?.walking ? "Walking" : "Idle";
 
@@ -438,6 +447,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
         <button type="button" className="fn-icon" onClick={() => placing ? cancelPlace() : setPanel("buy")} aria-pressed={!!placing} aria-label="Buy mode: furniture" title="Buy mode: furniture"><img src={icon.sofa} alt="" /></button>
         <button type="button" className="fn-icon" onClick={() => setZoomed(z => !z)} aria-pressed={zoomed} aria-label={zoomed ? "Zoom out" : "Zoom in"} title="Zoom">{zoomed ? "−" : "+"}</button>
         <button type="button" className="fn-icon" onClick={toggleSound} aria-pressed={!muted} aria-label={muted ? "Sound off" : "Sound on"} title="Sound"><img src={muted ? icon.mute : icon.speaker} alt="" /></button>
+        <button type="button" className="fn-icon" onClick={makeMeme} disabled={!v || !!placing} aria-label="Make a meme" title="Meme: a random caption about your Friend"><img src={icon.camera} alt="" /></button>
         <button type="button" className="fn-icon" onClick={() => setPanel("help")} aria-label="How to play" title="How to play">?</button>
       </div>
 
@@ -519,6 +529,12 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
       {panel && <div className="fn-overlay" onPointerDown={e => { if (e.target === e.currentTarget) setPanel(null); }}>
         <section className="fn-panel" role="dialog" aria-modal="true" aria-label={panel}>
           <button type="button" className="fn-close" onClick={() => setPanel(null)} aria-label="Close">×</button>
+          {panel === "meme" && meme && <>
+            <h2>A meme about {nick}</h2>
+            <img className="fn-meme" src={meme.url} alt={`${meme.meme.top} / ${meme.meme.bottom}`} />
+            <p className="fn-sub">Random every time, written from {nick}'s own character. Screenshot it to share.</p>
+            <div className="fn-row"><button type="button" className="fn-btn" onClick={makeMeme}>Another meme</button><button type="button" className="fn-btn" onClick={() => setPanel(null)}>Back to the house</button></div>
+          </>}
           {panel === "profile" && <>
             <h2>{temper.title}</h2>
             <p className="fn-sub">{nick} · Friend #{friendId.toString()} · {family ?? "Unknown"} family · {genText}</p>
