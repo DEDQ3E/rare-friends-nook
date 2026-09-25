@@ -12,7 +12,7 @@ for (let run = 0; run < 3; run++) await testGame("./games/friend-nook", { width:
     await toast.waitFor({ timeout: 8000 });
     const text = await toast.innerText(), secs = (Date.now() - t0) / 1000;
     console.log(`${secs.toFixed(1)} s: ${text}`);
-    assert.ok(secs < 6, "first own choice within 6 s"); assert.match(text, /loves this|favourite thing|family heirloom/);
+    assert.ok(secs < 6, "first own choice within 6 s"); assert.match(text, /loves this|favourite thing|family heirloom|quirk/);
     await page.waitForTimeout(600); if (run === 0) await page.screenshot({ path: `${out}/onboarding.png` });
   } });
 console.log("ok");

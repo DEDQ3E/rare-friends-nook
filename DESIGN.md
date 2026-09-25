@@ -70,7 +70,7 @@ Every family also loves its own heirloom (below).
   disliked actions, a signature idle), Gen 6 the mildest. Every generation plays the full game.
 - **Free will.** When the player gives no orders, the Friend picks what to do by need urgency × taste.
   Its first own choice comes seconds after the welcome and is something it loves; a line on screen says it was its own
-  choice and why (its favourite, its family heirloom, its temperament, or a low need), then at most once a minute.
+  choice and why (its favourite, its family heirloom, its temperament, its quirk, or a low need), then at most once a minute.
 - **Refusals.** Ordering a disliked action can get a "Nope" (chance grows with character strength).
 - **Wishes.** A thought bubble shows a wish drawn from the Friend's likes. Fulfilling it gives
   Friendship points; Friendship levels are titles, from Stranger to Forever Friend.

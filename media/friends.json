@@ -14,10 +14,13 @@
     "birthday": "Jan 7",
     "quirk": "Sleepyhead",
     "says": "Stars forever!",
+    "heirloom": "Mask stand",
+    "swatch": "rgb(229, 143, 176)",
+    "first": "admire self — a Performer loves this",
     "chose": [
-      "08:20 Dance (loves it)",
-      "09:27 Cook a meal",
-      "10:53 Try on a mask (loves it)"
+      "08:17 Admire self (loves it)",
+      "09:23 Cook a meal",
+      "10:58 Play video games"
     ],
     "wishes": [],
     "errors": []
@@ -37,10 +40,13 @@
     "birthday": "Dec 4",
     "quirk": "Chatterbox",
     "says": "Socks forever!",
+    "heirloom": "Cell garden",
+    "swatch": "rgb(160, 98, 142)",
+    "first": "cook a meal — a Foodie loves this",
     "chose": [
-      "08:39 Cook a meal (loves it)",
-      "10:13 Read",
-      "11:48 Snack at the bar (loves it)"
+      "08:20 Cook a meal (loves it)",
+      "09:54 Play video games",
+      "10:57 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -60,9 +66,13 @@
     "birthday": "Jul 2",
     "quirk": "Early bird",
     "says": "Bubbles ahoy!",
+    "heirloom": "Wobbly tower",
+    "swatch": "rgb(127, 199, 167)",
+    "first": "stack the wobbly tower — its family heirloom",
     "chose": [
-      "09:38 Play video games (loves it)",
-      "10:41 Play video games (loves it)"
+      "08:08 Stack the wobbly tower (loves it)",
+      "09:16 Play with toys (loves it)",
+      "10:48 Cook a meal"
     ],
     "wishes": [],
     "errors": []
@@ -82,9 +92,13 @@
     "birthday": "May 24",
     "quirk": "Night snacker",
     "says": "Clouds galore!",
+    "heirloom": "Wobbly tower",
+    "swatch": "rgb(242, 201, 76)",
+    "first": "cook a meal — its favourite thing",
     "chose": [
-      "09:41 Play with toys (loves it)",
-      "11:16 Cook a meal (loves it)"
+      "08:17 Cook a meal (loves it)",
+      "09:46 Play video games (loves it)",
+      "11:39 Play video games (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -104,10 +118,13 @@
     "birthday": "Sep 20",
     "quirk": "Quiet one",
     "says": "Buttons for everyone!",
+    "heirloom": "Cloud cushion",
+    "swatch": "rgb(242, 201, 76)",
+    "first": "float on the cloud — its family heirloom",
     "chose": [
-      "08:28 Play video games",
-      "10:25 Snack at the bar",
-      "11:30 Nap (loves it)"
+      "08:09 Float on the cloud (loves it)",
+      "09:23 Snack at the bar",
+      "10:31 Read"
     ],
     "wishes": [],
     "errors": []
@@ -127,9 +144,13 @@
     "birthday": "Jan 5",
     "quirk": "Sky watcher",
     "says": "Stars and spoons!",
+    "heirloom": "Old boulder seat",
+    "swatch": "rgb(240, 138, 111)",
+    "first": "watch TV — a Gentle Giant loves this",
     "chose": [
-      "09:16 Watch TV (loves it)",
-      "11:16 Cook a meal"
+      "08:14 Watch TV (loves it)",
+      "10:18 Grab a snack",
+      "11:34 Nap (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -149,10 +170,13 @@
     "birthday": "Oct 5",
     "quirk": "Sleepyhead",
     "says": "Noodles in a jar!",
+    "heirloom": "Mirror ball",
+    "swatch": "rgb(155, 179, 92)",
+    "first": "dance under the mirror ball — its family heirloom",
     "chose": [
-      "08:21 Dance under the mirror ball (loves it)",
-      "09:51 Cook a meal",
-      "11:25 Nap"
+      "08:09 Dance under the mirror ball (loves it)",
+      "09:35 Take a bath (loves it)",
+      "11:18 Cook a meal"
     ],
     "wishes": [],
     "errors": []
@@ -172,10 +196,13 @@
     "birthday": "Sep 21",
     "quirk": "Sleepyhead",
     "says": "Biscuits and spoons!",
+    "heirloom": "Bone xylophone",
+    "swatch": "rgb(127, 199, 167)",
+    "first": "rattle out a tune — its family heirloom",
     "chose": [
-      "08:21 Rattle out a tune (loves it)",
-      "09:33 Cook a meal",
-      "11:10 Nap"
+      "08:09 Rattle out a tune (loves it)",
+      "10:02 Cook a meal",
+      "12:01 Watch TV (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -195,9 +222,13 @@
     "birthday": "Feb 14",
     "quirk": "Night snacker",
     "says": "Pickles in a jar!",
+    "heirloom": "Bone xylophone",
+    "swatch": "rgb(155, 179, 92)",
+    "first": "play with toys — its favourite thing",
     "chose": [
-      "08:56 Watch TV (loves it)",
-      "11:09 Grab a snack (loves it)"
+      "08:18 Play with toys (loves it)",
+      "09:57 Cook a meal",
+      "11:31 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -217,11 +248,14 @@
     "birthday": "Jan 14",
     "quirk": "Night snacker",
     "says": "Biscuits and spoons!",
+    "heirloom": "Family photo table",
+    "swatch": "rgb(142, 124, 195)",
+    "first": "look at family photos — its family heirloom",
     "chose": [
-      "08:26 Play video games",
-      "09:42 Look at family photos (loves it)",
-      "10:36 Snack at the bar",
-      "11:33 Look at family photos (loves it)"
+      "08:09 Look at family photos (loves it)",
+      "09:08 Cook a meal",
+      "10:36 Look at family photos (loves it)",
+      "11:28 Read"
     ],
     "wishes": [],
     "errors": []

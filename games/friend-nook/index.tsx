@@ -152,8 +152,11 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
       if (now - lastChoiceToast.current > 60000) {
         lastChoiceToast.current = now;
         const low = n ? NEEDS.reduce((a, k) => (n[k] < n[a] ? k : a)) : null;
-        const why = traits?.favorite === e.action ? "its favourite thing" : heirloom?.action.id === e.action ? `the ${temper.family} family heirloom` : e.loved ? `a ${temper.title} loves this` : low ? `${NEED_LABEL[low].toLowerCase()} was low` : "felt like it";
-        flash(`${nick}'s own choice: ${ACTION[e.action].label.toLowerCase()} — ${why}`);
+        const why = traits?.favorite === e.action ? "its favourite thing" : heirloom?.action.id === e.action ? "its family heirloom"
+          : familyTemper.loves.includes(e.action) ? `a ${temper.title} loves this` : e.loved && traits ? `its quirk: ${traits.quirk.label.toLowerCase()}`
+          : low ? `${NEED_LABEL[low].toLowerCase()} was low` : "felt like it";
+        const what = ACTION[e.action].label;
+        flash(`${nick}'s own choice: ${what[0].toLowerCase()}${what.slice(1)} — ${why}`);
       }
     }
     if (e.type === "start" && !e.auto && e.disliked) note(`${ACTION[e.action].label} — did it for you, grudgingly`);
@@ -166,7 +169,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     else if (e.type === "wish") play("action-ready", .4);
     else if (e.type === "wishDone") { flash(`Wish granted! +${e.points} friendship`); play("reward", .7); }
     else if (e.type === "blocked") flash("Your Friend can't get there.");
-  }, [play, flash, note, nick, temper, traits, heirloom]);
+  }, [play, flash, note, nick, temper, familyTemper, traits, heirloom]);
   const onEventRef = useRef(onEvent); onEventRef.current = onEvent;
 
   const ready = !!snapshot && !!sprites;
