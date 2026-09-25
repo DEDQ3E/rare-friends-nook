@@ -40,6 +40,9 @@ The Friend is the only character, and the game is about who it is.
 - **The token itself = what makes it unique.** From the sprite seed the SDK returns, the game derives a nickname, a favourite colour (its blanket, cushion and living-room rug take that colour), a personal favourite activity outside its family's loves, a favourite snack, a birthday, a catchphrase and one of twelve quirks with real effects (chatterbox, quiet one, night snacker, early bird, sleepyhead, neat freak, collector, hummer, bookworm, speedy, sky watcher, cuddle bug). A quirk can even overrule the family: a Bookworm Mask reads although Masks dislike books. Two Hoverers are different Friends.
 - **A family heirloom.** Each family brings one piece of its own into the house, at the front of the living room, with an activity only that family has and loves: a Skeleton rattles a tune on a bone xylophone, a Hoverer floats on its cloud cushion, a Sparkling dances under the mirror ball. There are nine family heirlooms, one per family.
 - **A voice.** Speech is voiced as a babble of syllables whose pitch and timbre come from the family (a deep slow Colossus, an airy Hoverer, a clacky Skeleton), more expressive with stronger generations.
+- **Memes about it.** The camera button makes a random meme about this Friend: one of fifteen meme templates filled from its own voice lines, temperament, quirk, birthday, snack, heirloom, needs and what it is doing, over a clean snapshot of it at home (the platform's *Make memes*). *Another meme* rolls a new one; the sandbox cannot save files, so share it as a screenshot.
+
+  ![Three random memes about Humippy (Friend #7730)](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/memes.png)
 - **A relationship.** A *Meet your Friend* card opens first; a diary records what it chose by itself, what it refused and which wishes you granted; friendship levels go from Stranger to Forever Friend.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code and never looks up other tokens.
@@ -148,7 +151,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`0275297`](https://github.com/DEDQ3E/rare-friends-nook/tree/0275297f9b6b3d85973f09789b7adfd5a1a044d7)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`62af7dc`](https://github.com/DEDQ3E/rare-friends-nook/tree/62af7dc93b39d27fa9732c003b55a455c6c7a191)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
 
 ## Playable demo / how to run
 
@@ -171,6 +174,7 @@ On Windows, `play.bat` serves the prebuilt `docs/` folder on http://localhost:41
 - Keep its five needs up. The panel names the lowest need and points (with an arrow in the house) to one thing that raises it; one tap sends your Friend there.
 - Leave it alone and it lives its own life, choosing by need and by taste. Grant its wishes (thought bubbles) for friendship; it may refuse things it dislikes.
 - Pet it, talk to it, open Gift Boxes with it. Buy food, clothes and furniture; place furniture anywhere free (arrows move it, `R` rotates).
+- The camera button makes a random meme about your Friend; *Another meme* rolls again.
 - Time runs at pause, 1× (a day is 8 minutes) or 3×. The camera follows your Friend close up; zoom out for the whole house (Buy mode zooms out by itself). Settings: volume, music, reduced motion.
 
 ## Costs and rewards

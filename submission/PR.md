@@ -31,6 +31,7 @@ A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitche
 - **Generation = character strength:** one read-only `generation(tokenId)` call sets it from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more, refuse more, gesture and speak more expressively.
 - **The token itself:** from its sprite seed come a nickname, a favourite colour (its blanket, cushion and rug), a personal favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects (night snacker, early bird, bookworm, sky watcher, cuddle bug…). Two Hoverers are different Friends.
 - **A family heirloom:** each family brings one piece of its own (nine family heirlooms: a bone xylophone for a Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…) with an activity only that family has.
+- **Memes about it:** the camera button makes a random meme about this Friend, one of fifteen meme templates filled from its own voice, temperament, quirk, heirloom and what it is doing, over a snapshot of it at home (the platform's *Make memes*).
 - **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, a diary of its own choices and friendship levels.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
@@ -40,6 +41,8 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 ![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
 
 ![The nine family heirlooms](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/heirlooms.png)
+
+![Three random memes about Humippy (Friend #7730)](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/memes.png)
 
 ## How RF is spent, and the economy
 
@@ -62,7 +65,7 @@ Paid outcomes only through the SDK chance game (Gift Box). Browser randomness on
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`0275297`](https://github.com/DEDQ3E/rare-friends-nook/tree/0275297f9b6b3d85973f09789b7adfd5a1a044d7)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`62af7dc`](https://github.com/DEDQ3E/rare-friends-nook/tree/62af7dc93b39d27fa9732c003b55a455c6c7a191)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
@@ -70,7 +73,7 @@ https://dedq3e.github.io/rare-friends-nook/ (GitHub Pages, simulated economy). N
 
 ## How do you play?
 
-Click or tap furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, pet it, open Gift Boxes, buy food, clothes and furniture (arrows move, `R` rotates). Time: pause, 1× (a day is 8 minutes), 3×. Settings: volume, music, reduced motion.
+Click or tap furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, pet it, make memes (camera), open Gift Boxes, buy food, clothes and furniture (arrows move, `R` rotates). Time: pause, 1× (a day is 8 minutes), 3×. Settings: volume, music, reduced motion.
 
 ## What have you tested?
 
