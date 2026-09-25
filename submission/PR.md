@@ -32,7 +32,7 @@ A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitche
 - **The token itself:** from its sprite seed come a nickname, a favourite colour (its blanket, cushion and rug), a personal favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects (night snacker, early bird, bookworm, sky watcher, cuddle bug…). Two Hoverers are different Friends.
 - **A family heirloom:** each family brings one piece of its own (nine family heirlooms: a bone xylophone for a Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…) with an activity only that family has.
 - **Memes about it:** the camera button makes a random meme about this Friend, one of fifteen meme templates filled from its own voice, temperament, quirk, heirloom and what it is doing, over a snapshot of it at home (the platform's *Make memes*).
-- **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, a diary of its own choices and friendship levels.
+- **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, then within seconds its first own choice, explained on screen ("Humippy's own choice: float on the cloud — the Hoverer family heirloom"), a diary of its own choices and friendship levels.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
 
@@ -65,7 +65,7 @@ Paid outcomes only through the SDK chance game (Gift Box). Browser randomness on
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`62af7dc`](https://github.com/DEDQ3E/rare-friends-nook/tree/62af7dc93b39d27fa9732c003b55a455c6c7a191)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`033466f`](https://github.com/DEDQ3E/rare-friends-nook/tree/033466f12e1ae90874291bc85076a41db61ab12e)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
