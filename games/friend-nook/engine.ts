@@ -87,6 +87,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   let friendship = 0, keepsakeCount = 0;
   const fr = { i: 5.75, j: 7.75, z: 0, facing: "down" as Facing, path: [] as [number, number][], moving: false, clock: 0, lie: false, bath: false };
   let doing: Doing | null = null;
+  let firstChoice = false; // right after the welcome: its first own choice comes quickly, and is something it loves
   let idleFor = 0, voiceIn = 25, wish: { action: string; until: number } | null = null, wishIn = 90, lastLow: Partial<Record<NeedKey, number>> = {};
   let bubble: { icon: Pixmap; until: number; thought?: boolean } | null = null;
   let speech: { text: string; until: number } | null = null;
@@ -254,7 +255,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   }
 
   /* ---------- free will ---------- */
-  function chooseSomething() {
+  function chooseSomething(lovedOnly = false) {
     const options: { a: ActionDef; uid: string | null; v: number }[] = [];
     const seen = new Set<string>();
     for (const p of placed) for (const a of actionsOn(p.def, minute)) {
@@ -263,6 +264,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       if (quirk === "nightsnacker" && isNight(minute) && (a.id === "snack" || a.id === "bar")) v *= 2.5;
       if (v > 0) options.push({ a, uid: p.uid, v });
     }
+    if (lovedOnly && options.some(o => temper.loves.includes(o.a.id))) options.splice(0, options.length, ...options.filter(o => temper.loves.includes(o.a.id)));
     if (!options.length) return;
     options.sort((x, y) => y.v - x.v);
     const top = options.slice(0, 3), total = top.reduce((s, o) => s + o.v, 0);
@@ -378,7 +380,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     // free will
     if (!doing && !fr.path.length && !(move.x || move.y)) {
       idleFor += dt * Math.min(3, speed);
-      if (idleFor > 6) { idleFor = 0; if (Math.random() < .8) chooseSomething(); else wanderSomewhere(); }
+      if (idleFor > 6) { idleFor = 0; if (firstChoice) { firstChoice = false; chooseSomething(true); } else if (Math.random() < .8) chooseSomething(); else wanderSomewhere(); }
     }
     // wishes
     wishIn -= gm;
@@ -615,7 +617,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     command,
     walkTo(i: number, j: number) { const p = pathTo(i, j, .8); if (p) { stop(); fr.path = p; idleFor = 0; } else onEvent({ type: "blocked" }); },
     cancel() { stop(); idleFor = 0; },
-    greet() { say(pickLine(temper.voice.hello), 4.5); show("heart", 2); },
+    greet() { say(pickLine(temper.voice.hello), 4.5); show("heart", 2); firstChoice = true; idleFor = 4.5; },
     say,
     emote(icon: keyof typeof ICONS, seconds = 2) { show(icon, seconds); },
     /** Actions shown in the menu of a clicked piece (always offered; availability is explained in the menu). */
