@@ -6,7 +6,7 @@ const out = process.argv[2] ?? "./tmp";
 for (let run = 0; run < 3; run++) await testGame("./games/friend-nook", { width: 1280, height: 800, timeout: 120000,
   check: async ({ page, game }) => {
     const card = await game.locator(".fn-intro").innerText();
-    for (const t of ["family", "Gen", "Character strength", "Favourite thing", "Quirk"]) assert.ok(card.includes(t), t);
+    for (const t of ["family", "Gen", "Character strength", "secrets", "22:00"]) assert.ok(card.includes(t), t);
     await game.getByRole("button", { name: /Welcome home/ }).click();
     const t0 = Date.now(), toast = game.locator(".fn-toast").filter({ hasText: "own choice" });
     await toast.waitFor({ timeout: 8000 });
