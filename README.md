@@ -29,6 +29,13 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
 - **The Friend:** its canonical Generations frames in four facings, never recoloured, rotated or reshaped;
   clothes fitted to its own silhouette. Needs (hunger, energy, fun, hygiene, social), free will, wishes,
   refusals, a diary of its own choices, friendship levels, a family voice, a signature idle.
+- **Secrets:** the *Meet your Friend* card shows only its family, generation and temperament. Its favourite thing,
+  colour, snack and quirk fill in on its card as you find them out by watching, talking and trying things; guess
+  its favourite snack for a friendship bonus.
+- **Your first day together:** 08:00 to 22:00, with a goal (reach Buddy by night) and a summary card at the end:
+  what it chose by itself, what it refused, wishes granted and missed, the friendship reached and a meme to share.
+- **Wishes with a timer:** grant a wish in time for friendship; an ignored wish makes it sad and goes in the diary.
+  Some wishes need a piece from Buy mode first (a Mask that wants to paint needs an easel).
 - **Family heirlooms:** nine family heirlooms, one per family, move in with the Friend (a bone xylophone for a
   Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…), each with an activity its family loves.
 - **Hints:** the lowest need, and one thing in the house that raises it, with an arrow and a one-tap button.
@@ -81,7 +88,7 @@ npm run docs       # every number in the docs matches game.json and the code
 ```
 
 Browser checks (need `npm install --no-save playwright` and `npx playwright install chromium`):
-`node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`.
+`node tests/interact.mjs`, `day.mjs` (the first day to its summary card), `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`.
 Real Friends read live from mainnet: `node tests/friends.mjs` (also needs `pngjs`). Music to WAV: `node tests/music.mjs`.
 Demo video with sound: `node tests/video.mjs` (Microsoft Edge). README media: `node tests/media.mjs` (also needs `gifenc` and `pngjs`); the heirloom sheet: `node tests/heirlooms.mjs`.
 
