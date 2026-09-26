@@ -77,26 +77,24 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 
 ## Ten real Friends, ten characters
 
-Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK runtime (wallet flow, fresh ownership check, sandboxed iframe) for a fixed list of ten real Generations Friends, with their artwork, family, seed and generation read **live from Robinhood mainnet**; only the wallet account and the ownership answers are mocked, as in `friendsdk test`. Eight of the nine families, generations 1 to 6, and two pairs from one family. Each card below is the game's own *Meet your Friend* card; then each Friend was left alone at 3× for about four in-game hours.
+Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK runtime (wallet flow, fresh ownership check, sandboxed iframe) for a fixed list of ten real Generations Friends, with their artwork, family, seed and generation read **live from Robinhood mainnet**; only the wallet account and the ownership answers are mocked, as in `friendsdk test`. Eight of the nine families, generations 1 to 6, and two pairs from one family. The picture shows each of them in the same house at its first own choice; then each Friend was left alone at 3× for about four in-game hours. In the game the favourite thing, colour and quirk start as secrets; the test reads them for this table.
 
-![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
+![Ten real Friends in one house, each at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
 
 | Friend | Family · generation | Nickname | Temperament · strength | Favourite thing | Colour | Quirk | Chose by itself (first 4 in-game hours) |
 |---|---|---|---|---|---|---|---|
-| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Dance ♥, Cook a meal, Try on a mask ♥ |
-| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Cook a meal ♥, Read, Snack at the bar ♥ |
-| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Play video games ♥, Play video games ♥ |
-| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Play with toys ♥, Cook a meal ♥ |
-| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Play video games, Snack at the bar, Nap ♥ |
-| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Watch TV ♥, Cook a meal |
-| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Dance under the mirror ball ♥, Cook a meal, Nap |
-| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Rattle out a tune ♥, Cook a meal, Nap |
-| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Watch TV ♥, Grab a snack ♥ |
-| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Play video games, Look at family photos ♥, Snack at the bar, Look at family photos ♥ |
+| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Admire self ♥, Cook a meal, Play video games |
+| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Cook a meal ♥, Play video games, Nap |
+| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Stack the wobbly tower ♥, Play with toys ♥, Cook a meal |
+| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Cook a meal ♥, Play video games ♥, Play video games ♥ |
+| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Float on the cloud ♥, Snack at the bar, Read |
+| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Watch TV ♥, Grab a snack, Nap ♥ |
+| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Dance under the mirror ball ♥, Take a bath ♥, Cook a meal |
+| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Rattle out a tune ♥, Cook a meal, Watch TV ♥ |
+| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Play with toys ♥, Cook a meal, Nap |
+| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Look at family photos ♥, Cook a meal, Look at family photos ♥, Read |
 
-♥ = something it loves. Four of them went to their family heirloom on their own: Kikosh (Sparkling) danced under the mirror ball, Daluno (Skeleton) rattled out a tune on the bone xylophone, Rox (Mask) tried on the masks and Luli (Family) looked at the family photos twice. The two Asymmetries share a family but not a life: Robo (Gen 5) cooked, its personal favourite, while Veluri (Gen 1) stuck to video games. Each house takes its Friend's colour (blanket, cushion, rug), and the game opens close on the Friend:
-
-![The same house, ten different lives](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-life.png)
+♥ = something it loves. Five of them went to their family heirloom first, on their own: Veluri (Asymmetry) stacked the wobbly tower, Humippy (Hoverer) floated on the cloud cushion, Kikosh (Sparkling) danced under the mirror ball, Daluno (Skeleton) rattled out a tune on the bone xylophone and Luli (Family) looked at the family photos, twice. Two Friends of one family still live differently: Robo (Asymmetry, Gen 5) cooked, its personal favourite, while Veluri (Gen 1) went for its heirloom and its toys; Kozzy (Skeleton, Gen 6) played with toys, its favourite, while Daluno (Gen 4) played its xylophone. Each house takes its Friend's colour (blanket, cushion, rug).
 
 ## How RF is spent, and the economy
 

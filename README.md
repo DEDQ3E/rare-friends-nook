@@ -50,9 +50,10 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
 ## Ten real Friends
 
 `node tests/friends.mjs` plays ten real Generations Friends (eight families, generations 1 to 6) through the real
-SDK runtime, their artwork, family, seed and generation read live from Robinhood mainnet. Same house, ten characters:
+SDK runtime, their artwork, family, seed and generation read live from Robinhood mainnet. Same house, ten characters,
+each at its first own choice:
 
-![Meet your Friend cards of ten real Friends](media/friends-cards.png)
+![Ten real Friends in one house, each at its first own choice](media/friends-rooms.png)
 
 The full table (what each chose by itself) is in [submission/README.md](submission/README.md#ten-real-friends-ten-characters).
 

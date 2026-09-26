@@ -554,7 +554,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
       {toast && <div className="fn-toast" role="status">{toast}</div>}
       {!hintClosed && !panel && !placing && <div className="fn-card fn-hint" role="status"><span>Click furniture to pick an activity, the floor to walk. Leave your Friend alone to see its character.</span><button type="button" className="fn-btn fn-small" onClick={() => setHintClosed(true)}>Got it</button></div>}
       {showIntro && traits && <div className="fn-overlay fn-intro-wrap">
-        <section className="fn-panel fn-intro" role="dialog" aria-modal="true" aria-label={`Meet ${nick}`}>
+        <section className="fn-panel fn-intro" role="dialog" aria-modal="true" aria-label={`Meet ${nick}`}
+          data-secrets={JSON.stringify({ favorite: ACTION[traits.favorite]?.label, colour: traits.accent.name, swatch: traits.accent.top, snack: traits.snack, quirk: traits.quirk.label })}>{/* for tests/friends.mjs: the seed is public anyway */}
           <div className="fn-intro-head">
             {bigPortrait && <img src={bigPortrait} width={96} height={104} alt="" style={{ background: traits.accent.light }} />}
             <div>

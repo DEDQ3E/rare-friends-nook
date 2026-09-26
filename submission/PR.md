@@ -36,9 +36,9 @@ A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitche
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
 
-**Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Their own *Meet your Friend* cards, and what each chose by itself, are in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
+**Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Each of them in the same house at its first own choice, and what each chose by itself, are in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
 
-![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
+![Ten real Friends in one house, each at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
 
 ![The nine family heirlooms](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/heirlooms.png)
 
