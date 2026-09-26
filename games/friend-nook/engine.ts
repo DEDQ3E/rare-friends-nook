@@ -10,7 +10,6 @@ import type { Facing, Outfit } from "./wardrobe.js";
 import { FX } from "./fx.js";
 import { drawPixmap } from "./art.js";
 import { HEIRLOOM, HEIRLOOMS, HEIRLOOM_AT } from "./heirlooms.js";
-import { CATALOG } from "./catalog.js";
 
 /** Particles per action: where they come from (default coordinates of the used piece, or the Friend) and what. */
 type Emit = Readonly<{ at?: readonly [number, number, number]; kind: "bubble" | "steam" | "icon" | "dot" | "drip" | "hop"; icon?: string; colors?: readonly string[]; every: number }>;
@@ -45,7 +44,6 @@ export type EngineEvent =
   | { type: "noStock"; kind: "snack" | "meal" }
   | { type: "wish"; action: string }
   | { type: "wishDone"; action: string; points: number }
-  | { type: "wishMissed"; action: string }
   | { type: "start"; action: string; auto: boolean; loved: boolean; disliked: boolean }
   | { type: "done"; action: string; loved: boolean }
   | { type: "blocked" }
@@ -59,14 +57,13 @@ export type Pick =
   | { kind: "none"; x: number; y: number };
 export type View = Readonly<{
   needs: Readonly<Needs>; minute: number; mood: number; action: string | null; walking: boolean;
-  wish: string | null; wishLeft: number; wishNeeds: string | null; friendship: number; stock: Readonly<Stock>; room: Room; speed: number; active: string | null;
+  wish: string | null; friendship: number; stock: Readonly<Stock>; room: Room; speed: number; active: string | null;
 }>;
 
 const VIEW_W = 480, VIEW_H = 320;           // logical viewport (the 960 × 640 frame at 2×)
 const HOME: readonly [number, number] = [240 - 222, 160 - 72]; // world point shown at the view centre at zoom 1
 const SPRITE = 2;                           // world pixels per Friend sprite pixel
 const WALK_SPEED = 1.7;                     // tiles per real second
-const WISH_MINUTES = 3 * 60, CHAIN_WISH_MINUTES = 6 * 60; // in-game time to grant a wish
 const GRASS = "#8FBF6A";
 
 type Doing = { action: ActionDef; target: string | null; phase: "walk" | "do"; left: number; spot: [number, number] | null; seat: Placed | null; loved: boolean; auto: boolean };
@@ -91,7 +88,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   const fr = { i: 5.75, j: 7.75, z: 0, facing: "down" as Facing, path: [] as [number, number][], moving: false, clock: 0, lie: false, bath: false };
   let doing: Doing | null = null;
   let firstChoice = false; // right after the welcome: its first own choice comes quickly, and is something it loves
-  let idleFor = 0, voiceIn = 25, wish: { action: string; until: number } | null = null, wishIn = 60, lastLow: Partial<Record<NeedKey, number>> = {};
+  let idleFor = 0, voiceIn = 25, wish: { action: string; until: number } | null = null, wishIn = 90, lastLow: Partial<Record<NeedKey, number>> = {};
   let bubble: { icon: Pixmap; until: number; thought?: boolean } | null = null;
   let speech: { text: string; until: number } | null = null;
   let move = { x: 0, y: 0 };
@@ -252,15 +249,9 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     for (const [k, v] of Object.entries(a.done ?? {}) as [NeedKey, number][]) needs[k] = clamp(needs[k] + v);
     if (a.id === "keepsakes") needs.fun = clamp(needs.fun + Math.min(20, 2 * keepsakeCount));
     friendship += loved ? 3 : 1;
-    if (wish && wish.action === a.id) { const pts = 12 + Math.round(8 * strength); friendship += pts; wish = null; wishIn = 60 + Math.random() * 60; show("sparkle", 2.4); onEvent({ type: "wishDone", action: a.id, points: pts }); }
+    if (wish && wish.action === a.id) { const pts = 12 + Math.round(8 * strength); friendship += pts; wish = null; wishIn = 100 + Math.random() * 80; show("sparkle", 2.4); onEvent({ type: "wishDone", action: a.id, points: pts }); }
     stop(); idleFor = 0;
     onEvent({ type: "done", action: a.id, loved });
-  }
-
-  /** The Buy-mode piece a wished action still needs (null when the house already has one). */
-  function needsPiece(id: string): string | null {
-    const a = ACTION[id]; if (!a || placed.some(p => a.on.includes(p.def))) return null;
-    return CATALOG.find(c => a.on.includes(c.def.id))?.def.id ?? null;
   }
 
   /* ---------- free will ---------- */
@@ -268,7 +259,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     const options: { a: ActionDef; uid: string | null; v: number }[] = [];
     const seen = new Set<string>();
     for (const p of placed) for (const a of actionsOn(p.def, minute)) {
-      const key = a.id + (a.seat ? "" : p.uid); if (seen.has(key) || a.id === wish?.action) continue; seen.add(key);
+      const key = a.id + (a.seat ? "" : p.uid); if (seen.has(key)) continue; seen.add(key);
       let v = desire(a, needs, temper, strength, minute, stock);
       if (quirk === "nightsnacker" && isNight(minute) && (a.id === "snack" || a.id === "bar")) v *= 2.5;
       if (v > 0) options.push({ a, uid: p.uid, v });
@@ -395,19 +386,11 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     wishIn -= gm;
     if (!wish && wishIn <= 0) {
       const h = (minute % DAY_MINUTES) / 60, bedtime = h >= 20 || h < 2;
-      const loved = ACTIONS.filter(a => temper.loves.includes(a.id) && !a.panel && a.id !== doing?.action.id && (a.id !== "sleep" || bedtime) && (!a.when || (a.when === "night") === isNight(minute)));
-      const pool = loved.filter(a => placed.some(p => a.on.includes(p.def)));
-      // a chain: sometimes it wishes for something only a Buy-mode piece brings (an easel to paint), with more time
-      const chain = loved.filter(a => !placed.some(p => a.on.includes(p.def)) && needsPiece(a.id));
-      const choice = chain.length && Math.random() < .35 ? chain[Math.floor(Math.random() * chain.length)] : pool.length ? pool[Math.floor(Math.random() * pool.length)] : ACTION.ball;
-      wish = { action: choice.id, until: minute + (needsPiece(choice.id) ? CHAIN_WISH_MINUTES : WISH_MINUTES) }; onEvent({ type: "wish", action: choice.id }); show(choice.icon as keyof typeof ICONS, 3.5, true);
+      const pool = ACTIONS.filter(a => temper.loves.includes(a.id) && !a.panel && a.id !== doing?.action.id && (a.id !== "sleep" || bedtime) && placed.some(p => a.on.includes(p.def)) && (!a.when || (a.when === "night") === isNight(minute)));
+      const choice = pool.length ? pool[Math.floor(Math.random() * pool.length)] : ACTION.ball;
+      wish = { action: choice.id, until: minute + 6 * 60 }; onEvent({ type: "wish", action: choice.id }); show(choice.icon as keyof typeof ICONS, 3.5, true);
     }
-    if (wish && minute > wish.until && doing?.action.id !== wish.action) {
-      // an ignored wish hurts: its mood drops
-      const missed = wish.action; wish = null; wishIn = 60;
-      needs.fun = clamp(needs.fun - 15); needs.social = clamp(needs.social - 15);
-      show("sweat", 3); say(temper.voice.lonely); onEvent({ type: "wishMissed", action: missed });
-    }
+    if (wish && minute > wish.until) { wish = null; wishIn = 60; }
     // voice
     voiceIn -= dt;
     if (voiceIn <= 0) {
@@ -687,7 +670,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     boostNeed(k: NeedKey, v: number) { needs[k] = clamp(needs[k] + v); },
     preferenceOf(id: string) { return preference(temper, strength, id); },
     view(): View {
-      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, wishLeft: wish ? Math.max(0, wish.until - minute) : 0, wishNeeds: wish ? needsPiece(wish.action) : null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null };
+      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null };
     },
     /** Meme mode: a clean picture of the Friend and the room around it, cut from the current view. */
     snapshot(): HTMLCanvasElement {

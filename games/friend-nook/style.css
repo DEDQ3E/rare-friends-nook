@@ -177,13 +177,3 @@ kbd{border:2px solid var(--line);padding:0 4px;background:#fffaf0;font:inherit;f
 /* the family's heirloom line on the Meet card */
 .fn-heir { margin: 6px 0 2px; font-size: 12px; line-height: 1.35; }
 @container (max-width: 720px) { .fn-heir { font-size: 10px; margin: 3px 0 1px; } }
-.fn-wish em{font-style:normal;color:#7a5a3e}.fn-wish em.fn-late{color:#C0504D;font-weight:bold}
-.fn-link{border:0;background:none;padding:0 0 0 4px;font:inherit;color:#C0504D;text-decoration:underline;cursor:pointer}
-.fn-goal{font-size:11px;color:#7a5a3e;margin-right:4px}
-.fn-secret{color:#9a8a7a;font-style:italic}
-.fn-guess{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-@container (max-width: 720px) { .fn-goal{display:none} }
-.fn-wishgo{color:inherit;padding:0;text-decoration:none}.fn-wishgo:not(:disabled):hover{text-decoration:underline}.fn-wishgo:disabled{text-decoration:none;cursor:default}
-.fn-daymeme{max-height:190px;width:auto;display:block;margin:4px auto}
-.fn-secrets{font-size:12px;margin:6px 0}
-@container (max-width: 720px) { .fn-secrets{font-size:10px;margin:3px 0} }
