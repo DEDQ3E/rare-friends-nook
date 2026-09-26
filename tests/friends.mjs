@@ -1,6 +1,6 @@
 // Real Friends, real characters: the game's real SDK runtime for a fixed, hand-picked list of Generations
 // Friends, each read live from Robinhood mainnet (see tests/live.mjs; nothing is scanned or enumerated).
-// For each: its "Meet your Friend" card (and the secrets the player finds later), its first own choice (the line the game shows, and a picture of it in
+// For each: its "Meet your Friend" card, its first own choice (the line the game shows, and a picture of it in
 // the room), then 26 s alone at 3× (about four in-game hours) and what it chose.
 // Needs (not in package.json): npm install --no-save playwright
 // Run: node tests/friends.mjs → tmp/friends/*.png, media/friends.json, media/friends.md, media/friends-rooms.png
@@ -29,9 +29,9 @@ try {
       family: pick(/· (\S+) family ·/), generation: pick(/family · ([^\n]+)/),
       temperament: await card.locator(".fn-temper strong").innerText(), strength: pick(/Character strength: ([^\n(]+)/),
       loves: pick(/Loves: ([^\n]+)/), dislikes: pick(/Dislikes: ([^\n]+)/),
-      birthday: pick(/born on ([^\n]+?) and says/), says: pick(/says [“"]([^”"]+)/), heirloom: pick(/Family heirloom: ([^\n(]+)/),
-      // its secrets are hidden from the player at first; the card carries them for this table
-      ...JSON.parse(await card.getAttribute("data-secrets")),
+      favorite: pick(/Favourite thing: ([^\n]+)/), colour: pick(/Favourite colour:\s*([^\n]+)/), snack: pick(/Favourite snack: ([^\n]+)/),
+      birthday: pick(/Birthday: ([^\n]+)/), quirk: pick(/Quirk: ([^\n—]+)/), says: pick(/Says: [“"]([^”"]+)/),
+      heirloom: pick(/Family heirloom: ([^\n(]+)/), swatch: await card.locator(".fn-swatch").evaluate(e => e.style.background),
     };
     await game.getByRole("button", { name: /Welcome home/ }).click();
     await game.getByRole("button", { name: "Got it" }).click({ timeout: 3000 }).catch(() => {});

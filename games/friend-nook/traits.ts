@@ -22,7 +22,7 @@ const ACCENTS: readonly Accent[] = [
   { name: "Moss", top: "#9BB35C", left: "#809845", right: "#697F36", light: "#C8D99A" },
   { name: "Plum", top: "#A0628E", left: "#864C75", right: "#6E3B60", light: "#C99BBD" },
 ];
-export const SNACKS = ["strawberry mochi", "cheese toast", "honey pancakes", "seaweed crackers", "cherry pie", "mango pudding", "salted pretzels", "berry yoghurt", "corn dogs", "cinnamon rolls", "rice balls", "choco biscuits"];
+const SNACKS = ["strawberry mochi", "cheese toast", "honey pancakes", "seaweed crackers", "cherry pie", "mango pudding", "salted pretzels", "berry yoghurt", "corn dogs", "cinnamon rolls", "rice balls", "choco biscuits"];
 export const QUIRKS: readonly Quirk[] = [
   { id: "chatterbox", label: "Chatterbox", blurb: "Talks twice as often." },
   { id: "quiet", label: "Quiet one", blurb: "Talks half as often, and means it." },

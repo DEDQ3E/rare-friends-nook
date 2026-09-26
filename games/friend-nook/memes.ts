@@ -9,8 +9,6 @@ export type Meme = Readonly<{ top: string; bottom: string; template: number }>;
 export type MemeContext = Readonly<{
   nick: string; temper: Temperament; traits: Traits | null; strengthLabel: string; generation: number | null;
   needs: Needs; mood: number; action: string | null; heirloom: string | null;
-  /** Secrets the player has found so far (a meme never gives one away). */
-  known: Readonly<{ quirk: boolean; favorite: boolean; snack: boolean }>;
 }>;
 
 const pick = <T,>(a: readonly T[], r: () => number): T => a[Math.floor(r() * a.length) % a.length];
@@ -25,9 +23,9 @@ const TEMPLATES: readonly Template[] = [
   c => { const low = NEEDS.reduce((a, k) => (c.needs[k] < c.needs[a] ? k : a)); return c.needs[low] < 60 ? [`${NEED_LABEL[low]}: ${Math.round(c.needs[low])}%`, c.temper.voice[({ hunger: "hungry", energy: "tired", fun: "bored", hygiene: "grubby", social: "lonely" } as const)[low]]] : null; },
   c => [`Happiness: ${c.mood}`, `Feeling ${moodLabel(c.mood).toLowerCase()}. As a ${c.temper.title} should.`],
   c => c.generation ? [`Gen ${c.generation} ${c.temper.family}`, `${c.strengthLabel} ${c.temper.title} energy`] : null,
-  c => c.traits && c.known.quirk ? [c.traits.quirk.label, c.traits.quirk.blurb] : null,
-  c => c.traits && c.known.favorite && ACTION[c.traits.favorite] ? [`${c.nick} after one ${label(c.traits.favorite)}`, "Worth it."] : null,
-  c => c.traits ? [`Birthday: ${c.traits.birthday.label}`, c.known.snack ? `Gifts accepted in ${c.traits.snack}` : "Gifts accepted. Snacks especially."] : null,
+  c => c.traits ? [c.traits.quirk.label, c.traits.quirk.blurb] : null,
+  c => c.traits && ACTION[c.traits.favorite] ? [`${c.nick} after one ${label(c.traits.favorite)}`, "Worth it."] : null,
+  c => c.traits ? [`Birthday: ${c.traits.birthday.label}`, `Gifts accepted in ${c.traits.snack}`] : null,
   c => c.traits ? ["Every single time:", c.traits.catchphrase] : null,
   c => c.heirloom ? [`The ${c.heirloom.toLowerCase()}`, "It's a family thing. You wouldn't understand."] : null,
   (c, r) => [`${c.nick} hearing you come home`, pick(c.temper.voice.hello, r)],

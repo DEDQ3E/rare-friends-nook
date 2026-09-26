@@ -72,17 +72,8 @@ Every family also loves its own heirloom (below).
   Its first own choice comes seconds after the welcome and is something it loves; a line on screen says it was its own
   choice and why (its favourite, its family heirloom, its temperament, its quirk, or a low need), then at most once a minute.
 - **Refusals.** Ordering a disliked action can get a "Nope" (chance grows with character strength).
-- **Wishes.** A thought bubble shows a wish drawn from the Friend's likes, with a timer (3 in-game hours;
-  6 when it needs a Buy-mode piece first, such as an easel to paint). Granting it gives Friendship points; the
-  Friend never does a wished thing by itself. A wish that runs out drops fun and social and writes a sad line in
-  the diary. Friendship levels are titles, from Stranger to Forever Friend.
-- **Secrets.** The first card shows the family, generation and temperament only. The favourite thing, colour,
-  snack and quirk are found by playing: doing the favourite thing (or buying the piece for it), using the bed or
-  sofa (its colour), three talks or a quirk-driven own choice (the quirk), and one guess on its card among four
-  snacks, with clues in what it says (+20 friendship if right). Hearts in menus and Buy mode show only what is known.
-- **The first day.** Day 1 runs from 08:00 to 22:00 (under five minutes at 1×) with one goal: reach Buddy.
-  At 22:00 a summary card shows its own choices, refusals, wishes granted and missed, the friendship reached,
-  secrets found and a meme; after that the house keeps going.
+- **Wishes.** A thought bubble shows a wish drawn from the Friend's likes. Fulfilling it gives
+  Friendship points; Friendship levels are titles, from Stranger to Forever Friend.
 - **Voice.** Short speech lines and emotes per family (talk, idle, reactions to gifts and food).
 - **The token itself.** Each trait is its own hash of the sprite seed and token ID: nickname, favourite colour
   (blanket, cushion, rug), a favourite activity outside the family's loves, snack, birthday, catchphrase and one

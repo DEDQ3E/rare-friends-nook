@@ -32,13 +32,13 @@ A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitche
 - **The token itself:** from its sprite seed come a nickname, a favourite colour (its blanket, cushion and rug), a personal favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects (night snacker, early bird, bookworm, sky watcher, cuddle bug…). Two Hoverers are different Friends.
 - **A family heirloom:** each family brings one piece of its own (nine family heirlooms: a bone xylophone for a Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…) with an activity only that family has.
 - **Memes about it:** the camera button makes a random meme about this Friend, one of fifteen meme templates filled from its own voice, temperament, quirk, heirloom and what it is doing, over a snapshot of it at home (the platform's *Make memes*).
-- **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, then within seconds its first own choice, explained on screen ("Humippy's own choice: float on the cloud — the Hoverer family heirloom"), a diary of its own choices and friendship levels. Its favourite thing, colour, snack and quirk are secrets you find out by playing, and each session is a finished first day (08:00–22:00, reach Buddy) with a summary card and a meme; wishes have a timer, and some need a Buy-mode piece first.
+- **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, then within seconds its first own choice, explained on screen ("Humippy's own choice: float on the cloud — the Hoverer family heirloom"), a diary of its own choices and friendship levels.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
 
-**Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Each of them in the same house at its first own choice, and what each chose by itself, are in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
+**Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Their own *Meet your Friend* cards, and what each chose by itself, are in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
 
-![Ten real Friends in one house, each at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
+![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
 
 ![The nine family heirlooms](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/heirlooms.png)
 
@@ -65,7 +65,7 @@ Paid outcomes only through the SDK chance game (Gift Box). Browser randomness on
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`b2e5cc6`](https://github.com/DEDQ3E/rare-friends-nook/tree/b2e5cc67044e5cc71794cf5884c0670a88f38b61)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`033466f`](https://github.com/DEDQ3E/rare-friends-nook/tree/033466f12e1ae90874291bc85076a41db61ab12e)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
