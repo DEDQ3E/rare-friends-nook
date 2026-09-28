@@ -39,7 +39,7 @@ The Friend is the only character, and the game is about who it is.
 - **The token itself = what makes it unique.** From the sprite seed the SDK returns, the game derives a nickname, a favourite colour (its blanket, cushion and living-room rug take that colour), a personal favourite activity outside its family's loves, a favourite snack, a birthday, a catchphrase and one of twelve quirks with real effects (chatterbox, quiet one, night snacker, early bird, sleepyhead, neat freak, collector, hummer, bookworm, speedy, sky watcher, cuddle bug). A quirk can even overrule the family: a Bookworm Mask reads although Masks dislike books. Two Hoverers are different Friends.
 - **A family heirloom.** Each family brings one piece of its own into the house, at the front of the living room, with an activity only that family has and loves: a Skeleton rattles a tune on a bone xylophone, a Hoverer floats on its cloud cushion, a Sparkling dances under the mirror ball. There are nine family heirlooms, one per family.
 - **A voice.** Speech is voiced as a babble of syllables whose pitch and timbre come from the family (a deep slow Colossus, an airy Hoverer, a clacky Skeleton), more expressive with stronger generations.
-- **Memes about it.** The camera button makes a random meme about this Friend: one of fifteen meme templates filled from its own voice lines, temperament, quirk, birthday, snack, heirloom, needs and what it is doing, over a clean snapshot of it at home (the platform's *Make memes*). *Another meme* rolls a new one; the sandbox cannot save files, so share it as a screenshot.
+- **Memes about it.** The camera button makes a random meme about this Friend: one of twenty-one meme templates in today's formats (gm and gn, POV, +1000 aura, let him cook, locked in, side quest, WAGMI) filled from its own voice lines, temperament, heirloom, needs, found secrets and what it is doing; the ones that fit the moment are the likeliest, over a clean snapshot of it at home (the platform's *Make memes*). *Another meme* rolls a new one; the sandbox cannot save files, so share it as a screenshot.
 
   ![Three random memes about Humippy (Friend #7730)](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/memes.png)
 - **Four secrets to find.** The card shows its family, generation, temperament, heirloom, colour and catchphrase at once, and keeps four of the token's own traits hidden: its favourite thing (found when it does it), favourite snack (feed it), birthday (talk to it) and quirk (become friends). Each find is a line on screen and a little friendship, and the character card fills in as you play.
@@ -153,7 +153,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`b15f95b`](https://github.com/DEDQ3E/rare-friends-nook/tree/b15f95b7f03267a3e6f30a1f35dedb4325b3bf06)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`32c81be`](https://github.com/DEDQ3E/rare-friends-nook/tree/32c81be3adadbea6d9c4bdfbb51cdfd5afddfdb4)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
 
 ## Playable demo / how to run
 

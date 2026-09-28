@@ -31,7 +31,7 @@ It is the [Rare Friends](https://rarefriends.com/) home loop, playable today: ra
 - **A family heirloom:** each family brings one piece (a bone xylophone for a Skeleton, a mirror ball for a Sparkling…) with an activity only that family has.
 - **Its first own choice, explained:** seconds after the *Meet your Friend* card it picks something it loves, and the game says why ("Humippy's own choice: float on the cloud — its family heirloom").
 - **Four secrets and one day:** the card hides four traits (favourite thing, snack, birthday, quirk) until you find them by watching, feeding, talking and making friends. At 22:00 a recap card sums up the day together; one session is one day, since the SDK keeps no saves.
-- **Memes about it:** the camera makes a random meme, one of fifteen meme templates filled from its own voice, temperament and heirloom (the platform's *Make memes*).
+- **Memes about it:** the camera makes a random meme, one of twenty-one meme templates in today's formats (gm, POV, +1000 aura, let him cook, WAGMI) filled from its own voice, temperament, heirloom and what it is doing right now (the platform's *Make memes*).
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
 
@@ -62,7 +62,7 @@ Paid outcomes only through the SDK chance game. Browser randomness only drives b
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`b15f95b`](https://github.com/DEDQ3E/rare-friends-nook/tree/b15f95b7f03267a3e6f30a1f35dedb4325b3bf06)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`32c81be`](https://github.com/DEDQ3E/rare-friends-nook/tree/32c81be3adadbea6d9c4bdfbb51cdfd5afddfdb4)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
