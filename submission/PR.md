@@ -4,11 +4,10 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (47 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
+🎬 **Demo with sound (50 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
 
-https://github.com/user-attachments/assets/ba8e0824-cde9-49f6-81cb-2066e2926d94
+https://github.com/user-attachments/assets/9e056e7d-26f8-48e5-ada4-28adf4106d07
 
-![Dancing, watching TV, taking a bath](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friend-nook.gif)
 
 **Project name:** Rare Friends: Friend Nook
 **Builder / contact:** [DEDQ3E](https://github.com/DEDQ3E) · Discord `dedq3e3` · Telegram [@DEDQ3E](https://t.me/DEDQ3E)
@@ -32,17 +31,17 @@ A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitche
 - **The token itself:** from its sprite seed come a nickname, a favourite colour (its blanket, cushion and rug), a personal favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects (night snacker, early bird, bookworm, sky watcher, cuddle bug…). Two Hoverers are different Friends.
 - **A family heirloom:** each family brings one piece of its own (nine family heirlooms: a bone xylophone for a Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…) with an activity only that family has.
 - **Memes about it:** the camera button makes a random meme about this Friend, one of fifteen meme templates filled from its own voice, temperament, quirk, heirloom and what it is doing, over a snapshot of it at home (the platform's *Make memes*).
-- **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, then within seconds its first own choice, explained on screen ("Humippy's own choice: float on the cloud — the Hoverer family heirloom"), a diary of its own choices and friendship levels.
+- **Four secrets and one day:** the card hides four of those traits (favourite thing, snack, birthday, quirk) until you find them by watching, feeding, talking and making friends; at 22:00 a recap card sums up the day together (own choices, refusals, wishes, friendship, secrets found, a meme). One session is one day: the SDK keeps no saves.
+- **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, then within seconds its first own choice, explained on screen ("Humippy's own choice: float on the cloud — its family heirloom"), a diary of its own choices and friendship levels.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
 
-**Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Their own *Meet your Friend* cards, and what each chose by itself, are in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
+**Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Each one in the same house at its first own choice; the full table of what each chose is in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
 
-![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
+![Ten real Friends in the same house, each at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
 
-![The nine family heirlooms](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/heirlooms.png)
 
-![Three random memes about Humippy (Friend #7730)](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/memes.png)
+![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
 
 ## How RF is spent, and the economy
 
@@ -65,7 +64,7 @@ Paid outcomes only through the SDK chance game (Gift Box). Browser randomness on
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`033466f`](https://github.com/DEDQ3E/rare-friends-nook/tree/033466f12e1ae90874291bc85076a41db61ab12e)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`b15f95b`](https://github.com/DEDQ3E/rare-friends-nook/tree/b15f95b7f03267a3e6f30a1f35dedb4325b3bf06)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
@@ -73,7 +72,7 @@ https://dedq3e.github.io/rare-friends-nook/ (GitHub Pages, simulated economy). N
 
 ## How do you play?
 
-Click or tap furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, pet it, make memes (camera), open Gift Boxes, buy food, clothes and furniture (arrows move, `R` rotates). Time: pause, 1× (a day is 8 minutes), 3×. Settings: volume, music, reduced motion.
+Click or tap furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, pet it, find its four secrets, make memes (camera), open Gift Boxes, buy food, clothes and furniture (arrows move, `R` rotates). Time: pause, 1× (a day is 8 minutes), 3×. Settings: volume, music, reduced motion.
 
 ## What have you tested?
 

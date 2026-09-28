@@ -4,11 +4,10 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (47 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
+🎬 **Demo with sound (50 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
 
-https://github.com/user-attachments/assets/ba8e0824-cde9-49f6-81cb-2066e2926d94
+https://github.com/user-attachments/assets/9e056e7d-26f8-48e5-ada4-28adf4106d07
 
-![Dancing to the record player, watching TV, taking a bath](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friend-nook.gif)
 
 **Project name**
 Rare Friends: Friend Nook
@@ -43,7 +42,11 @@ The Friend is the only character, and the game is about who it is.
 - **Memes about it.** The camera button makes a random meme about this Friend: one of fifteen meme templates filled from its own voice lines, temperament, quirk, birthday, snack, heirloom, needs and what it is doing, over a clean snapshot of it at home (the platform's *Make memes*). *Another meme* rolls a new one; the sandbox cannot save files, so share it as a screenshot.
 
   ![Three random memes about Humippy (Friend #7730)](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/memes.png)
-- **A relationship.** A *Meet your Friend* card opens first; seconds after the welcome the Friend makes its first own choice, something it loves, and the game says why on screen ("Humippy's own choice: float on the cloud — the Hoverer family heirloom"; then at most once a minute); a diary records what it chose by itself, what it refused and which wishes you granted; friendship levels go from Stranger to Forever Friend.
+- **Four secrets to find.** The card shows its family, generation, temperament, heirloom, colour and catchphrase at once, and keeps four of the token's own traits hidden: its favourite thing (found when it does it), favourite snack (feed it), birthday (talk to it) and quirk (become friends). Each find is a line on screen and a little friendship, and the character card fills in as you play.
+- **One day, one arc.** The SDK keeps no saves, so a session is one day together: at 22:00 a recap card shows what it chose by itself and how much of that it loves, what it refused, wishes granted, friendship, secrets found, and a meme of the day. A day is 8 minutes at 1×, under 3 at 3×.
+
+  ![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
+- **A relationship.** A *Meet your Friend* card opens first; seconds after the welcome the Friend makes its first own choice, something it loves, and the game says why on screen ("Humippy's own choice: float on the cloud — its family heirloom"; then at most once a minute); a diary records what it chose by itself, what it refused and which wishes you granted; friendship levels go from Stranger to Forever Friend.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code and never looks up other tokens.
 
@@ -77,26 +80,25 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 
 ## Ten real Friends, ten characters
 
-Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK runtime (wallet flow, fresh ownership check, sandboxed iframe) for a fixed list of ten real Generations Friends, with their artwork, family, seed and generation read **live from Robinhood mainnet**; only the wallet account and the ownership answers are mocked, as in `friendsdk test`. Eight of the nine families, generations 1 to 6, and two pairs from one family. Each card below is the game's own *Meet your Friend* card; then each Friend was left alone at 3× for about four in-game hours.
+Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK runtime (wallet flow, fresh ownership check, sandboxed iframe) for a fixed list of ten real Generations Friends, with their artwork, family, seed and generation read **live from Robinhood mainnet**; only the wallet account and the ownership answers are mocked, as in `friendsdk test`. Eight of the nine families, generations 1 to 6, and two pairs from one family. Each moved into the same house; the picture shows each one at its first own choice, seconds after the welcome, with the reason the game gave on screen. Then each was left alone at 3× for about four in-game hours.
 
-![Meet your Friend cards of ten real Friends](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-cards.png)
+![Ten real Friends in the same house, each at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
 
 | Friend | Family · generation | Nickname | Temperament · strength | Favourite thing | Colour | Quirk | Chose by itself (first 4 in-game hours) |
 |---|---|---|---|---|---|---|---|
-| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Dance ♥, Cook a meal, Try on a mask ♥ |
-| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Cook a meal ♥, Read, Snack at the bar ♥ |
-| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Play video games ♥, Play video games ♥ |
-| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Play with toys ♥, Cook a meal ♥ |
-| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Play video games, Snack at the bar, Nap ♥ |
-| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Watch TV ♥, Cook a meal |
-| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Dance under the mirror ball ♥, Cook a meal, Nap |
-| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Rattle out a tune ♥, Cook a meal, Nap |
-| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Watch TV ♥, Grab a snack ♥ |
-| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Play video games, Look at family photos ♥, Snack at the bar, Look at family photos ♥ |
+| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Dance ♥, Snack at the bar, Try on a mask ♥, Nap |
+| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Snack at the bar ♥, Play video games, Snack at the bar ♥, Nap |
+| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Play video games ♥, Snack at the bar, Play video games ♥ |
+| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Play video games ♥, Snack at the bar, Stack the wobbly tower ♥, Nap |
+| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Nap ♥, Play with toys, Grab a snack |
+| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Watch TV ♥, Watch TV ♥, Cook a meal |
+| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Dance under the mirror ball ♥, Snack at the bar, Nap, Take a bath ♥ |
+| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Grab a snack ♥, Watch TV ♥, Watch TV ♥, Nap |
+| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Play with toys ♥, Snack at the bar, Nap |
+| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Look at family photos ♥, Cook a meal, Play video games |
 
-♥ = something it loves. Four of them went to their family heirloom on their own: Kikosh (Sparkling) danced under the mirror ball, Daluno (Skeleton) rattled out a tune on the bone xylophone, Rox (Mask) tried on the masks and Luli (Family) looked at the family photos twice. The two Asymmetries share a family but not a life: Robo (Gen 5) cooked, its personal favourite, while Veluri (Gen 1) stuck to video games. Each house takes its Friend's colour (blanket, cushion, rug), and the game opens close on the Friend:
+♥ = something it loves. Every first choice was something it loves, each for its own reason: Kikosh (Sparkling) danced under the mirror ball and Luli (Family) looked at the family photos, their family heirlooms; Kozzy (Skeleton) went for the toys, its personal favourite, and that secret was found on the spot; the rest followed their temperament. The token matters as much as the family: the Skeletons Daluno (Gen 4) and Kozzy (Gen 6) share one, yet Daluno raided the fridge and watched TV like a Night Owl while Kozzy played with toys; the Asymmetries Veluri (Gen 1) and Robo (Gen 5) both love games, but only Robo stacked the wobbly tower.
 
-![The same house, ten different lives](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-life.png)
 
 ## How RF is spent, and the economy
 
@@ -151,7 +153,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`033466f`](https://github.com/DEDQ3E/rare-friends-nook/tree/033466f12e1ae90874291bc85076a41db61ab12e)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`b15f95b`](https://github.com/DEDQ3E/rare-friends-nook/tree/b15f95b7f03267a3e6f30a1f35dedb4325b3bf06)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
 
 ## Playable demo / how to run
 
@@ -172,6 +174,7 @@ On Windows, `play.bat` serves the prebuilt `docs/` folder on http://localhost:41
 
 - Click or tap furniture to choose what your Friend does; click the floor to walk. Arrows / WASD walk, `E` uses the nearest thing, `F` talks to your Friend, `Esc` closes.
 - Keep its five needs up. The panel names the lowest need and points (with an arrow in the house) to one thing that raises it; one tap sends your Friend there.
+- Find its four secrets by watching, feeding and talking to it; at 22:00 the day ends with a recap card.
 - Leave it alone and it lives its own life, choosing by need and by taste. Grant its wishes (thought bubbles) for friendship; it may refuse things it dislikes.
 - Pet it, talk to it, open Gift Boxes with it. Buy food, clothes and furniture; place furniture anywhere free (arrows move it, `R` rotates).
 - The camera button makes a random meme about your Friend; *Another meme* rolls again.
