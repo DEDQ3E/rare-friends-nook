@@ -56,6 +56,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [found, setFound] = useState<ReadonlySet<Secret>>(() => new Set());
   const foundRef = useRef(found); foundRef.current = found;
   const [recap, setRecap] = useState<{ day: number; own: number; loved: number; refused: number; wishes: number; gifts: number; level: number; found: number; url: string; alt: string } | null>(null);
+  const lastGift = useRef<{ name: string; rare: boolean; at: number } | null>(null); // for the Gift Box meme
   const dayStats = useRef({ own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0 }), recapDay = useRef(0);
   const [toast, setToast] = useState("");
   const [speed, setSpeed] = useState(1);
@@ -364,6 +365,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (settled.outcomeId === null) { setError("The box is still opening. Try again in a moment."); return; }
     const k = KEEPSAKES[settled.outcomeId - 1];
     setReveal(settled); setGiftsOpened(n => n + 1); dayStats.current.gifts++;
+    lastGift.current = { name: k.name, rare: settled.outcomeId >= 4, at: viewRef.current?.minute ?? 0 };
     play(settled.outcomeId >= 5 ? "reveal-legendary" : settled.outcomeId >= 3 ? "reveal-rare" : "reveal-common");
     const lover = GIFT_LOVERS.has(temper.family), bond = Math.round(k.bond * (lover ? 1.5 : 1) * (traits?.quirk.id === "collector" ? 1.5 : 1) * (1 + strength * .5));
     engine.current?.addFriendship(bond); engine.current?.boostNeed("social", 10 + k.bond); engine.current?.boostNeed("fun", 6);
@@ -483,7 +485,10 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     setMeme(memeNow(e, meme?.meme.template)); setPanel("meme");
   }
   function memeNow(e: Engine, last?: number) {
-    const next = randomMeme({ nick, temper, traits, strengthLabel: STRENGTH_LABEL(strength), generation: generation ?? null, needs: v!.needs, mood: v!.mood, action: v!.action, heirloom: heirloom?.def.name ?? null, known: found }, last);
+    const g = lastGift.current, gift = g && v!.minute - g.at < 180 ? g : null; // a Gift Box within the last three in-game hours
+    const next = randomMeme({ nick, temper, traits, strengthLabel: STRENGTH_LABEL(strength), generation: generation ?? null, needs: v!.needs, mood: v!.mood,
+      action: v!.action, walking: v!.walking, hour: hourOf(v!.minute), heirloom: heirloom?.def.name ?? null, heirloomAction: heirloom?.action.id ?? null,
+      level, levelTitle: BOND_TITLES[level], gift, known: found }, last);
     return { meme: next, url: renderMeme(e.snapshot(), next, `${nick} #${friendId.toString()} · Friend Nook`) };
   }
   const genText = generation === undefined ? "Gen …" : generation === null ? "Gen ?" : `Gen ${generation}`;

@@ -83,6 +83,9 @@ Every family also loves its own heirloom (below).
   friendship level). Each find: a line on screen, 3 friendship points, and the character card fills in.
 - **One day, one arc.** No saves in the SDK sandbox, so a session is one day: at 22:00 a recap card (own choices and how
   many it loves, refusals, wishes, gifts, friendship, secrets found, a meme of the day).
+- **Memes.** The camera: a random two-line meme in today's formats (gm/gn, POV, +1000 aura, let him cook, locked in, side
+  quest, WAGMI, HODL) written from the Friend's character; the templates that fit the moment weigh more, and a meme never
+  spoils a secret that is still hidden.
 - **Family heirloom.** Each family brings one piece into the house (front of the living room) with its own loved
   activity: bone xylophone, mask stand, family photo table, cell garden, wobbly tower, cloud cushion, old boulder
   seat, mirror ball, quiet lantern.
