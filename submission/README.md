@@ -191,13 +191,14 @@ Preview balance: 20 RF (simulated, from the SDK). Gift Box 1 RF (odds and values
 
 ## What have you tested?
 
-Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound, phone sizes and 60 fps; ten real Friends were played live from mainnet; a docs check ties every number here to the code.
+Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound, phone sizes and 60 fps; ten real Friends were played live from mainnet; the published build was played by hand with a real wallet on Robinhood mainnet, on a computer and on a phone; a docs check ties every number here to the code.
 
 <details><summary><b>All checks</b></summary>
 
 - `npm run typecheck`, `npm run check` (`friendsdk check`: valid, expected reward 0.9165 RF, maximum 5 RF), `npm test` (`friendsdk test`: PASS at 960 px).
 - Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), the first own choice, secrets found by playing and the day's recap, sulking and making up, a visit to a simulated neighbour, random memes, activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
 - **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots use the same live reads for #7730.
+- **Real wallet:** the published build (FriendSDK v0.1.3) was played by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house and care, the Gift Box and purchases through the SDK confirmations (simulated economy, no RF spent), a neighbour visit and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it.
 - **Video:** `tests/video.mjs` records the demo above, picture and sound together, straight from the running game.
 - **Music:** `tests/music.mjs` records every track straight from the game's audio graph to check the mix (similar loudness across tracks, no clipping).
 - `npm run docs` (`tests/docs.ts`) checks that every price, odd and value in this file and the README matches `game.json` and the code.
@@ -209,7 +210,7 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 
 - The SDK sandbox has no storage: a reload starts a fresh house, clock and friendship.
 - The SDK has no multiplayer, so the neighbours behind the front door are simulated: FriendSDK's two sample Friends, played by the game and labelled as such.
-- `friendsdk test` and the interaction tests use the SDK's mock wallet with Friend #7730, whose simulated ledger always returns the first keepsake. The ten-Friend run reads real artwork and generations but mocks the wallet; no Hollow Friend was in the fixed list, so that family is covered by code only.
+- The automated checks and the demo video use the SDK's mock wallet (the real-wallet run is by hand): `friendsdk test` and the interaction tests use it with Friend #7730, whose simulated ledger always returns the first keepsake. The ten-Friend run reads real artwork and generations but mocks the wallet; no Hollow Friend was in the fixed list, so that family is covered by code only.
 - The generation is one public read of the Generations contract from inside the game (the same RPC the SDK sprite reader uses and the child CSP allows). It is never an ownership check; if it fails, the character uses medium strength.
 - Mobile needs the wallet app's browser; in portrait the 3:2 frame is small (the game suggests turning the phone).
 - Sound starts after the first click or key press (browser rule).

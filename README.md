@@ -85,7 +85,8 @@ Browser checks (need `npm install --no-save playwright` and `npx playwright inst
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`,
 `onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (simulated neighbours),
 `meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.
-Demo video with sound: `node tests/video.mjs` (Microsoft Edge). README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs` (also needs `pngjs`).
+Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The published build is also played by hand with a real wallet on Robinhood mainnet (computer and phone).
+README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs` (also needs `pngjs`).
 
 ## Layout
 
