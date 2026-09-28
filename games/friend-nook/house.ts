@@ -93,7 +93,7 @@ export function buildStructure(b: Builder) {
   wallJ(4.9, 0, 3); wallJ(4.9, 4, 5.1); wallJ(4.9, 5.1, 6); wallJ(4.9, 7, 8.1);
   wallI(4.9, 0, 4.9); wallI(7.9, 0, 4.9); wallI(7.9, 5.1, 6); wallI(7.9, 8.9, 10);
   for (let i = 0; i < COLS; i++) b.box(i, 10, 1, .2, 5, FR);
-  for (let j = 0; j < ROWS; j++) b.box(12, j, .2, 1, 5, FR);
+  for (let j = 0; j < ROWS; j++) if (j !== 4) b.box(12, j, .2, 1, 5, FR); // j 4–5: the front door
   b.box(12, 10, .2, .2, 5, FR);
   for (const [a, c] of [[3, 4], [6, 7]]) { b.box(a, 4.88, .08, .24, 30, DK); b.box(c - .08, 4.88, .08, .24, 30, DK); b.box(a + .08, 4.88, c - a - .16, .24, 3, DK, 27); }
   b.box(7.88, 6, .24, .08, 30, DK); b.box(7.88, 8.82, .24, .08, 30, DK); b.box(7.88, 6.08, .24, 2.74, 3, DK, 27);

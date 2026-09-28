@@ -213,6 +213,13 @@ export const FURNITURE: readonly FurnitureDef[] = [
       b.box(i + .08, j + .06, .6, .4, 1.2, BLK, 8); b.tpFx(i + .16, j + .1, i + .5, j + .42, 9.3, drawRecord); b.box(i + .56, j + .1, .05, .3, .8, STEEL, 9.2);
     } },
   { id: "plant-living", name: "Potted plant", origin: [.12, 5.12], foot: [.12, 5.12, .78, 5.78], spots: [], build: b => plant(b, .12, 5.12, 1.15) },
+  { id: "frontdoor", name: "Front door", origin: [11.3, 4.1], foot: [11.3, 4.1, 11.95, 4.95], spots: [[10.85, 4.5]],
+    build: b => {
+      b.box(11.35, 4.15, .55, .75, .5, S("#B5533C", "#9C4331", "#8A3A2A"));            // doormat
+      b.box(12, 4, .2, .06, 20, S("#6E4630", "#5A3B26", "#4A3020")); b.box(12, 4.94, .2, .06, 20, S("#6E4630", "#5A3B26", "#4A3020"));
+      b.box(12, 4.06, .12, .88, 19, S("#4F8A8B", "#3F7273", "#355F60"));              // the door
+      b.box(11.96, 4.78, .05, .06, 1.2, S("#F2C94C", "#D8B13E", "#C29C30"), 9);       // knob
+    } },
   { id: "ball", name: "Ball", origin: [6.8, 7.5], foot: [6.8, 7.5, 7.0, 7.7], spots: [[6.3, 8.1]],
     build: b => b.custom(6.8, 7.5, .2, .2, 6, drawBall) },
 ];

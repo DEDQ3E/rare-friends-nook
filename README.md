@@ -23,7 +23,7 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
 
 ## What's in it
 
-- **The house:** 12 × 10 tiles, five rooms, cut-away walls, day and night, 31 activities on furniture that
+- **The house:** 12 × 10 tiles, five rooms, cut-away walls, day and night, 32 activities on furniture that
   animates while it's used (TV channels and a video game, swimming fish, a turning record, a sizzling pan).
 - **The Friend:** its canonical Generations frames in four facings, never recoloured, rotated or reshaped;
   clothes fitted to its own silhouette. Needs (hunger, energy, fun, hygiene, social), free will, wishes,
@@ -52,7 +52,7 @@ The full table (what each chose by itself) is in [submission/README.md](submissi
 ## Controls
 
 Click or tap furniture to pick an action, click the floor to walk. Arrows / WASD walk, `E` uses the nearest
-thing, `F` talks to your Friend, `Esc` closes. The camera button makes a random meme about your Friend (one of twenty-one meme templates). In Buy mode: arrows move the piece, `R` rotates, `Enter` places.
+thing, `F` talks to your Friend, `Esc` closes. The front door visits a simulated neighbour (FriendSDK's sample Friends, not real players). The camera button makes a random meme about your Friend (one of twenty-one meme templates). In Buy mode: arrows move the piece, `R` rotates, `Enter` places.
 Time: pause, 1× (a day lasts 8 minutes), 3×. Settings (`?`): volume, music, reduced motion.
 
 ## Requirements

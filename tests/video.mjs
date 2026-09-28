@@ -46,6 +46,11 @@ try {
   await game.getByRole("button", { name: "Make a meme" }).click(); await wait(3200); // a random meme about this Friend
   await game.getByRole("button", { name: "Another meme" }).click(); await wait(3200);
   await game.getByRole("button", { name: "Back to the house" }).click(); await wait(1200);
+  await zoom(false); await use(12.05, 4.5, 10, "Visit a neighbour");                  // the front door: a simulated neighbour
+  await game.getByRole("button", { name: /'s room/ }).first().click({ timeout: 30000 }); await wait(2200);
+  await game.getByRole("button", { name: "Hug" }).click(); await wait(2600);
+  await game.getByRole("button", { name: "Dance together" }).click(); await wait(2600);
+  await game.getByRole("button", { name: "Go home" }).click(); await zoom(true); await wait(800);
   await friendMenu("Open a Gift Box"); await wait(900);
   await game.getByRole("button", { name: /Buy and open/ }).click();
   for (let n = 0; n < 2; n++) { const b = page.getByRole("button", { name: "Confirm preview" }); await b.waitFor(); await wait(700); await b.click(); }

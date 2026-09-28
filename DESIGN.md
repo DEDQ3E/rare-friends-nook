@@ -44,6 +44,7 @@ neighbour is used.
 | 16 | Ball | Play ball with you | Fun, Social |
 | 17 | Keepsake hutch | Keepsakes (gift collection) | — |
 | 18 | The Friend | Pet / Talk / Open a gift | Social |
+| 19 | Front door | Visit a neighbour (simulated) | Social |
 
 ## Needs
 
@@ -86,6 +87,12 @@ Every family also loves its own heirloom (below).
 - **Memes.** The camera: a random two-line meme in today's formats (gm/gn, POV, +1000 aura, let him cook, locked in, side
   quest, WAGMI, HODL) written from the Friend's character; the templates that fit the moment weigh more, and a meme never
   spoils a secret that is still hidden.
+- **Sulking.** Left alone too long (no petting, talking, dinner, ball or Gift Box with you) it sulks and refuses your
+  requests until you make up: pet it or talk to it (1 to 3 times, by character strength) or open a Gift Box. How soon
+  depends on family (Homebody fastest, Introvert hardly ever) and generation.
+- **Simulated neighbours.** No multiplayer in the SDK: the front door opens a list of FriendSDK's sample Friends
+  (#3412, #7730; SDK-supplied artwork), played by the game and labelled simulated. A visit is a small room with their
+  colour and heirloom; hug, say hi, dance or share a snack, and both temperaments decide the reaction.
 - **Family heirloom.** Each family brings one piece into the house (front of the living room) with its own loved
   activity: bone xylophone, mask stand, family photo table, cell garden, wobbly tower, cloud cushion, old boulder
   seat, mirror ball, quiet lantern.
@@ -113,6 +120,6 @@ Every family also loves its own heirloom (below).
 
 ## Scope for the vibeathon
 
-House, camera, walking, depth sorting; needs and clock; 31 activities on 27 kinds of furniture plus nine
+House, camera, walking, depth sorting; needs and clock; 32 activities on 27 kinds of furniture plus nine
 family heirlooms; 9 temperaments with generation strength, per-token traits, wishes, refusals and voice lines;
 shop, wardrobe, Gift Box; Buy mode with a nine-piece catalog; mobile layout; tests. No storage exists in the SDK sandbox: progress resets on reload.

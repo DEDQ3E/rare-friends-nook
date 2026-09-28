@@ -39,7 +39,7 @@ const ARROW: Pixmap = { palette: { k: "#3A2A1E", y: "#FFD23F", w: "#FFF3B0" }, r
 export type FriendSprites = Readonly<{ walk: Readonly<Record<Facing, readonly (readonly string[])[]>>; idle: Readonly<Record<Facing, readonly (readonly string[])[]>> }>;
 export type EngineEvent =
   | { type: "speech"; text: string }
-  | { type: "panel"; panel: "wardrobe" | "keepsakes" | "gift" }
+  | { type: "panel"; panel: "wardrobe" | "keepsakes" | "gift" | "neighbours" }
   | { type: "refuse"; action: string; sulking?: boolean }
   | { type: "sulk"; grudge: number }
   | { type: "forgive" }
@@ -638,6 +638,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     command,
     walkTo(i: number, j: number) { const p = pathTo(i, j, .8); if (p) { stop(); fr.path = p; idleFor = 0; } else onEvent({ type: "blocked" }); },
     cancel() { stop(); idleFor = 0; },
+    /** You spent time together away from the house (a visit): counts as attention. */
+    care() { careAt = minute; },
     greet() { say(pickLine(temper.voice.hello), 4.5); show("heart", 2); firstChoice = true; idleFor = 4.5; careAt = minute; },
     say,
     emote(icon: keyof typeof ICONS, seconds = 2) { show(icon, seconds); },

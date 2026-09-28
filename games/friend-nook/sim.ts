@@ -59,7 +59,7 @@ export type ActionDef = Readonly<{
   uses?: "snack" | "meal";
   when?: "night" | "day";
   withYou?: boolean;              // you take part (counts as company)
-  panel?: "wardrobe" | "keepsakes" | "gift";
+  panel?: "wardrobe" | "keepsakes" | "gift" | "neighbours";
   icon: string;                   // wish / menu icon key
   sleep?: boolean;
 }>;
@@ -92,6 +92,7 @@ export const ACTIONS: readonly ActionDef[] = [
   { id: "telescope", label: "Look through the telescope", on: ["telescope"], minutes: 40, rates: { fun: 36 }, pose: "stand", anim: "still", when: "night", icon: "star" },
   { id: "primp", label: "Primp", on: ["vanity"], minutes: 20, rates: { fun: 34, hygiene: 10 }, pose: "stand", anim: "bounce", icon: "mirror" },
   { id: "piano", label: "Play the piano", on: ["piano"], minutes: 30, rates: { fun: 38, social: 6 }, pose: "stand", anim: "bounce", icon: "note" },
+  { id: "visit", label: "Visit a neighbour", on: ["frontdoor"], minutes: 5, pose: "stand", anim: "still", panel: "neighbours", icon: "door" },
   { id: "keepsakes", label: "Look at keepsakes", on: ["hutch"], minutes: 10, done: { fun: 6 }, pose: "stand", anim: "still", panel: "keepsakes", icon: "gift" },
   { id: "pet", label: "Pet", on: ["friend"], minutes: 5, done: { social: 16, fun: 4 }, pose: "stand", anim: "bounce", withYou: true, icon: "heart" },
   { id: "talk", label: "Talk", on: ["friend"], minutes: 8, done: { social: 12 }, pose: "stand", anim: "bounce", withYou: true, icon: "chat" },
