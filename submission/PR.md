@@ -4,10 +4,9 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (50 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
+🎬 **Demo with sound (50 s):** the real SDK runtime with Sparkling Friend #66666 read live from mainnet, only the wallet mocked ([file](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm), `tests/video.mjs`).
 
 https://github.com/user-attachments/assets/9e056e7d-26f8-48e5-ada4-28adf4106d07
-
 
 **Project name:** Rare Friends: Friend Nook
 **Builder / contact:** [DEDQ3E](https://github.com/DEDQ3E) · Discord `dedq3e3` · Telegram [@DEDQ3E](https://t.me/DEDQ3E)
@@ -19,27 +18,26 @@ Full submission: [`submissions/friend-nook/README.md`](https://github.com/DEDQ3E
 
 ## What did you build?
 
-A life sim with one star: a 12 × 10 tile pixel house (bedroom, bathroom, kitchen, living and dining room) in isometric cut-away view with day and night, five needs and 31 things to do on 27 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself; the camera opens close on your Friend. The house is alive (TV channels and a video game, swimming fish, a turning record, steam, bath bubbles) with a composed, synthesized soundtrack for each time of day (marimba morning, vibraphone swing, lo-fi evening, music-box lullaby, a disco record) and a sound for every activity. A hint always points to one thing that raises the lowest need.
+A life sim with one star: a 12 × 10 tile isometric pixel house with day and night, five needs and 31 things to do on 27 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself. The house is alive (TV, fish, a turning record, bath bubbles) with a synthesized soundtrack for each time of day and a sound for every activity.
 
-**The Rare Friends home loop, playable today.** The [Rare Friends site](https://rarefriends.com/) describes Friends whose happiness grows through play, gifts of food, toys and decorations, and homes upgraded with furniture, plants and play spaces. Friend Nook is that loop in one house: raise your Friend's Happiness meter (its five needs in one number), feed it, give it Gift Box keepsakes, and upgrade its home in Buy mode (a big plant, a toy piano, an arcade cabinet, an aquarium…). It is a virtual pet and familiar care game, two of the game types the Vibeathon page lists, with the Friend's own character as the star.
+It is the [Rare Friends](https://rarefriends.com/) home loop, playable today: raise your Friend's Happiness meter, feed it, give it Gift Box keepsakes and upgrade its home in Buy mode (a big plant, a toy piano, an arcade cabinet…). A virtual pet and familiar care game, with the Friend's own character as the star.
 
 ## How does it use Rare Friends?
 
-- **Its own artwork:** canonical Generations frames through the SDK sprite reader, four facings, never recoloured, rotated or reshaped; clothes fitted to its own silhouette.
-- **Family = temperament:** loves, dislikes, need rates, speed, voice lines and a signature idle per family. A Hoverer floats and naps, a Skeleton wakes at night, an Asymmetry zigzags between toys and the arcade. It may refuse what it dislikes.
-- **Generation = character strength:** one read-only `generation(tokenId)` call sets it from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more, refuse more, gesture and speak more expressively.
-- **The token itself:** from its sprite seed come a nickname, a favourite colour (its blanket, cushion and rug), a personal favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects (night snacker, early bird, bookworm, sky watcher, cuddle bug…). Two Hoverers are different Friends.
-- **A family heirloom:** each family brings one piece of its own (nine family heirlooms: a bone xylophone for a Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…) with an activity only that family has.
-- **Memes about it:** the camera button makes a random meme about this Friend, one of fifteen meme templates filled from its own voice, temperament, quirk, heirloom and what it is doing, over a snapshot of it at home (the platform's *Make memes*).
-- **Four secrets and one day:** the card hides four of those traits (favourite thing, snack, birthday, quirk) until you find them by watching, feeding, talking and making friends; at 22:00 a recap card sums up the day together (own choices, refusals, wishes, friendship, secrets found, a meme). One session is one day: the SDK keeps no saves.
-- **A voice and a relationship:** speech is voiced in a family babble; a *Meet your Friend* card, then within seconds its first own choice, explained on screen ("Humippy's own choice: float on the cloud — its family heirloom"), a diary of its own choices and friendship levels.
+- **Its own artwork:** canonical Generations frames through the SDK sprite reader, never recoloured or reshaped; clothes fitted to its own silhouette.
+- **Family = temperament:** loves, dislikes, need rates, speed, voice and a signature idle per family. It may refuse what it dislikes.
+- **Generation = character strength:** one read-only `generation(tokenId)` call, from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more, refuse more and speak more expressively.
+- **The token itself:** its sprite seed gives a nickname, a favourite colour (its blanket, cushion and rug), a favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects. Two Hoverers are different Friends.
+- **A family heirloom:** each family brings one piece (a bone xylophone for a Skeleton, a mirror ball for a Sparkling…) with an activity only that family has.
+- **Its first own choice, explained:** seconds after the *Meet your Friend* card it picks something it loves, and the game says why ("Humippy's own choice: float on the cloud — its family heirloom").
+- **Four secrets and one day:** the card hides four traits (favourite thing, snack, birthday, quirk) until you find them by watching, feeding, talking and making friends. At 22:00 a recap card sums up the day together; one session is one day, since the SDK keeps no saves.
+- **Memes about it:** the camera makes a random meme, one of fifteen meme templates filled from its own voice, temperament and heirloom (the platform's *Make memes*).
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
 
-**Ten real Friends, ten characters:** `tests/friends.mjs` plays ten real Generations Friends (eight families, Gen 1 to 6) through the real SDK runtime, their artwork, family, seed and generation read live from mainnet (only the wallet is mocked). Each one in the same house at its first own choice; the full table of what each chose is in the [submission README](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters).
+**Ten real Friends, one house:** `tests/friends.mjs` plays ten real Friends (eight families, Gen 1 to 6) through the real runtime, read live from mainnet. Each at its first own choice ([full table](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters)):
 
 ![Ten real Friends in the same house, each at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
-
 
 ![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
 
@@ -47,20 +45,20 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 
 | Loop | Player pays | Player gets back |
 |---|---|---|
-| **Gift Box** (SDK chance game) | 1 RF per box | one keepsake, 0.9165 RF on average when sold back; each box reserves the 5 RF top prize |
-| **Food** | Snack pack ×4: 1 RF · Groceries ×3 meals: 2 RF | consumed by the fridge, bar, stove and family dinner |
-| **Wardrobe** | 2–5 RF per piece (32 RF for all ten) | cosmetic, never refunded |
-| **Buy mode** | 2–6 RF per piece (37 RF for all nine) | new activities, never refunded |
+| **Gift Box** (SDK chance game) | 1 RF per box | one keepsake, 0.9165 RF on average when sold back; 5 RF top prize |
+| **Food** | Snack pack ×4: 1 RF · Groceries ×3 meals: 2 RF | eaten at the fridge, bar, stove and dinner |
+| **Wardrobe** | 2–5 RF per piece | cosmetic |
+| **Buy mode** | 2–6 RF per piece | new activities |
 
-Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF). Kept ones stand in the hutch; any can be sold back at its fixed value. Per box: standard deviation 0.934 RF, 27% chance of 1 RF or more back. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed split, simulated). Personality never changes prices, odds or rewards.
+Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards.
 
 ## What would be on-chain?
 
-Nothing in this build. The Gift Box is a deployment of the SDK's `ChanceGame` with this `game.json` (`buy`, `play`, `settle`, `redeem` into the Friend's canonical NFT wallet). Food, clothes and furniture need a custom RF integration; needs, friendship and the house layout need storage FriendSDK v0.1.2 does not supply.
+Nothing in this build. The Gift Box is the SDK's `ChanceGame` with this `game.json` (`buy`, `play`, `settle`, `redeem` into the Friend's NFT wallet). Food, clothes and furniture need a custom RF integration; needs, friendship and the house need storage FriendSDK v0.1.2 does not supply.
 
 ## How does it use randomness?
 
-Paid outcomes only through the SDK chance game (Gift Box). Browser randomness only drives behaviour (free will, wishes, refusals, hints). Personal traits are deterministic from the token.
+Paid outcomes only through the SDK chance game. Browser randomness only drives behaviour (free will, wishes, refusals, memes). Personal traits are deterministic from the token.
 
 ## Source code
 
@@ -68,19 +66,19 @@ https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`b15f95b`](https:/
 
 ## Playable demo / how to run
 
-https://dedq3e.github.io/rare-friends-nook/ (GitHub Pages, simulated economy). Needs a browser wallet on **Robinhood mainnet (4663)** holding a hardwired Generations NFT (generation ≥ 1); on phones, use the wallet app's browser, landscape. Locally: `npm ci && npm run dev` (Node 22+).
+https://dedq3e.github.io/rare-friends-nook/ (simulated economy). Needs a browser wallet on **Robinhood mainnet (4663)** holding a hardwired Generations NFT; on phones, the wallet app's browser, landscape. Locally: `npm ci && npm run dev` (Node 22+).
 
 ## How do you play?
 
-Click or tap furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, pet it, find its four secrets, make memes (camera), open Gift Boxes, buy food, clothes and furniture (arrows move, `R` rotates). Time: pause, 1× (a day is 8 minutes), 3×. Settings: volume, music, reduced motion.
+Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, find its four secrets, make memes, open Gift Boxes, buy food, clothes and furniture. Time: pause, 1× (a day is 8 minutes), 3×.
 
 ## What have you tested?
 
-`npm run typecheck`, `friendsdk check` (valid), `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), and ten real Friends read live from mainnet through the real runtime, browser checks with the SDK harness: furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound and mute, phone sizes, 60 fps. The live Pages build is byte-identical to `docs/`.
+`npm run typecheck`, `friendsdk check`, `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), ten real Friends read live from mainnet, and browser checks: furniture, the Gift Box through the SDK confirmations, Buy mode, a full day with secrets and the recap, sound and mute, phone sizes, 60 fps. The live Pages build is byte-identical to `docs/`.
 
 ## Known limitations
 
-No storage in the SDK sandbox (a reload starts fresh); the SDK test harness uses the mock wallet's Friend #7730 (the ten-Friend run mocks only the wallet; no Hollow in its list); the generation is one public read from inside the game (never an ownership check; falls back to medium strength); mobile needs the wallet app's browser; sound starts after the first click.
+No storage in the SDK sandbox (a reload starts fresh); the SDK test harness uses its mock Friend #7730; no Hollow Friend was at hand for the ten-Friend run; mobile needs the wallet app's browser; sound starts after the first click.
 
 ## Credits
 
