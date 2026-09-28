@@ -19,7 +19,7 @@ try {
       const s = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: true, preferCurrentTab: true });
       const [v] = s.getVideoTracks(); const frame = document.querySelector(".rf-game-frame");
       if (frame && window.CropTarget) await v.cropTo(await window.CropTarget.fromElement(frame));
-      const r = new MediaRecorder(s, { mimeType: "video/webm;codecs=vp9,opus", videoBitsPerSecond: 2_500_000, audioBitsPerSecond: 128_000 }), parts = [];
+      const r = new MediaRecorder(s, { mimeType: "video/webm;codecs=vp9,opus", videoBitsPerSecond: 900_000, audioBitsPerSecond: 128_000 }), parts = [];
       r.ondataavailable = e => parts.push(e.data); r.start(1000); b.remove();
       window.__stop = () => new Promise(res => { r.onstop = async () => { const buf = new Uint8Array(await new Blob(parts).arrayBuffer()); s.getTracks().forEach(t => t.stop()); res(Array.from(buf)); }; r.stop(); });
     };
@@ -36,26 +36,26 @@ try {
   };
   const friendMenu = async label => { await canvas.focus(); await page.keyboard.press("KeyF"); await wait(700); await game.getByRole("menuitem", { name: new RegExp(label) }).first().click(); };
 
-  await wait(4500);                                                          // the Meet your Friend card
+  await wait(4000);                                                          // the Meet your Friend card
   await game.getByRole("button", { name: /Welcome home/ }).click();          // the camera glides in
   await game.getByRole("button", { name: "Got it" }).click({ timeout: 3000 }).catch(() => {});
   await game.locator(".fn-toast").filter({ hasText: /own choice|Secret \d/ }).waitFor(); // its first own choice, and why
-  await wait(7000);
-  await friendMenu("^Talk"); await wait(4500);                              // talking finds a secret: its birthday
-  await zoom(false); await use(6.05, .6, 8, "Take a bath"); await wait(3800); await zoom(true); await wait(5500);
-  await game.getByRole("button", { name: "Make a meme" }).click(); await wait(3200); // a random meme about this Friend
-  await game.getByRole("button", { name: "Another meme" }).click(); await wait(3200);
+  await wait(5000);
+  await friendMenu("^Talk"); await wait(4000);                              // talking finds a secret: its birthday
+  await zoom(false); await use(6.05, .6, 8, "Take a bath"); await wait(3000); await zoom(true); await wait(3500);
+  await game.getByRole("button", { name: "Make a meme" }).click(); await wait(2800); // a random meme about this Friend
+  await game.getByRole("button", { name: "Another meme" }).click(); await wait(2800);
   await game.getByRole("button", { name: "Back to the house" }).click(); await wait(1200);
   await zoom(false); await use(12.05, 4.5, 10, "Visit a neighbour");                  // the front door: a simulated neighbour
-  await game.getByRole("button", { name: /'s room/ }).first().click({ timeout: 30000 }); await wait(2200);
-  await game.getByRole("button", { name: "Hug" }).click(); await wait(2600);
-  await game.getByRole("button", { name: "Dance together" }).click(); await wait(2600);
+  await game.getByRole("button", { name: /'s room/ }).first().click({ timeout: 30000 }); await wait(1800);
+  await game.getByRole("button", { name: "Hug" }).click(); await wait(2300);
+  await game.getByRole("button", { name: "Dance together" }).click(); await wait(2300);
   await game.getByRole("button", { name: "Go home" }).click(); await zoom(true); await wait(800);
   await friendMenu("Open a Gift Box"); await wait(900);
   await game.getByRole("button", { name: /Buy and open/ }).click();
   for (let n = 0; n < 2; n++) { const b = page.getByRole("button", { name: "Confirm preview" }); await b.waitFor(); await wait(700); await b.click(); }
-  await game.getByRole("button", { name: "Keep it in the hutch" }).waitFor({ timeout: 90000 }); await wait(3500);
-  await game.getByRole("button", { name: "Keep it in the hutch" }).click(); await wait(2500);
+  await game.getByRole("button", { name: "Keep it in the hutch" }).waitFor({ timeout: 90000 }); await wait(2800);
+  await game.getByRole("button", { name: "Keep it in the hutch" }).click(); await wait(1500);
 
   const bytes = await page.evaluate(() => window.__stop());
   writeFileSync("media/friend-nook.webm", Buffer.from(bytes));
