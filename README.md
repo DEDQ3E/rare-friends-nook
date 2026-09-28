@@ -5,7 +5,7 @@ A cozy isometric life sim starring **your** Rare Friend, built with FriendSDK v0
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/** (simulated economy)
 
-🎬 **Demo with sound (50 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File](media/friend-nook.webm).
+🎬 **Demo with sound (67 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File](media/friend-nook.webm).
 
 https://github.com/user-attachments/assets/c40286c7-e27e-4e72-a20e-0ebabf51cc3b
 
@@ -81,16 +81,17 @@ npm run docs       # every number in the docs matches game.json and the code
 ```
 
 Browser checks (need `npm install --no-save playwright` and `npx playwright install chromium`):
-`node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`.
-Real Friends read live from mainnet: `node tests/friends.mjs` (also needs `pngjs`). Music to WAV: `node tests/music.mjs`.
-Demo video with sound: `node tests/video.mjs` (Microsoft Edge). README media: `node tests/media.mjs` (also needs `gifenc` and `pngjs`); the heirloom sheet: `node tests/heirlooms.mjs`.
+`node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`,
+`onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (simulated neighbours),
+`meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.
+Demo video with sound: `node tests/video.mjs` (Microsoft Edge). README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs` (also needs `pngjs`).
 
 ## Layout
 
 `games/friend-nook/`: `index.tsx` (React adapter and UI), `engine.ts` (camera, rendering, walking, free will),
 `iso.ts` (projection and depth sorting), `house.ts`, `furniture.ts`, `catalog.ts`, `fx.ts` (living furniture),
 `sim.ts` (needs and actions), `personality.ts` (families), `traits.ts` (per-token traits), `heirlooms.ts` (family
-heirlooms), `audio.ts`,
+heirlooms), `memes.ts` (meme mode), `neighbours.ts` + `visit.ts` (simulated neighbours), `audio.ts`,
 `keepsakes.ts`, `art.ts`, `wardrobe.ts` + `fit.ts` (clothes fitted to any Friend), `game.json` (Gift Box odds).
 Design notes: [DESIGN.md](DESIGN.md).
 
