@@ -1,5 +1,5 @@
 /** Simulated neighbours. FriendSDK has no multiplayer, so the neighbours are the two sample Friends that ship with
- * FriendSDK v0.1.2 (examples/fishing/sample-sprites.ts: canonical Generations frame samples, block 66188037; SDK-supplied
+ * FriendSDK v0.1.3 (examples/fishing/sample-sprites.ts: canonical Generations frame samples, block 66188037; SDK-supplied
  * artwork, used under the SDK's NOTICE.md). The game plays them; they are not real players, no chain read is made for
  * them and nothing is sent anywhere. Their character comes from the same rules as the player's Friend. */
 import { decodeGenerationSprites, spriteFrame } from "@rarefriends/friendsdk/sprites";

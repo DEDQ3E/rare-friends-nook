@@ -1,6 +1,6 @@
 # Rare Friends: Friend Nook
 
-A cozy isometric life sim starring **your** Rare Friend, built with FriendSDK v0.1.2 for the
+A cozy isometric life sim starring **your** Rare Friend, built with FriendSDK v0.1.3 for the
 [Rare Friends Vibeathon](https://github.com/spokesz/rarefriends-vibeathon) (category: Character Spotlight).
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/** (simulated economy)
