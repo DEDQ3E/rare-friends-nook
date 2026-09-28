@@ -106,7 +106,7 @@ Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK r
 
 ## How RF is spent, and the economy
 
-Four RF sinks, all simulated in the preview: **Gift Boxes** (1 RF, the SDK chance game: one of five keepsakes, 0.9165 RF back on average if sold), **food** (snacks and meals the Friend eats), **clothes** and **furniture** (Buy mode). Only keepsakes pay RF back. Personality never changes prices, odds or rewards.
+Four RF sinks, all simulated in the preview: **Gift Boxes** (1 RF, the SDK chance game: one of five keepsakes, 0.9165 RF back on average if sold), **food** (snacks and meals the Friend eats), **clothes** and **furniture** (Buy mode). Only keepsakes pay RF back. Personality never changes prices, odds or rewards. Prices are proposed terms in RF, on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average).
 
 <details><summary><b>Prices, keepsake odds and session statistics</b></summary>
 

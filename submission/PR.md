@@ -51,7 +51,7 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 | **Wardrobe** | 2–5 RF per piece | cosmetic |
 | **Buy mode** | 2–6 RF per piece | new activities |
 
-Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards.
+Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF). Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards. Prices are proposed terms in RF, on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average).
 
 ## What would be on-chain?
 
@@ -75,7 +75,7 @@ Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F
 
 ## What have you tested?
 
-`npm run typecheck`, `friendsdk check`, `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), ten real Friends read live from mainnet, and browser checks: furniture, the Gift Box through the SDK confirmations, Buy mode, a full day with secrets and the recap, sound and mute, phone sizes, 60 fps. The live Pages build is byte-identical to `docs/`.
+`npm run typecheck`, `friendsdk check`, `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), ten real Friends read live from mainnet, and browser checks: furniture, the Gift Box through the SDK confirmations, Buy mode, a full day with secrets and the recap, sound and mute, phone sizes, 60 fps.
 
 ## Known limitations
 

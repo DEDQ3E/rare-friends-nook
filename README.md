@@ -35,7 +35,8 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
   evening with vinyl crackle, a music-box lullaby in 3/4) and a disco record to dance to, a sound for every activity,
   footsteps by floor, finches, an owl; all synthesized with Web Audio.
 - **Economy (simulated):** Gift Box on the SDK chance game (1 RF, five keepsakes worth 0.9165 RF on average when
-  sold back), food, clothes and Buy-mode furniture as RF sinks. Details in [submission/README.md](submission/README.md).
+  sold back), food, clothes and Buy-mode furniture as RF sinks. Prices are proposed terms in RF, on the scale of the
+  SDK's reference games (1 RF per consumable, about 0.90 RF back on average). Details in [submission/README.md](submission/README.md).
 
 ![The nine family heirlooms](media/heirlooms.png)
 
