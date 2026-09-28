@@ -66,7 +66,7 @@ https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`b15f95b`](https:/
 
 ## Playable demo / how to run
 
-https://dedq3e.github.io/rare-friends-nook/ (simulated economy). Needs a browser wallet on **Robinhood mainnet (4663)** holding a hardwired Generations NFT; on phones, the wallet app's browser, landscape. Locally: `npm ci && npm run dev` (Node 22+).
+https://dedq3e.github.io/rare-friends-nook/ (simulated economy). Needs a browser wallet on **Robinhood mainnet (4663)** holding a hardwired Generations NFT (generation 1 or higher); on phones, the wallet app's browser, landscape. Locally: `npm ci && npm run dev` (Node 22+).
 
 ## How do you play?
 
