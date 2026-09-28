@@ -145,7 +145,7 @@ Nothing in this build; no transaction is ever sent. The Gift Box needs no new co
 - `play` burns a box and commits the opening; a sponsor pays the Dice fee, the oracle records one random word, and anyone can `settle`: the keepsake is minted as an ERC-1155 reward into the canonical NFT wallet.
 - `redeem` burns a keepsake for its fixed RF, back into the same wallet, with no expiry.
 
-The hutch would read the Friend wallet's keepsake balances. Food, clothes and furniture would be RF purchases into the Friend wallet with the 50% burn / 50% rewards split, which needs a custom RF integration; needs, the clock, friendship and the house layout need storage that FriendSDK v0.1.2 does not supply.
+The hutch would read the Friend wallet's keepsake balances. Food, clothes and furniture would be RF purchases into the Friend wallet with the 50% burn / 50% rewards split, which needs a custom RF integration; needs, the clock, friendship and the house layout need storage that FriendSDK v0.1.3 does not supply.
 
 </details>
 
@@ -157,7 +157,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`52c984b`](https://github.com/DEDQ3E/rare-friends-nook/tree/52c984be1850f01babbc77cd52d5075a6edb8d69)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`a19df27`](https://github.com/DEDQ3E/rare-friends-nook/tree/a19df27af685735ef494be87c32b122ef2b81261)). FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
 
 ## Playable demo / how to run
 
@@ -216,4 +216,4 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 
 ## Credits
 
-Game design, code, pixel art, music and sound: DEDQ3E with Claude (Anthropic). FriendSDK v0.1.2 and the Rare Friends Generations artwork by Rare Friends. The neighbours use the SDK's own sample Friend artwork (`examples/fishing/sample-sprites.ts`, SDK-supplied, see its NOTICE.md). The wardrobe fitting (`fit.ts`, `wardrobe.ts`) is reused from the builder's own entry *Rare Friends: Expeditions*. No third-party assets. License: Apache-2.0.
+Game design, code, pixel art, music and sound: DEDQ3E with Claude (Anthropic). FriendSDK v0.1.3 and the Rare Friends Generations artwork by Rare Friends. The neighbours use the SDK's own sample Friend artwork (`examples/fishing/sample-sprites.ts`, SDK-supplied, see its NOTICE.md). The wardrobe fitting (`fit.ts`, `wardrobe.ts`) is reused from the builder's own entry *Rare Friends: Expeditions*. No third-party assets. License: Apache-2.0.

@@ -55,7 +55,7 @@ Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% 
 
 ## What would be on-chain?
 
-Nothing in this build. The Gift Box is the SDK's `ChanceGame` with this `game.json` (`buy`, `play`, `settle`, `redeem` into the Friend's NFT wallet). Food, clothes and furniture need a custom RF integration; needs, friendship and the house need storage FriendSDK v0.1.2 does not supply.
+Nothing in this build. The Gift Box is the SDK's `ChanceGame` with this `game.json` (`buy`, `play`, `settle`, `redeem` into the Friend's NFT wallet). Food, clothes and furniture need a custom RF integration; needs, friendship and the house need storage FriendSDK v0.1.3 does not supply.
 
 ## How does it use randomness?
 
@@ -63,7 +63,7 @@ Paid outcomes only through the SDK chance game. Browser randomness only drives b
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`52c984b`](https://github.com/DEDQ3E/rare-friends-nook/tree/52c984be1850f01babbc77cd52d5075a6edb8d69)) · FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`a19df27`](https://github.com/DEDQ3E/rare-friends-nook/tree/a19df27af685735ef494be87c32b122ef2b81261)) · FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
@@ -83,4 +83,4 @@ No storage in the SDK sandbox (a reload starts fresh); no multiplayer in the SDK
 
 ## Credits
 
-DEDQ3E with Claude (Anthropic). FriendSDK v0.1.2 and the Generations artwork by Rare Friends; the neighbours use the SDK's sample Friend artwork. Wardrobe fitting reused from the builder's *Rare Friends: Expeditions*. No third-party assets. Apache-2.0.
+DEDQ3E with Claude (Anthropic). FriendSDK v0.1.3 and the Generations artwork by Rare Friends; the neighbours use the SDK's sample Friend artwork. Wardrobe fitting reused from the builder's *Rare Friends: Expeditions*. No third-party assets. Apache-2.0.
