@@ -2,9 +2,10 @@
 // (tests/live.mjs: only the wallet and ownership answers are mocked), recorded as the tab plays, picture and
 // sound together (tab capture in headless Microsoft Edge, cropped to the game frame).
 // Needs (not in package.json): npm install --no-save playwright; Microsoft Edge installed.
-// Run: node tests/video.mjs [tokenId] → media/friend-nook.webm
+// Run: node tests/video.mjs [tokenId] → media/friend-nook.mp4 (H.264 + AAC, under GitHub's 10 MB video limit)
 import { writeFileSync } from "node:fs";
 import { liveRuntime } from "./live.mjs";
+import { fixMp4Duration } from "./mp4-duration.mjs";
 
 const id = BigInt(process.argv[2] ?? 66666);
 const rt = await liveRuntime({ launch: { channel: "msedge", ignoreDefaultArgs: ["--mute-audio"], args: ["--auto-accept-this-tab-capture", "--autoplay-policy=no-user-gesture-required"] } });
@@ -19,7 +20,7 @@ try {
       const s = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: true, preferCurrentTab: true });
       const [v] = s.getVideoTracks(); const frame = document.querySelector(".rf-game-frame");
       if (frame && window.CropTarget) await v.cropTo(await window.CropTarget.fromElement(frame));
-      const r = new MediaRecorder(s, { mimeType: "video/webm;codecs=vp9,opus", videoBitsPerSecond: 900_000, audioBitsPerSecond: 128_000 }), parts = [];
+      const r = new MediaRecorder(s, { mimeType: "video/mp4;codecs=avc1.42E01E,mp4a.40.2", videoBitsPerSecond: 1_100_000, audioBitsPerSecond: 128_000 }), parts = [];
       r.ondataavailable = e => parts.push(e.data); r.start(1000); b.remove();
       window.__stop = () => new Promise(res => { r.onstop = async () => { const buf = new Uint8Array(await new Blob(parts).arrayBuffer()); s.getTracks().forEach(t => t.stop()); res(Array.from(buf)); }; r.stop(); });
     };
@@ -58,7 +59,8 @@ try {
   await game.getByRole("button", { name: "Keep it in the hutch" }).click(); await wait(1500);
 
   const bytes = await page.evaluate(() => window.__stop());
-  writeFileSync("media/friend-nook.webm", Buffer.from(bytes));
-  console.log("media/friend-nook.webm", (bytes.length / 1e6).toFixed(1), "MB", errors.length ? "ERRORS " + errors.join("; ") : "");
+  const mp4 = Buffer.from(bytes), secs = fixMp4Duration(mp4); // the real length in the header, so players show it and can seek
+  writeFileSync("media/friend-nook.mp4", mp4);
+  console.log("media/friend-nook.mp4", (bytes.length / 1e6).toFixed(1), "MB", secs.toFixed(1), "s", errors.length ? "ERRORS " + errors.join("; ") : "");
   await close();
 } finally { await rt.close(); }
