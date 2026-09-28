@@ -6,7 +6,7 @@
 
 🎬 **Demo with sound (50 s):** the real SDK runtime with Sparkling Friend #66666 read live from mainnet, only the wallet mocked ([file](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm), `tests/video.mjs`).
 
-https://github.com/user-attachments/assets/9e056e7d-26f8-48e5-ada4-28adf4106d07
+https://github.com/user-attachments/assets/c40286c7-e27e-4e72-a20e-0ebabf51cc3b
 
 **Project name:** Rare Friends: Friend Nook
 **Builder / contact:** [DEDQ3E](https://github.com/DEDQ3E) · Discord `dedq3e3` · Telegram [@DEDQ3E](https://t.me/DEDQ3E)

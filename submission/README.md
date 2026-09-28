@@ -6,7 +6,7 @@
 
 🎬 **Demo with sound (50 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
 
-https://github.com/user-attachments/assets/9e056e7d-26f8-48e5-ada4-28adf4106d07
+https://github.com/user-attachments/assets/c40286c7-e27e-4e72-a20e-0ebabf51cc3b
 
 
 **Project name**
