@@ -5,11 +5,10 @@ A cozy isometric life sim starring **your** Rare Friend, built with FriendSDK v0
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/** (simulated economy)
 
-🎬 **Demo with sound (47 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File](media/friend-nook.webm).
+🎬 **Demo with sound (49 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File](media/friend-nook.webm).
 
 https://github.com/user-attachments/assets/ba8e0824-cde9-49f6-81cb-2066e2926d94
 
-![Dancing, watching TV and taking a bath](media/friend-nook.gif)
 
 Your Friend moves into a little pixel house and lives in it like a Sim. Everything it does by itself comes from
 the NFT: its **family** sets its temperament (loves, dislikes, voice, how it moves), its **generation** how strong
@@ -43,9 +42,10 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
 ## Ten real Friends
 
 `node tests/friends.mjs` plays ten real Generations Friends (eight families, generations 1 to 6) through the real
-SDK runtime, their artwork, family, seed and generation read live from Robinhood mainnet. Same house, ten characters:
+SDK runtime, their artwork, family, seed and generation read live from Robinhood mainnet. Same house, ten characters,
+each at its first own choice:
 
-![Meet your Friend cards of ten real Friends](media/friends-cards.png)
+![Ten real Friends in the same house, each at its first own choice](media/friends-rooms.png)
 
 The full table (what each chose by itself) is in [submission/README.md](submission/README.md#ten-real-friends-ten-characters).
 

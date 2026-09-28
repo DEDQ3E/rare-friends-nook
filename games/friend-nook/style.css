@@ -33,7 +33,10 @@
 .fn-need b{display:block;height:100%;transition:width .25s}
 .fn-reduced .fn-need b{transition:none}
 .fn-mood{font-size:11px;margin-top:4px;color:#7a5a3e}
+.fn-secret{color:#9b7a5e}.fn-secret small{margin-left:4px;font-style:italic}
+.fn-recap{margin:6px 0;padding-left:18px}.fn-recap li{margin:2px 0}
 .fn-meme{display:block;width:100%;max-width:480px;margin:6px auto;border:3px solid var(--line);background:#000}
+.fn-meme-small{max-width:340px}
 .fn-happy{font-weight:bold;margin:0 0 5px;padding-bottom:5px;border-bottom:2px dashed #e6d6bf}
 .fn-happy img{display:block}
 .fn-happy i{height:11px}

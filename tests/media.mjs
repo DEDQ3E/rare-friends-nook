@@ -62,6 +62,8 @@ try {
     // leave it alone at 3× until night, then the character card with its diary
     await game.getByRole("button", { name: "Speed 3×" }).click();
     await page.waitForTimeout(80000);
+    const night = game.getByRole("button", { name: /Good night/ }); // 22:00: the day's recap card
+    await night.waitFor({ timeout: 60000 }); await page.waitForTimeout(600); await shot("recap"); await night.click();
     await shot("night");
     await game.getByRole("button", { name: /character card/ }).click(); await shot("character");
     await game.getByRole("button", { name: "Close" }).first().click();

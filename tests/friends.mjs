@@ -6,6 +6,9 @@
 // Run: node tests/friends.mjs → tmp/friends/*.png, media/friends.json, media/friends.md, media/friends-rooms.png
 import assert from "node:assert/strict";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import { buildSync } from "esbuild";
 import { chromium } from "playwright";
 import { liveRuntime } from "./live.mjs";
 
@@ -15,6 +18,9 @@ const FRIENDS = [87846n, 65001n, 1969n, 15000n, 7730n, 20838n, 66666n, 77777n, 4
 const out = "./tmp/friends"; // per-Friend shots (not committed); the combined picture goes to media/
 mkdirSync(out, { recursive: true });
 
+// the card keeps four traits secret: compute them with the game's own code (checked against the card's nickname)
+buildSync({ entryPoints: ["tests/traits-lib.ts"], bundle: true, platform: "node", format: "esm", outfile: "tmp/traits-lib.mjs", logLevel: "error" });
+const lib = await import(pathToFileURL(resolve("tmp/traits-lib.mjs")).href);
 const rt = await liveRuntime();
 const results = [];
 try {
@@ -33,11 +39,15 @@ try {
       birthday: pick(/Birthday: ([^\n]+)/), quirk: pick(/Quirk: ([^\n—]+)/), says: pick(/Says: [“"]([^”"]+)/),
       heirloom: pick(/Family heirloom: ([^\n(]+)/), swatch: await card.locator(".fn-swatch").evaluate(e => e.style.background),
     };
+    const t = lib.traitsFor(id, Number(id), lib.temperamentFor(row.family));
+    assert.equal(t.nickname, row.nickname, "traits computed from the same seed");
+    Object.assign(row, { favorite: lib.ACTION[t.favorite].label, snack: t.snack, birthday: t.birthday.label, quirk: t.quirk.label });
     await game.getByRole("button", { name: /Welcome home/ }).click();
     await game.getByRole("button", { name: "Got it" }).click({ timeout: 3000 }).catch(() => {});
     // its first own choice, as the game explains it on screen
-    const toast = game.locator(".fn-toast").filter({ hasText: "own choice" }); await toast.waitFor();
-    row.first = (await toast.innerText()).replace(/^.*?own choice: /, "");
+    const toast = game.locator(".fn-toast").filter({ hasText: /own choice|Secret \d/ }); await toast.waitFor();
+    const said = await toast.innerText(), fav = row.favorite[0].toLowerCase() + row.favorite.slice(1);
+    row.first = said.includes("own choice: ") ? said.replace(/^.*?own choice: /, "") : `${fav} — its favourite thing (secret found)`;
     // leave it alone at 3×: whatever it does now is its own choice; a picture of it in the room once it got there
     await game.getByRole("button", { name: "Speed 3×" }).click();
     await page.waitForTimeout(2500);

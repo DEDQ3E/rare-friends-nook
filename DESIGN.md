@@ -78,6 +78,11 @@ Every family also loves its own heirloom (below).
 - **The token itself.** Each trait is its own hash of the sprite seed and token ID: nickname, favourite colour
   (blanket, cushion, rug), a favourite activity outside the family's loves, snack, birthday, catchphrase and one
   of twelve quirks with real effects; a quirk may overrule the family (a Bookworm Mask reads).
+- **Four secrets.** The card shows family, generation, temperament, heirloom, colour and catchphrase, and hides four traits
+  until they are found: favourite thing (it does it), favourite snack (feed it), birthday (talk to it), quirk (first
+  friendship level). Each find: a line on screen, 3 friendship points, and the character card fills in.
+- **One day, one arc.** No saves in the SDK sandbox, so a session is one day: at 22:00 a recap card (own choices and how
+  many it loves, refusals, wishes, gifts, friendship, secrets found, a meme of the day).
 - **Family heirloom.** Each family brings one piece into the house (front of the living room) with its own loved
   activity: bone xylophone, mask stand, family photo table, cell garden, wobbly tower, cloud cushion, old boulder
   seat, mirror ball, quiet lantern.

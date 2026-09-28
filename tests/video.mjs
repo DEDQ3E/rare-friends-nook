@@ -29,15 +29,19 @@ try {
   const at = (i, j, z = 0) => ({ x: ((i - j) * 18 - 18 + 240) * 2 * k, y: ((i + j) * 9 - z - 88 + 160) * 2 * k });
   const wait = ms => page.waitForTimeout(ms);
   const zoom = async on => { await game.getByRole("button", { name: on ? "Zoom in" : "Zoom out" }).click(); await wait(1300); };
-  const use = async (i, j, z, label) => { await canvas.click({ position: at(i, j, z) }); await wait(700); await game.getByRole("menuitem", { name: new RegExp(label) }).first().click(); };
+  const use = async (i, j, z, label) => { // a few heights, in case the Friend or a bubble is in the way
+    const item = game.getByRole("menuitem", { name: new RegExp(label) }).first();
+    for (const dz of [0, 8, -4, 16, 24]) { await canvas.click({ position: at(i, j, z + dz) }); await wait(700); if (await item.isVisible()) return item.click(); await page.keyboard.press("Escape"); }
+    throw new Error(`no menu for ${label}`);
+  };
   const friendMenu = async label => { await canvas.focus(); await page.keyboard.press("KeyF"); await wait(700); await game.getByRole("menuitem", { name: new RegExp(label) }).first().click(); };
 
   await wait(4500);                                                          // the Meet your Friend card
   await game.getByRole("button", { name: /Welcome home/ }).click();          // the camera glides in
   await game.getByRole("button", { name: "Got it" }).click({ timeout: 3000 }).catch(() => {});
-  await game.locator(".fn-toast").filter({ hasText: "own choice" }).waitFor(); // its first own choice, and why
+  await game.locator(".fn-toast").filter({ hasText: /own choice|Secret \d/ }).waitFor(); // its first own choice, and why
   await wait(7000);
-  await friendMenu("^Pet"); await wait(3500);
+  await friendMenu("^Talk"); await wait(4500);                              // talking finds a secret: its birthday
   await zoom(false); await use(6.05, .6, 8, "Take a bath"); await wait(3800); await zoom(true); await wait(5500);
   await game.getByRole("button", { name: "Make a meme" }).click(); await wait(3200); // a random meme about this Friend
   await game.getByRole("button", { name: "Another meme" }).click(); await wait(3200);

@@ -16,11 +16,12 @@
     "says": "Stars forever!",
     "heirloom": "Mask stand",
     "swatch": "rgb(229, 143, 176)",
-    "first": "admire self — a Performer loves this",
+    "first": "dance — a Performer loves this",
     "chose": [
-      "08:17 Admire self (loves it)",
-      "09:23 Cook a meal",
-      "10:58 Play video games"
+      "08:08 Dance (loves it)",
+      "09:09 Snack at the bar",
+      "10:03 Try on a mask (loves it)",
+      "10:57 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -42,11 +43,12 @@
     "says": "Socks forever!",
     "heirloom": "Cell garden",
     "swatch": "rgb(160, 98, 142)",
-    "first": "cook a meal — a Foodie loves this",
+    "first": "snack at the bar — a Foodie loves this",
     "chose": [
-      "08:20 Cook a meal (loves it)",
-      "09:54 Play video games",
-      "10:57 Nap"
+      "08:15 Snack at the bar (loves it)",
+      "09:16 Play video games",
+      "10:44 Snack at the bar (loves it)",
+      "11:52 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -68,11 +70,11 @@
     "says": "Bubbles ahoy!",
     "heirloom": "Wobbly tower",
     "swatch": "rgb(127, 199, 167)",
-    "first": "stack the wobbly tower — its family heirloom",
+    "first": "play video games — a Chaos Gremlin loves this",
     "chose": [
-      "08:08 Stack the wobbly tower (loves it)",
-      "09:16 Play with toys (loves it)",
-      "10:48 Cook a meal"
+      "08:11 Play video games (loves it)",
+      "09:34 Snack at the bar",
+      "11:06 Play video games (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -94,11 +96,12 @@
     "says": "Clouds galore!",
     "heirloom": "Wobbly tower",
     "swatch": "rgb(242, 201, 76)",
-    "first": "cook a meal — its favourite thing",
+    "first": "play video games — a Chaos Gremlin loves this",
     "chose": [
-      "08:17 Cook a meal (loves it)",
-      "09:46 Play video games (loves it)",
-      "11:39 Play video games (loves it)"
+      "08:11 Play video games (loves it)",
+      "10:02 Snack at the bar",
+      "10:53 Stack the wobbly tower (loves it)",
+      "11:59 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -120,11 +123,11 @@
     "says": "Buttons for everyone!",
     "heirloom": "Cloud cushion",
     "swatch": "rgb(242, 201, 76)",
-    "first": "float on the cloud — its family heirloom",
+    "first": "nap — a Dreamer loves this",
     "chose": [
-      "08:09 Float on the cloud (loves it)",
-      "09:23 Snack at the bar",
-      "10:31 Read"
+      "08:17 Nap (loves it)",
+      "09:33 Play with toys",
+      "11:21 Grab a snack"
     ],
     "wishes": [],
     "errors": []
@@ -149,8 +152,8 @@
     "first": "watch TV — a Gentle Giant loves this",
     "chose": [
       "08:14 Watch TV (loves it)",
-      "10:18 Grab a snack",
-      "11:34 Nap (loves it)"
+      "09:30 Watch TV (loves it)",
+      "11:32 Cook a meal"
     ],
     "wishes": [],
     "errors": []
@@ -175,8 +178,9 @@
     "first": "dance under the mirror ball — its family heirloom",
     "chose": [
       "08:09 Dance under the mirror ball (loves it)",
-      "09:35 Take a bath (loves it)",
-      "11:18 Cook a meal"
+      "09:13 Snack at the bar",
+      "10:16 Nap",
+      "11:55 Take a bath (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -198,11 +202,12 @@
     "says": "Biscuits and spoons!",
     "heirloom": "Bone xylophone",
     "swatch": "rgb(127, 199, 167)",
-    "first": "rattle out a tune — its family heirloom",
+    "first": "grab a snack — a Night Owl loves this",
     "chose": [
-      "08:09 Rattle out a tune (loves it)",
-      "10:02 Cook a meal",
-      "12:01 Watch TV (loves it)"
+      "08:22 Grab a snack (loves it)",
+      "09:25 Watch TV (loves it)",
+      "10:43 Watch TV (loves it)",
+      "12:00 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -224,11 +229,11 @@
     "says": "Pickles in a jar!",
     "heirloom": "Bone xylophone",
     "swatch": "rgb(155, 179, 92)",
-    "first": "play with toys — its favourite thing",
+    "first": "play with toys — its favourite thing (secret found)",
     "chose": [
       "08:18 Play with toys (loves it)",
-      "09:57 Cook a meal",
-      "11:31 Nap"
+      "09:50 Snack at the bar",
+      "10:55 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -253,9 +258,8 @@
     "first": "look at family photos — its family heirloom",
     "chose": [
       "08:09 Look at family photos (loves it)",
-      "09:08 Cook a meal",
-      "10:36 Look at family photos (loves it)",
-      "11:28 Read"
+      "09:09 Cook a meal",
+      "10:44 Play video games"
     ],
     "wishes": [],
     "errors": []
