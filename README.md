@@ -7,7 +7,7 @@ A cozy isometric life sim starring **your** Rare Friend, built with FriendSDK v0
 
 🎬 **Demo with sound (58 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File](media/friend-nook.webm).
 
-https://github.com/user-attachments/assets/c40286c7-e27e-4e72-a20e-0ebabf51cc3b
+https://github.com/user-attachments/assets/7c93719c-78de-4718-b09e-f6c715eed5ed
 
 
 Your Friend moves into a little pixel house and lives in it like a Sim. Everything it does by itself comes from

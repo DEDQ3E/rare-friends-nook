@@ -4,9 +4,9 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (50 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
+🎬 **Demo with sound (58 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). [File in the repository](https://github.com/DEDQ3E/rare-friends-nook/blob/main/media/friend-nook.webm).
 
-https://github.com/user-attachments/assets/c40286c7-e27e-4e72-a20e-0ebabf51cc3b
+https://github.com/user-attachments/assets/7c93719c-78de-4718-b09e-f6c715eed5ed
 
 
 **Project name**
@@ -23,7 +23,7 @@ Your Generations Friend lives in a cozy isometric house like a Sim, and everythi
 
 ## What did you build?
 
-A life sim with one star. The selected Friend moves into a 12 × 10 tile pixel house with a bedroom, a bathroom, a kitchen, a living room and a dining area, shown in isometric cut-away view with a day and night cycle. It has five needs (hunger, energy, fun, hygiene, social) and 31 things to do on 27 kinds of furniture: sleep, stargaze, bathe, cook, snack, eat dinner with you, watch TV, play video games, read, dance to the record player, play ball, paint, play the arcade and more. Click furniture to choose an action, or leave it alone and watch it choose by itself. The game opens close on the Friend, with the camera following it; the whole house is one tap away.
+A life sim with one star. The selected Friend moves into a 12 × 10 tile pixel house with a bedroom, a bathroom, a kitchen, a living room and a dining area, shown in isometric cut-away view with a day and night cycle. It has five needs (hunger, energy, fun, hygiene, social) and 32 things to do on 28 kinds of furniture: sleep, stargaze, bathe, cook, snack, eat dinner with you, watch TV, play video games, read, dance to the record player, play ball, paint, play the arcade and more. Click furniture to choose an action, or leave it alone and watch it choose by itself. The game opens close on the Friend, with the camera following it; the whole house is one tap away.
 
 The house is alive: the TV shows three channels and a video game, fish swim, the record turns, the pan sizzles, steam rises, bubbles pop in the bath, and the house has its own composed, synthesized soundtrack: a marimba morning, a swinging vibraphone afternoon, a lo-fi Rhodes evening, a music-box lullaby at night and a disco record to dance to, plus a sound for every activity. A hint always points to one thing in the house that raises the lowest need. Gift Boxes (the SDK chance game) give keepsakes for the hutch, and Buy mode adds furniture you place yourself. Everything lives inside the SDK's 960 × 640 container, with a compact layout for phones.
 
@@ -46,6 +46,10 @@ The Friend is the only character, and the game is about who it is.
 - **One day, one arc.** The SDK keeps no saves, so a session is one day together: at 22:00 a recap card shows what it chose by itself and how much of that it loves, what it refused, wishes granted, friendship, secrets found, and a meme of the day. A day is 8 minutes at 1×, under 3 at 3×.
 
   ![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
+- **It sulks if you leave it alone.** Too long without attention and it sulks: an angry bubble, a line of its own family ("Even the clouds visited more.") and your requests refused until you make up by petting it, talking to it or opening a Gift Box together. Character decides how soon and how long: a Gen 1 sulks sooner and harder than a Gen 6, a Family Homebody fastest, a Hollow Introvert hardly ever.
+- **Simulated neighbours.** The front door opens a street of neighbours. FriendSDK has no multiplayer, so they are the SDK's two sample Friends (#3412, a Skeleton, and #7730, a Hoverer), played by the game and labelled *simulated* everywhere; they are not real players. Visit one's room (its own colour and family heirloom) and hug, say hi, dance or share a snack: how it goes depends on both characters ("Instant besties", "A bit awkward").
+
+  ![A simulated visit to a neighbour's room](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/visit.png)
 - **A relationship.** A *Meet your Friend* card opens first; seconds after the welcome the Friend makes its first own choice, something it loves, and the game says why on screen ("Humippy's own choice: float on the cloud — its family heirloom"; then at most once a minute); a diary records what it chose by itself, what it refused and which wishes you granted; friendship levels go from Stranger to Forever Friend.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code and never looks up other tokens.
@@ -153,7 +157,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`32c81be`](https://github.com/DEDQ3E/rare-friends-nook/tree/32c81be3adadbea6d9c4bdfbb51cdfd5afddfdb4)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`52c984b`](https://github.com/DEDQ3E/rare-friends-nook/tree/52c984be1850f01babbc77cd52d5075a6edb8d69)). FriendSDK v0.1.2, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
 
 ## Playable demo / how to run
 
@@ -175,6 +179,7 @@ On Windows, `play.bat` serves the prebuilt `docs/` folder on http://localhost:41
 - Click or tap furniture to choose what your Friend does; click the floor to walk. Arrows / WASD walk, `E` uses the nearest thing, `F` talks to your Friend, `Esc` closes.
 - Keep its five needs up. The panel names the lowest need and points (with an arrow in the house) to one thing that raises it; one tap sends your Friend there.
 - Find its four secrets by watching, feeding and talking to it; at 22:00 the day ends with a recap card.
+- The front door visits a simulated neighbour. Leave your Friend alone too long and it sulks; pet it or talk to it to make up.
 - Leave it alone and it lives its own life, choosing by need and by taste. Grant its wishes (thought bubbles) for friendship; it may refuse things it dislikes.
 - Pet it, talk to it, open Gift Boxes with it. Buy food, clothes and furniture; place furniture anywhere free (arrows move it, `R` rotates).
 - The camera button makes a random meme about your Friend; *Another meme* rolls again.
@@ -191,11 +196,11 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 <details><summary><b>All checks</b></summary>
 
 - `npm run typecheck`, `npm run check` (`friendsdk check`: valid, expected reward 0.9165 RF, maximum 5 RF), `npm test` (`friendsdk test`: PASS at 960 px).
-- Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
-- **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots and GIF use the same live reads for #7730.
+- Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), the first own choice, secrets found by playing and the day's recap, sulking and making up, a visit to a simulated neighbour, random memes, activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
+- **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots use the same live reads for #7730.
 - **Video:** `tests/video.mjs` records the demo above, picture and sound together, straight from the running game.
 - **Music:** `tests/music.mjs` records every track straight from the game's audio graph to check the mix (similar loudness across tracks, no clipping).
-- `tests/docs.mjs` checks that every price, odd and value in this file and the README matches `game.json` and the code.
+- `npm run docs` (`tests/docs.ts`) checks that every price, odd and value in this file and the README matches `game.json` and the code.
 - Rules pass: canonical artwork never transformed, no wallet code, no storage, no parent-page access, everything simulated and labelled, purchases ignored while the runtime is paused.
 
 </details>
@@ -203,6 +208,7 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 ## Known limitations
 
 - The SDK sandbox has no storage: a reload starts a fresh house, clock and friendship.
+- The SDK has no multiplayer, so the neighbours behind the front door are simulated: FriendSDK's two sample Friends, played by the game and labelled as such.
 - `friendsdk test` and the interaction tests use the SDK's mock wallet with Friend #7730, whose simulated ledger always returns the first keepsake. The ten-Friend run reads real artwork and generations but mocks the wallet; no Hollow Friend was in the fixed list, so that family is covered by code only.
 - The generation is one public read of the Generations contract from inside the game (the same RPC the SDK sprite reader uses and the child CSP allows). It is never an ownership check; if it fails, the character uses medium strength.
 - Mobile needs the wallet app's browser; in portrait the 3:2 frame is small (the game suggests turning the phone).
@@ -210,4 +216,4 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 
 ## Credits
 
-Game design, code, pixel art, music and sound: DEDQ3E with Claude (Anthropic). FriendSDK v0.1.2 and the Rare Friends Generations artwork by Rare Friends. The wardrobe fitting (`fit.ts`, `wardrobe.ts`) is reused from the builder's own entry *Rare Friends: Expeditions*. No third-party assets. License: Apache-2.0.
+Game design, code, pixel art, music and sound: DEDQ3E with Claude (Anthropic). FriendSDK v0.1.2 and the Rare Friends Generations artwork by Rare Friends. The neighbours use the SDK's own sample Friend artwork (`examples/fishing/sample-sprites.ts`, SDK-supplied, see its NOTICE.md). The wardrobe fitting (`fit.ts`, `wardrobe.ts`) is reused from the builder's own entry *Rare Friends: Expeditions*. No third-party assets. License: Apache-2.0.
