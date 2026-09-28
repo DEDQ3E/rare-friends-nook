@@ -55,9 +55,9 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [meme, setMeme] = useState<{ meme: Meme; url: string } | null>(null);
   const [found, setFound] = useState<ReadonlySet<Secret>>(() => new Set());
   const foundRef = useRef(found); foundRef.current = found;
-  const [recap, setRecap] = useState<{ day: number; own: number; loved: number; refused: number; wishes: number; gifts: number; level: number; found: number; url: string; alt: string } | null>(null);
+  const [recap, setRecap] = useState<{ day: number; own: number; loved: number; refused: number; wishes: number; gifts: number; sulks: number; level: number; found: number; url: string; alt: string } | null>(null);
   const lastGift = useRef<{ name: string; rare: boolean; at: number } | null>(null); // for the Gift Box meme
-  const dayStats = useRef({ own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0 }), recapDay = useRef(0);
+  const dayStats = useRef({ own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0, sulks: 0 }), recapDay = useRef(0);
   const [toast, setToast] = useState("");
   const [speed, setSpeed] = useState(1);
   const [zoomed, setZoomed] = useState(true); // the Friend is the star: start close, the whole house is one tap away
@@ -78,7 +78,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [volume, setVolume] = useState(80), [motionPref, setMotionPref] = useState<"auto" | "on" | "off">("auto");
   const [hintClosed, setHintClosed] = useState(false);
   const lastLevel = useRef(0);
-  const [hint, setHint] = useState<{ need: NeedKey; uid: string | null; action: string | null } | null>(null);
+  const [hint, setHint] = useState<{ need: NeedKey; uid: string | null; action: string | null; sulk?: boolean } | null>(null);
   const locked = useRef(false), epoch = useRef(0);
   const viewRef = useRef<View | null>(null); viewRef.current = view;
   const lastChoiceToast = useRef(-Infinity);
@@ -172,6 +172,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (e.type === "speech") scape.current?.babble(e.text, voiceRef.current);
     if (e.type === "start" && e.auto) { dayStats.current.own++; if (e.loved) dayStats.current.loved++; }
     if (e.type === "refuse") dayStats.current.refused++;
+    if (e.type === "sulk") { dayStats.current.sulks++; note("Sulking: left alone too long"); flash(`${nick} is sulking: you left it alone too long. Pet it or talk to it to make up.`); play("impact", .35); }
+    if (e.type === "forgive") { note("Made up with you"); flash(`${nick} forgave you.`); play("reward", .5); }
     if (e.type === "wishDone") dayStats.current.wishes++;
     if (e.type === "done" && SNACK_ACTIONS.includes(e.action)) discover("snack");
     if (e.type === "done" && e.action === "talk") discover("birthday");
@@ -236,10 +238,11 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   // hint: the lowest need, and one random thing in the house that raises it (kept until that need changes)
   useEffect(() => {
     const e = engine.current; if (!view || !e) return;
+    if (view.sulk) { if (!hint?.sulk) setHint({ need: "social", uid: "friend", action: "pet", sulk: true }); return; } // sulking: make up first
     const low = NEEDS.reduce((a, b) => (view.needs[b] < view.needs[a] ? b : a));
     if (view.needs[low] >= 65) { if (hint) setHint(null); return; }
     const options = e.hintOptions(low);
-    const still = hint && hint.need === low && (hint.uid === null ? options.length === 0 : options.some(o => o.uid === hint.uid && o.action === hint.action));
+    const still = hint && !hint.sulk && hint.need === low && (hint.uid === null ? options.length === 0 : options.some(o => o.uid === hint.uid && o.action === hint.action));
     if (still) return;
     const pick = options.length ? options[Math.floor(Math.random() * options.length)] : null;
     setHint({ need: low, uid: pick?.uid ?? null, action: pick?.action ?? null });
@@ -468,7 +471,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     recapDay.current = dueDay;
     const s = dayStats.current, m = memeNow(e);
     setRecap({ day: dueDay, ...s, level, found: found.size, url: m.url, alt: `${m.meme.top} / ${m.meme.bottom}` });
-    dayStats.current = { own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0 };
+    dayStats.current = { own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0, sulks: 0 };
     setMenu(null); setPanel("recap"); play("reward", .6);
   }, [dueDay, panel, placing, showIntro, paused]); // eslint-disable-line react-hooks/exhaustive-deps
   if (loadError) return <div className="fn-root fn-center" role="alert"><p>{loadError}</p><button type="button" className="fn-btn" onClick={() => { setLoadError(""); setAttempt(n => n + 1); }}>Retry</button></div>;
@@ -522,9 +525,9 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
         {NEEDS.map(k => <div key={k} className={`fn-need${hint?.need === k ? " fn-low" : ""}`} title={NEED_LABEL[k]}><img src={icon[NEED_ICON[k]]} alt="" /><span>{NEED_LABEL[k]}</span><i role="meter" aria-label={NEED_LABEL[k]} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(v.needs[k])}><b style={{ width: `${v.needs[k]}%`, background: NEED_COLOR(v.needs[k]) }} /></i></div>)}
         {hint && <button type="button" className="fn-hintbtn" onClick={followHint} disabled={paused || hintBusy} title="Suggested by the game">
           <img src={icon[hint.action ? ACTION[hint.action].icon : "apple"]} alt="" />
-          <span><em>{NEED_LABEL[hint.need]} is low</em> {hintBusy ? "— on it!" : hint.action ? <>→ {ACTION[hint.action].label.toLowerCase()}{hint.uid && hint.uid !== "friend" ? ` · ${DEF[engine.current?.pieceById(hint.uid)?.def ?? ""]?.name ?? ""}` : ""}</> : "→ buy food in the shop"}</span>
+          <span><em>{hint.sulk ? "Sulking" : `${NEED_LABEL[hint.need]} is low`}</em> {hintBusy ? "— on it!" : hint.action ? <>→ {ACTION[hint.action].label.toLowerCase()}{hint.uid && hint.uid !== "friend" ? ` · ${DEF[engine.current?.pieceById(hint.uid)?.def ?? ""]?.name ?? ""}` : ""}</> : "→ buy food in the shop"}</span>
         </button>}
-        <div className="fn-mood">Feeling <strong>{moodLabel(v.mood)}</strong>{v.wish && <span className="fn-wish" title="Current wish"> · wishes to <img src={icon[ACTION[v.wish].icon]} alt="" /> {ACTION[v.wish].label.toLowerCase()}</span>}</div>
+        <div className="fn-mood">Feeling <strong>{v.sulk ? "Sulky" : moodLabel(v.mood)}</strong>{v.wish && <span className="fn-wish" title="Current wish"> · wishes to <img src={icon[ACTION[v.wish].icon]} alt="" /> {ACTION[v.wish].label.toLowerCase()}</span>}</div>
       </div>}
 
       {/* bottom right: time */}
@@ -599,7 +602,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
             <img className="fn-meme fn-meme-small" src={recap.url} alt={recap.alt} />
             <ul className="fn-recap">
               <li><strong>{recap.own}</strong> things it chose by itself{recap.own ? <>, <strong>{recap.loved}</strong> of them things it loves</> : ""}</li>
-              <li>{recap.refused ? <>Refused <strong>{recap.refused}</strong> {recap.refused === 1 ? "thing" : "things"} it dislikes</> : "Refused nothing today"}</li>
+              <li>{recap.refused ? <>Refused <strong>{recap.refused}</strong> {recap.refused === 1 ? "thing" : "things"} it dislikes</> : "Refused nothing today"}{recap.sulks ? <> · sulked <strong>{recap.sulks}</strong> {recap.sulks === 1 ? "time" : "times"}</> : " · never sulked"}</li>
               <li><strong>{recap.wishes}</strong> {recap.wishes === 1 ? "wish" : "wishes"} granted{recap.gifts ? <> · <strong>{recap.gifts}</strong> Gift {recap.gifts === 1 ? "Box" : "Boxes"} opened</> : ""}</li>
               <li>Friendship: <strong>{BOND_TITLES[recap.level]}</strong> · secrets found: <strong>{recap.found}/{SECRETS.length}</strong></li>
             </ul>

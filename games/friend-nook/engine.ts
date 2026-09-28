@@ -40,7 +40,9 @@ export type FriendSprites = Readonly<{ walk: Readonly<Record<Facing, readonly (r
 export type EngineEvent =
   | { type: "speech"; text: string }
   | { type: "panel"; panel: "wardrobe" | "keepsakes" | "gift" }
-  | { type: "refuse"; action: string }
+  | { type: "refuse"; action: string; sulking?: boolean }
+  | { type: "sulk"; grudge: number }
+  | { type: "forgive" }
   | { type: "noStock"; kind: "snack" | "meal" }
   | { type: "wish"; action: string }
   | { type: "wishDone"; action: string; points: number }
@@ -56,6 +58,7 @@ export type Pick =
   | { kind: "floor"; i: number; j: number; x: number; y: number }
   | { kind: "none"; x: number; y: number };
 export type View = Readonly<{
+  sulk: number; // make-ups still needed (0 = not sulking)
   needs: Readonly<Needs>; minute: number; mood: number; action: string | null; walking: boolean;
   wish: string | null; friendship: number; stock: Readonly<Stock>; room: Room; speed: number; active: string | null;
 }>;
@@ -80,6 +83,10 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   let sprites: FriendSprites | null = null, outfit: Outfit = {};
   let temper: Temperament = BALANCED, strength = .5, quirk: string | null = null, humIn = 1;
   let clean = false; // a meme snapshot: no arrow, bubble or speech
+  // left alone too long it sulks: player requests are refused until you make up (pet it, talk to it, a Gift Box)
+  let careAt = 8 * 60, grudge = 0; // the day starts at 08:00
+  const MAKE_UP: readonly string[] = ["pet", "talk", "gift"];
+  const sulkLimit = () => 300 * temper.sulkAfter * (1.3 - .5 * strength); // in-game minutes
   let paused = false, speed = 1, reduced = false, zoom = 1, zoomTo = 1, heirloomFor: string | null = null;
   let minute = 8 * 60;                      // Day 1, 08:00
   const needs: Needs = { hunger: 72, energy: 80, fun: 60, hygiene: 85, social: 55 };
@@ -200,6 +207,9 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   /** Start an action (from a menu click or free will). */
   function command(id: string, targetUid: string | null, fromPlayer = true): boolean {
     const a = ACTION[id]; if (!a) return false;
+    if (fromPlayer && grudge > 0 && !MAKE_UP.includes(id)) {
+      say(pickLine(temper.voice.sulk)); show("angry", 2); onEvent({ type: "refuse", action: id, sulking: true }); idleFor = 0; return false;
+    }
     if (fromPlayer && Math.random() < refuseChance(temper, strength, id)) {
       say(pickLine(temper.voice.nope)); show("angry", 2); onEvent({ type: "refuse", action: id }); idleFor = 0; return false;
     }
@@ -240,8 +250,14 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     if (doing.loved) { show("heart", 1.8); if (Math.random() < .5) say(pickLine(temper.voice.love)); }
     else if (temper.dislikes.includes(a.id)) show("sweat", 1.8);
     else show(a.icon as keyof typeof ICONS, 1.6);
-    if (a.id === "talk") say(pickLine(temper.voice.idle));
+    if (a.id === "talk" && !grudge) say(pickLine(temper.voice.idle));
+    if (a.withYou && !doing.auto) careAt = minute; // you spent time with it
+    if (a.id === "gift" && grudge) makeUp(grudge);
     onEvent({ type: "start", action: a.id, auto: doing.auto, loved: doing.loved, disliked: temper.dislikes.includes(a.id) });
+  }
+  function makeUp(n: number) {
+    grudge = Math.max(0, grudge - n); careAt = minute;
+    if (grudge) { show("dots", 1.6); say("Hmph. Keep going..."); } else { say(temper.voice.forgive, 4); show("heart", 2.4); onEvent({ type: "forgive" }); }
   }
   function finish() {
     if (!doing) return;
@@ -251,6 +267,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     friendship += loved ? 3 : 1;
     if (wish && wish.action === a.id) { const pts = 12 + Math.round(8 * strength); friendship += pts; wish = null; wishIn = 100 + Math.random() * 80; show("sparkle", 2.4); onEvent({ type: "wishDone", action: a.id, points: pts }); }
     stop(); idleFor = 0;
+    if (grudge && (a.id === "pet" || a.id === "talk")) makeUp(1);
     onEvent({ type: "done", action: a.id, loved });
   }
 
@@ -324,6 +341,10 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     minute += gm;
     const asleep = !!doing && doing.phase === "do" && !!doing.action.sleep;
     decayNeeds(needs, gm / 60, temper, asleep, minute);
+    // left alone too long: it sulks (stronger characters sooner and longer)
+    if (!grudge && !asleep && minute - careAt > sulkLimit()) {
+      grudge = 1 + Math.round(2 * strength); say(pickLine(temper.voice.sulk), 4); show("angry", 2.5); onEvent({ type: "sulk", grudge });
+    }
     // walking
     const pace = WALK_SPEED * temper.speed * Math.min(2, speed) * dt;
     if (move.x || move.y) {
@@ -617,7 +638,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     command,
     walkTo(i: number, j: number) { const p = pathTo(i, j, .8); if (p) { stop(); fr.path = p; idleFor = 0; } else onEvent({ type: "blocked" }); },
     cancel() { stop(); idleFor = 0; },
-    greet() { say(pickLine(temper.voice.hello), 4.5); show("heart", 2); firstChoice = true; idleFor = 4.5; },
+    greet() { say(pickLine(temper.voice.hello), 4.5); show("heart", 2); firstChoice = true; idleFor = 4.5; careAt = minute; },
     say,
     emote(icon: keyof typeof ICONS, seconds = 2) { show(icon, seconds); },
     /** Actions shown in the menu of a clicked piece (always offered; availability is explained in the menu). */
@@ -670,7 +691,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     boostNeed(k: NeedKey, v: number) { needs[k] = clamp(needs[k] + v); },
     preferenceOf(id: string) { return preference(temper, strength, id); },
     view(): View {
-      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null };
+      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null, sulk: grudge };
     },
     /** Meme mode: a clean picture of the Friend and the room around it, cut from the current view. */
     snapshot(): HTMLCanvasElement {
