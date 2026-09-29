@@ -1,4 +1,5 @@
-// The front door: visit a simulated neighbour (FriendSDK's sample Friends, played by the game). node tests/visit.mjs [out-dir]
+// The front door: visit a simulated neighbour (FriendSDK's sample Friends, played by the game) in its whole house, in its
+// family's style; your Friend walks over as the guest. Then back home, which must keep its own look. node tests/visit.mjs [out-dir]
 import assert from "node:assert/strict";
 import { testGame } from "@rarefriends/friendsdk/testing";
 const out = process.argv[2] ?? "./tmp";
@@ -20,13 +21,14 @@ for (const [w, h, name] of [[1280, 800, "visit-desktop"], [844, 390, "visit-phon
     await page.screenshot({ path: `${out}/${name}-list.png` });
     await game.getByRole("button", { name: /sample Friend #/ }).first().click();
     const scene = game.locator("section[role=dialog]").filter({ hasText: "simulated neighbour" });
-    await scene.waitFor();
-    for (const act of ["Hug", "Dance together"]) { await game.getByRole("button", { name: act }).click(); await page.waitForTimeout(900); console.log(act, "→", await scene.locator(".fn-sub").innerText()); }
+    await scene.waitFor(); await page.waitForTimeout(4500); // the guest walks in from the front door
+    for (const act of ["Hug", "Dance together"]) { await game.getByRole("button", { name: act }).click(); await page.waitForTimeout(1500); console.log(act, "→", await scene.locator(".fn-sub").innerText()); }
     await page.screenshot({ path: `${out}/${name}.png` });
     if (name === "visit-desktop") await scene.screenshot({ path: "./media/visit.png" }); // for the submission
     const drawn = await game.locator("canvas.fn-visit").evaluate(c => { const g = c.getContext("2d"), d = g.getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] > 150) n++; return [c.width, c.height, n]; });
     assert.ok(drawn[2] > 1000, "the room is drawn"); console.log("canvas", drawn.join(" "));
     await game.getByRole("button", { name: "Go home" }).click();
+    await page.waitForTimeout(700); await page.screenshot({ path: `${out}/${name}-home.png` }); // home keeps its own family look
     await game.getByRole("button", { name: "Open your Friend's character card" }).click();
     const diary = await game.locator(".fn-diary li").allInnerTexts(); console.log(diary.slice(0, 3).join(" | "));
     assert.ok(diary.some(s => s.includes("simulated neighbour")));

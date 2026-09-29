@@ -91,8 +91,10 @@ Every family also loves its own heirloom (below).
   requests until you make up: pet it or talk to it (1 to 3 times, by character strength) or open a Gift Box. How soon
   depends on family (Homebody fastest, Introvert hardly ever) and generation.
 - **Simulated neighbours.** No multiplayer in the SDK: the front door opens a list of FriendSDK's sample Friends
-  (#3412, #7730; SDK-supplied artwork), played by the game and labelled simulated. A visit is a small room with their
-  colour and heirloom; hug, say hi, dance or share a snack, and both temperaments decide the reaction.
+  (#3412, #7730; SDK-supplied artwork), played by the game and labelled simulated. A visit is the neighbour's whole house in its
+  family's style, run by a second engine: the neighbour lives there by itself (free will) and your Friend is the guest,
+  who walks over for each thing you do together; hug, say hi, dance or share a snack, and both temperaments decide the
+  reaction. Each engine puts its own home and colour into the shared drawing state before it builds or draws.
 - **Family heirloom.** Each family brings one piece into the house (front of the living room) with its own loved
   activity: bone xylophone, mask stand, family photo table, cell garden, wobbly tower, cloud cushion, old boulder
   seat, mirror ball, quiet lantern.

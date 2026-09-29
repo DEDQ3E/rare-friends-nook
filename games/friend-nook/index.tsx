@@ -23,7 +23,7 @@ import { randomMeme, renderMeme, type Meme } from "./memes.js";
 import { HEIRLOOM } from "./heirlooms.js";
 import { HOMES } from "./homes.js";
 import { neighbours, type Neighbour } from "./neighbours.js";
-import { VISIT_ACTS, drawVisit, react, type VisitAct } from "./visit.js";
+import { VISIT_ACTS, react, type VisitAct } from "./visit.js";
 import "./style.css";
 
 const rfText = (value: bigint) => `${formatGameAmount(value, 18)} RF`;
@@ -58,7 +58,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [meme, setMeme] = useState<{ meme: Meme; url: string } | null>(null);
   // a visit to a simulated neighbour (FriendSDK has no multiplayer: the neighbours are its sample Friends, played by the game)
   const [visit, setVisit] = useState<{ n: Neighbour; guestSays: string; hostSays: string; verdict: string; hopAt: number; done: ReadonlySet<string> } | null>(null);
-  const visitCanvas = useRef<HTMLCanvasElement | null>(null);
+  const visitCanvas = useRef<HTMLCanvasElement | null>(null), away = useRef<Engine | null>(null);
   const nearby = useMemo(() => neighbours().filter(n => n.id !== friendId), [friendId]);
   const [found, setFound] = useState<ReadonlySet<Secret>>(() => new Set());
   const foundRef = useRef(found); foundRef.current = found;
@@ -272,24 +272,29 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   useEffect(() => { if (ready && introDone && !greeted && engine.current) { setGreeted(true); window.setTimeout(() => engine.current?.greet(), 500); } }, [ready, introDone, greeted]);
   const showIntro = ready && !introDone && generation !== undefined && !!traits;
   useEffect(() => { engine.current?.setPaused(showIntro || paused || panel === "visit"); }, [showIntro, paused, panel]); // away visiting: time at home stops
-  // the visit scene, animated while it is open
+  // the visit: the neighbour's whole house, in its family's style, run by a second engine; the neighbour lives by
+  // itself (free will) and your Friend is the guest, who walks over for each thing you do together
+  const visitN = visit?.n ?? null;
   useEffect(() => {
-    if (panel !== "visit" || !visit || !sprites) return;
-    let raf = 0; const t0 = performance.now();
-    const loop = (now: number) => {
-      const c = visitCanvas.current, g = c?.getContext("2d");
-      if (c && g) {
-        const r = c.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(320, Math.round(r.width * dpr)), h = Math.round(w * 9 / 16);
-        if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
-        g.imageSmoothingEnabled = false;
-        drawVisit(g, { guest: sprites.idle.down, host: visit.n.sprites.idle.down, accent: visit.n.traits.accent, heirloomDef: visit.n.heirloom?.def.id ?? null, home: HOMES[visit.n.family],
-          t: Math.max(0, now - t0) / 1000, reduced: lessMotion, guestSays: visit.guestSays, hostSays: visit.hostSays, hop: 1.4 - (now - visit.hopAt) / 1000 });
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [panel, visit, sprites, lessMotion]);
+    const c = visitCanvas.current;
+    if (panel !== "visit" || !visitN || !sprites || !c) return;
+    let e: Engine;
+    try { e = createEngine(c, () => {}); } catch { return; }
+    away.current = e; e.resize();
+    e.setSprites(visitN.sprites); e.setCharacter(visitN.temper, .6, visitN.traits.quirk.id); e.setAccent(visitN.traits.accent);
+    e.setMinute(engine.current?.view().minute ?? 8 * 60); e.setZoom(1); e.setReducedMotion(lessMotion); e.setPaused(paused);
+    e.setGuest(sprites, outfit);
+    if (visit) e.meet(visit.hostSays, visit.guestSays, "heart", null);
+    const ro = new ResizeObserver(() => e.resize()); ro.observe(c);
+    return () => { ro.disconnect(); e.destroy(); away.current = null; };
+  }, [panel, visitN, sprites]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { away.current?.setPaused(paused); away.current?.setReducedMotion(lessMotion); }, [paused, lessMotion, visitN]);
+  function onAwayDown(ev: ReactPointerEvent<HTMLCanvasElement>) {
+    const e = away.current; if (!e || paused) return;
+    const r = ev.currentTarget.getBoundingClientRect(), p = e.pick(ev.clientX - r.left, ev.clientY - r.top);
+    if (p.kind === "friend") visitAct(VISIT_ACTS[1]); // click the neighbour: say hi
+    else if (p.kind === "floor") e.guestWalkTo(p.i, p.j);
+  }
   function startVisit(n: Neighbour) {
     if (paused) return;
     engine.current?.care(); play("select", .5); note(`Visited ${n.traits.nickname} (simulated neighbour)`);
@@ -302,6 +307,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (first) { engine.current?.addFriendship(r.score >= 2 ? 4 : r.score >= 1 ? 3 : r.score === 0 ? 1 : 0); engine.current?.boostNeed("social", 6 + 4 * Math.max(0, r.score)); }
     play(r.score > 0 ? "reward" : "select", .5); note(`${a.label} with ${visit.n.traits.nickname}: ${r.verdict.toLowerCase()}`);
     setVisit({ ...visit, guestSays: r.guest, hostSays: r.host, verdict: r.verdict, hopAt: r.score > 0 ? performance.now() : 0, done: new Set([...visit.done, a.id]) });
+    away.current?.meet(r.host, r.guest, a.icon, a.id === "dance" ? "dance" : r.score > 0 ? "hop" : null);
   }
 
   /* ---------- input ---------- */
@@ -637,7 +643,19 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
         <button type="button" className="fn-item fn-cancel" onClick={() => setMenu(null)}>Close</button>
       </div>}
 
-      {panel && <div className="fn-overlay" onPointerDown={e => { if (e.target === e.currentTarget) setPanel(null); }}>
+      {panel === "visit" && visit && <section className="fn-away" role="dialog" aria-modal="true" aria-label={`Visiting ${visit.n.traits.nickname}`}>
+        <canvas ref={visitCanvas} className="fn-visit" role="img" aria-label={`${nick} visiting ${visit.n.traits.nickname}'s house`} onPointerDown={onAwayDown} />
+        <div className="fn-card fn-away-top">
+          <h2>{visit.n.traits.nickname}'s {HOMES[visit.n.family]?.name ?? "house"} <span className="fn-sim">simulated neighbour</span></h2>
+          <p className="fn-sub">{visit.verdict ? <strong>{visit.verdict}</strong> : <>{visit.n.traits.nickname} is a {visit.n.temper.title} and lives here by itself. What will {nick} think?</>}</p>
+          <small className="fn-away-note">A simulated visit: {visit.n.traits.nickname} is one of FriendSDK's sample Friends, played by the game, not by a real player. Click the floor to walk.</small>
+        </div>
+        <div className="fn-card fn-away-bar" role="toolbar" aria-label="Things to do together">
+          {VISIT_ACTS.map(a => <button key={a.id} type="button" className="fn-btn fn-small" disabled={paused} onClick={() => visitAct(a)}><img src={icon[a.icon]} alt="" /> {a.label}</button>)}
+          <button type="button" className="fn-btn fn-small fn-home" onClick={() => { setVisit(null); setPanel(null); }}>Go home</button>
+        </div>
+      </section>}
+      {panel && panel !== "visit" && <div className="fn-overlay" onPointerDown={e => { if (e.target === e.currentTarget) setPanel(null); }}>
         <section className="fn-panel" role="dialog" aria-modal="true" aria-label={panel}>
           <button type="button" className="fn-close" onClick={() => setPanel(null)} aria-label="Close">×</button>
           {panel === "neighbours" && <>
@@ -647,14 +665,6 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               <img src={neighbourPortrait[String(n.id)]} width={60} height={64} alt="" style={{ background: n.traits.accent.light }} />
               <strong>{n.traits.nickname}'s {HOMES[n.family]?.name ?? "room"}</strong><small>{n.family} · {n.temper.title} · sample Friend #{String(n.id)}</small>
             </button>)}</div> : <p>No one else lives on this street yet.</p>}
-          </>}
-          {panel === "visit" && visit && <>
-            <h2>{visit.n.traits.nickname}'s {HOMES[visit.n.family]?.name ?? "room"} <span className="fn-sim">simulated neighbour</span></h2>
-            <canvas ref={visitCanvas} className="fn-visit" role="img" aria-label={`${nick} visiting ${visit.n.traits.nickname}`} />
-            <p className="fn-sub">{visit.verdict ? <strong>{visit.verdict}</strong> : <>{visit.n.traits.nickname} is a {visit.n.temper.title}. What will {nick} think?</>}</p>
-            <div className="fn-row">{VISIT_ACTS.map(a => <button key={a.id} type="button" className="fn-btn fn-small" disabled={paused} onClick={() => visitAct(a)}><img src={icon[a.icon]} alt="" /> {a.label}</button>)}</div>
-            <div className="fn-row"><button type="button" className="fn-btn" onClick={() => { setVisit(null); setPanel(null); }}>Go home</button></div>
-            <p className="fn-note">A simulated visit: {visit.n.traits.nickname} is one of FriendSDK's sample Friends, played by the game, not by a real player.</p>
           </>}
           {panel === "recap" && recap && <>
             <h2>Day {recap.day} with {nick}</h2>

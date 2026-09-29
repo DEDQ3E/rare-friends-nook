@@ -48,9 +48,9 @@ The Friend is the only character, and the game is about who it is.
 
   ![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
 - **It sulks if you leave it alone.** Too long without attention and it sulks: an angry bubble, a line of its own family ("Even the clouds visited more.") and your requests refused until you make up by petting it, talking to it or opening a Gift Box together. Character decides how soon and how long: a Gen 1 sulks sooner and harder than a Gen 6, a Family Homebody fastest, a Hollow Introvert hardly ever.
-- **Simulated neighbours.** The front door opens a street of neighbours. FriendSDK has no multiplayer, so they are the SDK's two sample Friends (#3412, a Skeleton, and #7730, a Hoverer), played by the game and labelled *simulated* everywhere; they are not real players. Visit one's room (its own colour and family heirloom) and hug, say hi, dance or share a snack: how it goes depends on both characters ("Instant besties", "A bit awkward").
+- **Simulated neighbours.** The front door opens a street of neighbours. FriendSDK has no multiplayer, so they are the SDK's two sample Friends (#3412, a Skeleton, and #7730, a Hoverer), played by the game and labelled *simulated* everywhere; they are not real players. A visit takes your Friend into the neighbour's whole house, decorated by its own family like yours (the Skeleton's Moonlit Manor, the Hoverer's Cloud Loft), where the neighbour lives by itself with its own free will. Your Friend is the guest: click the floor to walk around, or hug, say hi, dance or share a snack, and your Friend walks over to the neighbour; how it goes depends on both characters ("Instant besties", "A bit awkward").
 
-  ![A simulated visit to a neighbour's room](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/visit.png)
+  ![A simulated visit: Humippy dancing with Sux in Sux's Moonlit Manor](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/visit.png)
 - **A relationship.** A *Meet your Friend* card opens first; seconds after the welcome the Friend makes its first own choice, something it loves, and the game says why on screen ("Humippy's own choice: float on the cloud — its family heirloom"; then at most once a minute); a diary records what it chose by itself, what it refused and which wishes you granted; friendship levels go from Stranger to Forever Friend.
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code and never looks up other tokens.
@@ -183,7 +183,7 @@ On Windows, `play.bat` serves the prebuilt `docs/` folder on http://localhost:41
 - Click or tap furniture to choose what your Friend does; click the floor to walk. Arrows / WASD walk, `E` uses the nearest thing, `F` talks to your Friend, `Esc` closes.
 - Keep its five needs up. The panel names the lowest need and points (with an arrow in the house) to one thing that raises it; one tap sends your Friend there.
 - Find its four secrets by watching, feeding and talking to it; at 22:00 the day ends with a recap card.
-- The front door visits a simulated neighbour. Leave your Friend alone too long and it sulks; pet it or talk to it to make up.
+- The front door visits a simulated neighbour's house: click the floor to walk, or pick something to do together. Leave your Friend alone too long and it sulks; pet it or talk to it to make up.
 - Leave it alone and it lives its own life, choosing by need and by taste. Grant its wishes (thought bubbles) for friendship; it may refuse things it dislikes.
 - Pet it, talk to it, open Gift Boxes with it. Buy food, clothes and furniture; place furniture anywhere free (arrows move it, `R` rotates).
 - The camera button makes a random meme about your Friend; *Another meme* rolls again.

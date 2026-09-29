@@ -36,7 +36,18 @@
 .fn-secret{color:#9b7a5e}.fn-secret small{margin-left:4px;font-style:italic}
 .fn-recap{margin:6px 0;padding-left:18px}.fn-recap li{margin:2px 0}
 .fn-sim{display:inline-block;font-size:10px;vertical-align:middle;padding:1px 6px;margin-left:6px;background:#E8DCC8;border:2px solid var(--line);text-transform:uppercase;letter-spacing:.5px}
-.fn-visit{display:block;width:100%;max-width:560px;margin:6px auto;border:3px solid var(--line);image-rendering:pixelated;background:#2b1d14}
+/* a visit: the neighbour's whole house fills the frame, with a title card and a toolbar over it */
+.fn-away{position:absolute;inset:0;z-index:12;background:#8FBF6A}
+.fn-away .fn-visit{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;image-rendering:pixelated}
+.fn-away-top{left:12px;top:10px;padding:6px 10px;max-width:calc(100% - 210px);box-sizing:border-box}
+.fn-away-top h2{margin:0;font-size:15px}
+.fn-away-top .fn-sub{margin:2px 0 0;font-size:11px}
+.fn-away-top .fn-away-note{margin-top:3px;font-weight:600}
+.fn-away-bar{right:12px;top:10px;display:flex;flex-direction:column;gap:5px;align-items:stretch;padding:6px}
+.fn-away-bar .fn-btn{justify-content:flex-start;padding:4px 8px;font-size:11px}
+.fn-away-bar .fn-btn img{width:16px;height:16px}
+.fn-away-bar .fn-home{margin-top:4px;justify-content:center}
+@container (max-width: 720px) { .fn-away-top{left:6px;top:6px;padding:3px 6px;max-width:calc(100% - 128px)}.fn-away-top h2{font-size:11px}.fn-away-top .fn-sub,.fn-away-top .fn-away-note{font-size:8px}.fn-away-bar{right:6px;top:6px;gap:2px;padding:3px}.fn-away-bar .fn-btn{font-size:8px;padding:2px 4px}.fn-away-bar .fn-btn img{width:11px;height:11px} }
 .fn-meme{display:block;width:100%;max-width:480px;margin:6px auto;border:3px solid var(--line);background:#000}
 .fn-meme-small{max-width:340px}
 .fn-happy{font-weight:bold;margin:0 0 5px;padding-bottom:5px;border-bottom:2px dashed #e6d6bf}

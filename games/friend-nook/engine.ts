@@ -109,9 +109,16 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   let bought = 0;
   let particles: Particle[] = [], emitIn = 0, hintUid: string | null = null, stepIn = 0;
   const tops = new Map<string, { x: number; y: number }>();
+  // this house's look (a visit runs a second engine: each one puts its own look into FX before it builds or draws)
+  let myHome = FX.home, myAccent = FX.accent;
+  const own = () => { FX.home = myHome; FX.accent = myAccent; };
+  // a guest: your Friend visiting a neighbour's house (drawn and walked here; the host is this engine's Friend)
+  type Guest = { sprites: FriendSprites; outfit: Outfit; i: number; j: number; facing: Facing; path: [number, number][]; moving: boolean; clock: number; says: { text: string; until: number } | null; meet: (() => void) | null; followIn: number };
+  let guest: Guest | null = null, together: { until: number; anim: "dance" | "hop" } | null = null;
 
   /* ---------- furniture → parts and blocked cells ---------- */
   function rebuild() {
+    own();
     const b = new Builder();
     buildStructure(b);
     for (const p of placed) buildPlaced(b, p);
@@ -143,9 +150,9 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     return edgeOpen(a, c, na, nc);
   }
   /** Distances from the Friend's cell to every reachable cell (8 directions, no corner cutting). */
-  function reach(): { dist: Float32Array; prev: Int32Array } {
+  function reach(si = fr.i, sj = fr.j): { dist: Float32Array; prev: Int32Array } {
     const dist = new Float32Array(GW * GH).fill(Infinity), prev = new Int32Array(GW * GH).fill(-1);
-    const [sa, sc] = cellOf(fr.i, fr.j), open: number[] = [sc * GW + sa]; dist[sc * GW + sa] = 0;
+    const [sa, sc] = cellOf(si, sj), open: number[] = [sc * GW + sa]; dist[sc * GW + sa] = 0;
     while (open.length) {
       let best = 0; for (let k = 1; k < open.length; k++) if (dist[open[k]] < dist[open[best]]) best = k;
       const cur = open.splice(best, 1)[0], a = cur % GW, c = (cur - a) / GW;
@@ -159,8 +166,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     return { dist, prev };
   }
   /** Path to the reachable free cell nearest to (i, j). */
-  function pathTo(i: number, j: number, maxOff = 1.2): [number, number][] | null {
-    const { dist, prev } = reach();
+  function pathTo(i: number, j: number, maxOff = 1.2, from?: readonly [number, number]): [number, number][] | null {
+    const { dist, prev } = from ? reach(from[0], from[1]) : reach();
     let best = -1, bestD = Infinity;
     for (let n = 0; n < GW * GH; n++) {
       if (dist[n] === Infinity) continue;
@@ -413,6 +420,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       wish = { action: choice.id, until: minute + 6 * 60 }; onEvent({ type: "wish", action: choice.id }); show(choice.icon as keyof typeof ICONS, 3.5, true);
     }
     if (wish && minute > wish.until) { wish = null; wishIn = 60; }
+    if (guest) updateGuest(dt);
     // voice
     voiceIn -= dt;
     if (voiceIn <= 0) {
@@ -422,6 +430,34 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       if (!low || (lastLow[low] ?? -1e9) < minute - 120) { if (low) lastLow[low] = minute; say(line); }
       else if (wish) show(ACTION[wish.action].icon as keyof typeof ICONS, 3, true);
       if (!bubble && mood(needs) < 35) show(Math.random() < .5 ? "dots" : "sweat", 2.5);
+    }
+  }
+  /** Where the guest stands beside the host: the same room, clear of walls and doorways (a wall between them would
+   * hide half of it), preferring the host's screen right. */
+  function besideHost(): [number, number] {
+    const room = roomAt(fr.i, fr.j);
+    // walls between the spot and the camera (larger i or j): the high lintel over the dining opening reaches further
+    const clear = (i: number, j: number) => Math.min(i < 8 ? 8 - i - (j > 5.9 && j < 9 ? 1.1 : 0) : 9, j < 5 ? 5 - j : 9, j < 5 && i < 5 ? 5 - i : 9, (i - .4) * 2, (j - .4) * 2, (COLS - .4 - i) * 2, (ROWS - .4 - j) * 2);
+    for (const [di, dj] of [[1.2, -.45], [-.45, 1.2], [-1.2, .45], [.45, -1.2], [.9, .9], [-.9, -.9]] as const) {
+      const i = fr.i + di, j = fr.j + dj;
+      if (roomAt(i, j) === room && clear(i, j) >= .8 && !blocked[cellOf(i, j)[1] * GW + cellOf(i, j)[0]]) return [i, j];
+    }
+    return [fr.i + 1.2, fr.j - .45];
+  }
+  /** The guest walks its path; when idle and far from the host, it strolls over to stay near. */
+  function updateGuest(dt: number) {
+    const q = guest!; q.clock += dt;
+    if (q.path.length) {
+      const pace = WALK_SPEED * Math.min(2, speed) * dt, [ti, tj] = q.path[0], di = ti - q.i, dj = tj - q.j, d = Math.hypot(di, dj);
+      if (d <= pace) { q.i = ti; q.j = tj; q.path.shift(); } else { q.i += di / d * pace; q.j += dj / d * pace; q.facing = faceToward(di, dj); }
+      q.moving = true;
+      if (!q.path.length) { q.moving = false; const m = q.meet; q.meet = null; m?.(); }
+      return;
+    }
+    q.moving = false; q.followIn -= dt;
+    if (q.followIn <= 0) {
+      q.followIn = 2.5;
+      if (Math.hypot(fr.i - q.i, fr.j - q.j) > 2.6) { const [bi, bj] = besideHost(), p = pathTo(bi, bj, 1.2, [q.i, q.j]); if (p && p.length > 1) q.path = p; }
     }
   }
   /** The camera glides to its zoom and, zoomed in, follows the Friend (runs even while game time is stopped). */
@@ -454,8 +490,13 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       default: return { dx: 0, dy: 0 };
     }
   }
+  function togetherOffset(clock: number): { dx: number; dy: number } | null {
+    if (!together || t > together.until || reduced) return null;
+    return together.anim === "dance" ? { dx: Math.sin(clock * 4) * 3, dy: -Math.abs(Math.sin(clock * 8)) * 3 } : { dx: 0, dy: -Math.abs(Math.sin(clock * 9)) * 4 };
+  }
   function friendOffset(): { dx: number; dy: number } {
     if (reduced) return { dx: 0, dy: 0 };
+    const tog = !doing && !fr.moving ? togetherOffset(fr.clock) : null; if (tog) return tog;
     if (!doing && !fr.moving) return signatureIdle();
     if (!doing || doing.phase !== "do") return { dx: 0, dy: fr.moving ? -Math.abs(Math.sin(fr.clock * 10)) : 0 };
     const a = doing.action.anim, s = fr.clock;
@@ -497,6 +538,25 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       if (temper.family === "Family") { const ph = (fr.clock % 4) / 4; if (ph < .5 * (.5 + strength)) { const hy = top - 4 - ph * 16; c.fillStyle = `rgba(255,77,109,${1 - ph * 1.6})`; c.fillRect(x + 9, hy, 2, 2); c.fillRect(x + 12, hy, 2, 2); c.fillRect(x + 9, hy + 1, 5, 2); c.fillRect(x + 10, hy + 3, 3, 1); } }
     }
   }
+  function guestPart(q: Guest): Part {
+    const r = .2;
+    return makePart(q.i - r, q.i + r, q.j - r, q.j + r, 0, 30, "guest", c => drawGuestNow(c, q));
+  }
+  function guestRows(q: Guest) {
+    const clip = q.moving ? q.sprites.walk[q.facing] : q.sprites.idle[q.facing];
+    return clip[Math.floor(q.clock * (q.moving ? 8 : 2.5)) % Math.max(1, clip.length)] ?? clip[0] ?? [];
+  }
+  function drawGuestNow(c: CanvasRenderingContext2D, q: Guest) {
+    const rows = guestRows(q); if (!rows.length) return;
+    const [x, y] = project(q.i, q.j, 0), feet = feetRow(rows), off = (!q.moving && togetherOffset(q.clock + 1.3)) || { dx: 0, dy: q.moving && !reduced ? -Math.abs(Math.sin(q.clock * 10)) : 0 };
+    c.fillStyle = "rgba(0,0,0,.18)"; c.beginPath(); c.ellipse(x, y, 11, 3.6, 0, 0, Math.PI * 2); c.fill();
+    c.save(); c.translate(Math.round(x + off.dx - 8 * SPRITE), Math.round(y + off.dy - (feet + 1) * SPRITE)); c.scale(SPRITE, SPRITE);
+    drawFriend(c, rows, 0, 0, q.outfit, q.facing, q.clock, q.moving); c.restore();
+  }
+  function guestHead(q: Guest): [number, number] {
+    const rows = guestRows(q), [x, y] = project(q.i, q.j, 0);
+    return [x, y - ((rows.length ? feetRow(rows) : 15) - (rows.length ? topRow(rows) : 2) + 2) * SPRITE];
+  }
   /** The near half of the bath (water, foam, front rim and end) drawn over the Friend sitting in it. */
   function drawTubFront(c: CanvasRenderingContext2D, [a, b, e, d]: readonly number[]) {
     const P = project, dk = darkness(minute), rim = .12, wz = 7.6, W = ["#FFFFFF", "#E6E6EE", "#D2D2DE"];
@@ -531,6 +591,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
 
   function draw() {
     const W = canvas.width, H = canvas.height; scale = W / VIEW_W;
+    own();
     g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false;
     const k = darkness(minute);
     g.fillStyle = lit(GRASS, k * .8); g.fillRect(0, 0, W, H);
@@ -552,6 +613,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     }
     FX.t = t; FX.dark = k; FX.calm = reduced; FX.acts.clear(); if (doing?.phase === "do") FX.acts.add(doing.action.id);
     drawOrder = withMoving(parts, friendPart());
+    if (guest) drawOrder = withMoving(drawOrder, guestPart(guest));
     for (const p of drawOrder) {
       if (p.custom) { p.custom(g, p); continue; }
       const hi = hover !== null && p.owner === hover;
@@ -577,15 +639,21 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     if (bubble && t < bubble.until) {
       g.save(); g.translate(sx, sy); const bs = Math.max(2, Math.round(scale)); g.scale(bs, bs); drawIconBubble(g, bubble.icon, 0, 0, bubble.thought); g.restore();
     } else bubble = null;
-    if (speech && t < speech.until) drawSpeech(sx, sy - (bubble ? 34 * scale / 2 : 0), speech.text); else speech = null;
+    const hostTalks = !!speech && t < speech.until, hostTop = hostTalks ? drawSpeech(sx, sy - (bubble ? 34 * scale / 2 : 0), speech!.text) : Infinity;
+    if (!hostTalks) speech = null;
+    if (guest?.says && t < guest.says.until) { // the guest's words sit higher, so the two never cover each other
+      const [gx, gy] = guestHead(guest), [qx, qy] = toScreen(gx, gy - 4);
+      drawSpeech(qx, Math.min(qy, hostTop - 4 + 3 * scale), guest.says.text);
+    } else if (guest) guest.says = null;
   }
-  function drawSpeech(x: number, y: number, text: string) {
+  function drawSpeech(x: number, y: number, text: string): number {
     const css = canvas.width / Math.max(1, canvas.getBoundingClientRect().width), fs = Math.round(Math.max(6.5 * scale, 11 * css)); g.font = `bold ${fs}px "Courier New", monospace`;
     const w = Math.min(g.measureText(text).width, 200 * scale), pad = 4 * scale / 2, bx = clamp(x - w / 2 - pad, 4, canvas.width - w - pad * 2 - 4), by = y - fs - pad * 2 - 6 * scale / 2;
     g.fillStyle = "#1c1c1c"; g.fillRect(bx - 2, by - 2, w + pad * 2 + 4, fs + pad * 2 + 4);
     g.fillStyle = "#FFF6E6"; g.fillRect(bx, by, w + pad * 2, fs + pad * 2);
     g.fillStyle = "#1c1c1c"; g.fillRect(x - 3, by + fs + pad * 2 + 2, 6, 3 * scale / 2);
     g.fillStyle = "#3A2A1E"; g.textBaseline = "top"; g.fillText(text, bx + pad, by + pad, w);
+    return by - 2;
   }
   const brighten = (c: string) => { if (c[0] !== "#") return c; const n = [1, 3, 5].map(o => Math.min(255, parseInt(c.slice(o, o + 2), 16) + 28)); return `#${n.map(v => v.toString(16).padStart(2, "0")).join("")}`; };
 
@@ -625,12 +693,12 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     setCharacter(temperament: Temperament, s: number, q: string | null = null) {
       temper = temperament; strength = s; quirk = q;
       // the family decorates the house its own way (walls, wallpaper, floors, curtains, rugs)
-      const home = homeFor(temperament.family); if (FX.home !== home) { FX.home = home; rebuild(); }
+      const home = homeFor(temperament.family); if (myHome !== home) { myHome = home; rebuild(); }
       // the family's heirloom moves in with the Friend (once; the player may move it or put it away later)
       const h = HEIRLOOM[temperament.family];
       if (h && !heirloomFor) { heirloomFor = temperament.family; placed = placed.filter(p => !p.def.startsWith("heirloom-")); placed.push({ uid: "heirloom", def: h.def.id, i: HEIRLOOM_AT[0], j: HEIRLOOM_AT[1], swap: false }); rebuild(); }
     },
-    setAccent(a: { top: string; left: string; right: string; light: string }) { FX.accent = a; rebuild(); },
+    setAccent(a: { top: string; left: string; right: string; light: string }) { myAccent = a; rebuild(); },
     setPaused(v: boolean) { paused = v; if (v) move = { x: 0, y: 0 }; },
     setSpeed(v: number) { speed = v; },
     setReducedMotion(v: boolean) { reduced = v; },
@@ -641,6 +709,24 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     command,
     walkTo(i: number, j: number) { const p = pathTo(i, j, .8); if (p) { stop(); fr.path = p; idleFor = 0; } else onEvent({ type: "blocked" }); },
     cancel() { stop(); idleFor = 0; },
+    /** A visit: the guest (your Friend) comes in at the front door. */
+    setGuest(s: FriendSprites, o: Outfit) { guest = { sprites: s, outfit: o, i: 10.85, j: 4.6, facing: "left", path: [], moving: false, clock: 0, says: null, meet: null, followIn: 1 }; },
+    /** The neighbour's own clock matches yours (and it is not left alone as the visit starts). */
+    setMinute(m: number) { minute = m; careAt = m; },
+    /** The guest walks over to the host, they face each other and each says its line (a hop or a dance when asked). */
+    meet(hostLine: string, guestLine: string, icon: string, anim: "dance" | "hop" | null) {
+      const q = guest; if (!q) return;
+      stop(); idleFor = -8;
+      const go = () => {
+        fr.facing = faceToward(q.i - fr.i, q.j - fr.j); q.facing = faceToward(fr.i - q.i, fr.j - q.j);
+        say(hostLine, 4.2); q.says = { text: guestLine, until: t + 4.2 }; show(icon, 2.2);
+        together = anim ? { until: t + (anim === "dance" ? 5 : 1.5), anim } : null; idleFor = -5;
+      };
+      const [bi, bj] = besideHost(), near = Math.hypot(bi - q.i, bj - q.j) < .5, p = near ? null : pathTo(bi, bj, 1.2, [q.i, q.j]);
+      if (p && p.length > 1) { q.path = p; q.meet = go; } else go();
+    },
+    /** Click the floor while visiting: the guest walks there. */
+    guestWalkTo(i: number, j: number) { const q = guest; if (!q) return; const p = pathTo(i, j, .8, [q.i, q.j]); if (p) { q.path = p; q.meet = null; q.followIn = 6; } },
     /** You spent time together away from the house (a visit): counts as attention. */
     care() { careAt = minute; },
     greet() { say(pickLine(temper.voice.hello), 4.5); show("heart", 2); firstChoice = true; idleFor = 4.5; careAt = minute; },
