@@ -101,6 +101,8 @@ Every family also loves its own heirloom (below).
 - **Family home.** The same floor plan decorated per family (`homes.ts`): walls, wallpaper motif, floors, curtains,
   rugs, trim and furniture materials (light and dark wood, sofa and chair upholstery; heirlooms keep their own colours). Moonlit Manor (Skeleton, bone wallpaper), Backstage (Mask, harlequin diamonds), Cozy Cottage (Family, hearts), Greenhouse Lab (Cellular, cells), Funhouse (Asymmetry, zigzags), Cloud Loft (Hoverer, clouds and stars), Stone Lodge (Colossus, stone walls), Glam Suite (Sparkling, sparkles) and Quiet Library (Hollow, leaves). Neighbours' rooms use their own family's colours. Looks only.
 - **Camera.** The game opens close on the Friend and follows it; the whole house is one tap away.
+- **Weather.** Clear, cloudy, rain, snow or a storm in the windows (`weather.ts`), changing every 4 in-game hours;
+  the street shares one sky, so a visit shows the same weather. Looks only.
 - **Sound.** A composed tune per time of day, each with its own synthesized band (marimba morning, vibraphone
   swing, lo-fi Rhodes evening, music-box lullaby in 3/4, disco record for dancing); one-shots such as piano and
   twinkles take their notes from the chord the music is on.

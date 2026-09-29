@@ -35,6 +35,8 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
   furniture for a Skeleton, Cloud Loft with clouds and stars for a Hoverer, Stone Lodge in dark oak for a Colossus…).
   Only looks change: the same pieces in the same places, with the same activities and prices.
 - **Hints:** the lowest need, and one thing in the house that raises it, with an arrow and a one-tap button.
+- **Weather:** clear, cloudy, rain, snow or a storm in the windows, changing every few in-game hours; the whole street
+  shares it, so a neighbour's windows show the same sky.
 - **Sound:** a composed soundtrack for each time of day (marimba morning, vibraphone-and-Rhodes swing, lo-fi
   evening with vinyl crackle, a music-box lullaby in 3/4) and a disco record to dance to, a sound for every activity,
   footsteps by floor, finches, an owl; all synthesized with Web Audio.

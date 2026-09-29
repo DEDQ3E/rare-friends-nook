@@ -3,6 +3,7 @@
 import { Builder, depthSort, fillPoly, lit, withMoving, makePart, pointInPoly, project, unproject, type Part } from "./iso.js";
 import { CELL, COLS, GH, GW, ROWS, buildStructure, drawShell, edgeOpen, roomAt, type Room, type Sky } from "./house.js";
 import { homeFor } from "./homes.js";
+import { weatherAt, type Weather } from "./weather.js";
 import { DEF, buildPlaced, footprint, placePoint, starterHouse, setBallLift, setHutchItems, type Placed } from "./furniture.js";
 import { ACTION, ACTIONS, DAY_MINUTES, GAME_MINUTES_PER_SECOND, NEEDS, actionsOn, clamp, darkness, decayNeeds, desire, isNight, mood, type ActionDef, type NeedKey, type Needs, type Stock } from "./sim.js";
 import { BALANCED, preference, refuseChance, type Temperament } from "./personality.js";
@@ -61,7 +62,7 @@ export type Pick =
 export type View = Readonly<{
   sulk: number; // make-ups still needed (0 = not sulking)
   needs: Readonly<Needs>; minute: number; mood: number; action: string | null; walking: boolean;
-  wish: string | null; friendship: number; stock: Readonly<Stock>; room: Room; speed: number; active: string | null;
+  wish: string | null; friendship: number; stock: Readonly<Stock>; room: Room; speed: number; active: string | null; weather: Weather;
 }>;
 
 const VIEW_W = 480, VIEW_H = 320;           // logical viewport (the 960 × 640 frame at 2×)
@@ -598,7 +599,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     const s = scale * zoom;
     g.setTransform(s, 0, 0, s, (VIEW_W / 2 - cam.x * zoom) * scale, (VIEW_H / 2 - cam.y * zoom) * scale);
     const night = isNight(minute), h = (minute % DAY_MINUTES) / 60;
-    const sky: Sky = { glass: night ? "#1E2A4A" : h < 8 ? "#F4B183" : h >= 18 ? "#E8906A" : "#9FD3F0", stars: night, sun: !night && h >= 8 && h < 18 };
+    const sky: Sky = { glass: night ? "#1E2A4A" : h < 8 ? "#F4B183" : h >= 18 ? "#E8906A" : "#9FD3F0", stars: night, sun: !night && h >= 8 && h < 18, weather: weatherAt(minute), t: reduced ? 0 : t };
     drawShell(g, k, sky);
     // lamp light pools on the floor at night
     if (k > 0) for (const p of placed) {
@@ -782,7 +783,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     boostNeed(k: NeedKey, v: number) { needs[k] = clamp(needs[k] + v); },
     preferenceOf(id: string) { return preference(temper, strength, id); },
     view(): View {
-      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null, sulk: grudge };
+      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null, sulk: grudge, weather: weatherAt(minute) };
     },
     /** Meme mode: a clean picture of the Friend and the room around it, cut from the current view. */
     snapshot(): HTMLCanvasElement {

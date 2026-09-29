@@ -22,6 +22,7 @@ import { personalize, traitsFor } from "./traits.js";
 import { randomMeme, renderMeme, type Meme } from "./memes.js";
 import { HEIRLOOM } from "./heirlooms.js";
 import { HOMES } from "./homes.js";
+import { WEATHER_LABEL } from "./weather.js";
 import { neighbours, type Neighbour } from "./neighbours.js";
 import { VISIT_ACTS, react, type VisitAct } from "./visit.js";
 import "./style.css";
@@ -581,7 +582,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
       {/* bottom right: time */}
       {v && <div className="fn-card fn-time">
-        <span>{clockText(v.minute)}</span>
+        <span>{clockText(v.minute)} · {WEATHER_LABEL[v.weather]}</span>
         {[0, 1, 3].map(s => <button key={s} type="button" className="fn-speed" aria-pressed={speed === s} onClick={() => setSpeed(s)} aria-label={s === 0 ? "Pause time" : `Speed ${s}×`}>{s === 0 ? "❚❚" : `${s}×`}</button>)}
       </div>}
 

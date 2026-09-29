@@ -18,7 +18,7 @@ Full submission: [`submissions/friend-nook/README.md`](https://github.com/DEDQ3E
 
 ## What did you build?
 
-A life sim with one star: a 12 × 10 tile isometric pixel house with day and night, five needs and 32 things to do on 28 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself. The house is alive (TV, fish, a turning record, bath bubbles) with a synthesized soundtrack for each time of day and a sound for every activity.
+A life sim with one star: a 12 × 10 tile isometric pixel house with day and night and weather in the windows, five needs and 32 things to do on 28 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself. The house is alive (TV, fish, a turning record, bath bubbles) with a synthesized soundtrack for each time of day and a sound for every activity.
 
 It is the [Rare Friends](https://rarefriends.com/) home loop, playable today: raise your Friend's Happiness meter, feed it, give it Gift Box keepsakes and upgrade its home in Buy mode (a big plant, a toy piano, an arcade cabinet…). A virtual pet and familiar care game, with the Friend's own character as the star.
 

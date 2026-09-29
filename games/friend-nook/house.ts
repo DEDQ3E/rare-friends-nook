@@ -3,13 +3,14 @@
 import { Builder, S, fillPoly, lit, project, type Pt, type Shade } from "./iso.js";
 import { FX } from "./fx.js";
 import type { HomeTheme } from "./homes.js";
+import { drawWeather, glassFor, type Weather } from "./weather.js";
 
 export const COLS = 12, ROWS = 10, WALL_H = 44;
 export type Room = "bedroom" | "bathroom" | "kitchen" | "living" | "dining";
 export const ROOM_NAME: Readonly<Record<Room, string>> = { bedroom: "Bedroom", bathroom: "Bathroom", kitchen: "Kitchen", living: "Living room", dining: "Dining area" };
 export const roomAt = (i: number, j: number): Room => j < 5 ? (i < 5 ? "bedroom" : i < 8 ? "bathroom" : "kitchen") : (i < 8 ? "living" : "dining");
 
-export type Sky = Readonly<{ glass: string; stars: boolean; sun: boolean }>;
+export type Sky = Readonly<{ glass: string; stars: boolean; sun: boolean; weather: Weather; t: number }>;
 
 const flat = (pts: readonly Pt[]) => pts.flatMap(p => [p[0], p[1]]);
 const hash = (a: number, b: number) => ((a * 73856093) ^ (b * 19349663)) >>> 0;
@@ -50,16 +51,17 @@ export function drawShell(ctx: CanvasRenderingContext2D, k: number, sky: Sky) {
   q([P(0, 0, WALL_H), P(0, 10, WALL_H), P(-.3, 10, WALL_H), P(-.3, -.3, WALL_H), P(12, -.3, WALL_H), P(12, 0, WALL_H)], home.frame);
   q([P(0, 10, WALL_H), P(-.3, 10, WALL_H), P(-.3, 10, 0), P(0, 10, 0)], home.frameSide);
   q([P(12, -.3, WALL_H), P(12, 0, WALL_H), P(12, 0, 0), P(12, -.3, 0)], home.frameSide);
-  // windows: glass follows the sky; stars at night, a sun glint by day
-  const star = sky.stars ? "#FFF3B0" : sky.sun ? "#FFFFFF" : sky.glass;
+  // windows: glass follows the sky and the weather (clouds, rain, snow, a storm); stars and the sun glint only when clear
+  const glass = glassFor(sky.glass, sky.weather, sky.stars), clear = sky.weather === "clear" || sky.weather === "clouds";
+  const star = clear && sky.stars ? "#FFF3B0" : clear && sky.sun ? "#FFFFFF" : glass;
   const winL = (j0: number, j1: number, h0: number, h1: number, curtain: string) => {
-    LW(j0 - .15, j1 + .15, h0 - 2, h1 + 2, "#5A3B26"); LW(j0, j1, h0, h1, sky.glass);
+    LW(j0 - .15, j1 + .15, h0 - 2, h1 + 2, "#5A3B26"); LW(j0, j1, h0, h1, glass); drawWeather(LW, j0, j1, h0, h1, sky.weather, sky.t, sky.stars);
     const m = (j0 + j1) / 2; LW(m - .04, m + .04, h0, h1, "#5A3B26"); LW(j0, j1, (h0 + h1) / 2 - .5, (h0 + h1) / 2 + .5, "#5A3B26");
     LW(j0 + .25, j0 + .33, h1 - 5, h1 - 3.5, star); LW(j1 - .5, j1 - .42, h0 + 4, h0 + 5.5, star);
     LW(j0 - .35, j0 + .1, h0 - 4, h1 + 3, curtain); LW(j1 - .1, j1 + .35, h0 - 4, h1 + 3, curtain); LW(j0 - .45, j1 + .45, h1 + 3, h1 + 4.5, "#8A5A3A");
   };
   const winB = (i0: number, i1: number, h0: number, h1: number) => {
-    BW(i0 - .12, i1 + .12, h0 - 2, h1 + 2, "#FFFFFF"); BW(i0, i1, h0, h1, sky.glass);
+    BW(i0 - .12, i1 + .12, h0 - 2, h1 + 2, "#FFFFFF"); BW(i0, i1, h0, h1, glass); drawWeather(BW, i0, i1, h0, h1, sky.weather, sky.t, sky.stars);
     const m = (i0 + i1) / 2; BW(m - .04, m + .04, h0, h1, "#FFFFFF");
     BW(i0 + .2, i0 + .3, h1 - 5, h1 - 3.5, star); BW(i1 - .3, i1 - .22, h0 + 3, h0 + 4.5, star);
   };

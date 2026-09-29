@@ -1,4 +1,5 @@
-// The nine family homes, drawn by the game's own shell, builders and depth sort, as media/homes.png.
+// The nine family homes, drawn by the game's own shell, builders and depth sort, each with its own weather in the windows,
+// as media/homes.png.
 // Needs (not in package.json): npm install --no-save playwright pngjs
 // Run: node tests/homes.mjs [out.png] [night]
 import { build } from "esbuild";
@@ -6,12 +7,12 @@ import { writeFileSync } from "node:fs";
 import { chromium } from "playwright";
 import { PNG } from "pngjs";
 
-const out = process.argv[2] ?? "media/homes.png", dark = process.argv[3] === "night" ? 1 : 0;
+const out = process.argv[2] ?? "media/homes.png", dark = process.argv[3] === "night" ? 1 : 0, weathers = process.argv[4]?.split(",") ?? ["snow", "clear", "rain", "clouds", "storm", "clear", "clouds", "snow", "rain"]; // a different sky in each window
 const { outputFiles } = await build({ entryPoints: ["tests/homes-render.ts"], bundle: true, format: "iife", write: false, logLevel: "error" });
 const browser = await chromium.launch(), page = await browser.newPage({ viewport: { width: 2600, height: 1700 } });
 const errors = []; page.on("pageerror", e => errors.push(String(e)));
 await page.setContent("<body style='margin:0'></body>"); await page.addScriptTag({ content: outputFiles[0].text });
-await page.evaluate(d => window.draw(d), dark);
+await page.evaluate(([d, w]) => window.draw(d, w), [dark, weathers]);
 const big = PNG.sync.read(await page.locator("canvas").screenshot()); await browser.close();
 if (errors.length) throw new Error(errors.join("\n"));
 const k = process.env.K ? +process.env.K : 2, w = big.width / k | 0, h = big.height / k | 0, png = new PNG({ width: w, height: h });
