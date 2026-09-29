@@ -4,9 +4,9 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (58 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`).
+🎬 **Demo with sound (62 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`).
 
-https://github.com/user-attachments/assets/143c917c-1daf-49af-ba5f-3dcf168109e9
+https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
 
 
 **Project name**
@@ -160,7 +160,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`5e028fa`](https://github.com/DEDQ3E/rare-friends-nook/tree/5e028facee8e0d8e8b577db050b7a93b94b073d5)). FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`2e8ba84`](https://github.com/DEDQ3E/rare-friends-nook/tree/2e8ba842cc8891af70b5a1337c3f7de97cf5b2f8)). FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
 
 ## Playable demo / how to run
 
@@ -171,7 +171,7 @@ https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`5e028fa`](https:
 ```sh
 git clone https://github.com/DEDQ3E/rare-friends-nook.git
 cd rare-friends-nook
-git checkout 5e028facee8e0d8e8b577db050b7a93b94b073d5
+git checkout 2e8ba842cc8891af70b5a1337c3f7de97cf5b2f8
 npm ci
 npm run dev
 ```

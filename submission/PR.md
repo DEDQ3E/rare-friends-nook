@@ -4,9 +4,9 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (58 s):** the real SDK runtime with Sparkling Friend #66666 read live from mainnet, only the wallet mocked (`tests/video.mjs`).
+🎬 **Demo with sound (62 s):** the real SDK runtime with Sparkling Friend #66666 read live from mainnet, only the wallet mocked (`tests/video.mjs`).
 
-https://github.com/user-attachments/assets/143c917c-1daf-49af-ba5f-3dcf168109e9
+https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
 
 **Project name:** Rare Friends: Friend Nook
 **Builder / contact:** [DEDQ3E](https://github.com/DEDQ3E) · Discord `dedq3e3` · Telegram [@DEDQ3E](https://t.me/DEDQ3E)
@@ -68,7 +68,7 @@ Paid outcomes only through the SDK chance game. Browser randomness only drives b
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`5e028fa`](https://github.com/DEDQ3E/rare-friends-nook/tree/5e028facee8e0d8e8b577db050b7a93b94b073d5)) · FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`2e8ba84`](https://github.com/DEDQ3E/rare-friends-nook/tree/2e8ba842cc8891af70b5a1337c3f7de97cf5b2f8)) · FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
@@ -77,7 +77,7 @@ https://dedq3e.github.io/rare-friends-nook/ (simulated economy). Needs a browser
 ```sh
 git clone https://github.com/DEDQ3E/rare-friends-nook.git
 cd rare-friends-nook
-git checkout 5e028facee8e0d8e8b577db050b7a93b94b073d5
+git checkout 2e8ba842cc8891af70b5a1337c3f7de97cf5b2f8
 npm ci
 npm run dev
 ```
