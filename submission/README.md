@@ -217,4 +217,4 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 
 ## Credits
 
-Game design, code, pixel art, music and sound: DEDQ3E with Claude (Anthropic). FriendSDK v0.1.3 and the Rare Friends Generations artwork by Rare Friends. The neighbours use the SDK's own sample Friend artwork (`examples/fishing/sample-sprites.ts`, SDK-supplied, see its NOTICE.md). The wardrobe fitting (`fit.ts`, `wardrobe.ts`) is reused from the builder's own entry *Rare Friends: Expeditions*. No third-party assets. License: Apache-2.0.
+Game design, code, pixel art, music and sound: DEDQ3E. FriendSDK v0.1.3 and the Rare Friends Generations artwork by Rare Friends. The neighbours use the SDK's own sample Friend artwork (`examples/fishing/sample-sprites.ts`, SDK-supplied, see its NOTICE.md). The wardrobe fitting (`fit.ts`, `wardrobe.ts`) is reused from the builder's own entry *Rare Friends: Expeditions*. No third-party assets. License: Apache-2.0.

@@ -85,4 +85,4 @@ No storage in the SDK sandbox (a reload starts fresh); no multiplayer in the SDK
 
 ## Credits
 
-DEDQ3E with Claude (Anthropic). FriendSDK v0.1.3 and the Generations artwork by Rare Friends; the neighbours use the SDK's sample Friend artwork. Wardrobe fitting reused from the builder's *Rare Friends: Expeditions*. No third-party assets. Apache-2.0.
+DEDQ3E. FriendSDK v0.1.3 and the Generations artwork by Rare Friends; the neighbours use the SDK's sample Friend artwork. Wardrobe fitting reused from the builder's *Rare Friends: Expeditions*. No third-party assets. Apache-2.0.
