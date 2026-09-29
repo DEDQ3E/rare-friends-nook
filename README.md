@@ -30,6 +30,9 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
   refusals, a diary of its own choices, friendship levels, a family voice, a signature idle.
 - **Family heirlooms:** nine family heirlooms, one per family, move in with the Friend (a bone xylophone for a
   Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…), each with an activity its family loves.
+- **Family homes:** the family also decorates the house: nine homes on the same floor plan, each with its own walls,
+  wallpaper motif, floors, curtains and rugs (Moonlit Manor with bone wallpaper for a Skeleton, Cloud Loft with clouds
+  and stars for a Hoverer, Stone Lodge for a Colossus…). Only looks change; furniture, activities and prices do not.
 - **Hints:** the lowest need, and one thing in the house that raises it, with an arrow and a one-tap button.
 - **Sound:** a composed soundtrack for each time of day (marimba morning, vibraphone-and-Rhodes swing, lo-fi
   evening with vinyl crackle, a music-box lullaby in 3/4) and a disco record to dance to, a sound for every activity,
@@ -41,13 +44,15 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
 
 ![The nine family heirlooms](media/heirlooms.png)
 
+![The nine family homes: same floor plan, each family's own walls, wallpaper, floors and rugs](media/homes.png)
+
 ## Ten real Friends
 
 `node tests/friends.mjs` plays ten real Generations Friends (eight families, generations 1 to 6) through the real
-SDK runtime, their artwork, family, seed and generation read live from Robinhood mainnet. Same house, ten characters,
-each at its first own choice:
+SDK runtime, their artwork, family, seed and generation read live from Robinhood mainnet. Same floor plan, ten family
+homes and ten characters, each at its first own choice:
 
-![Ten real Friends in the same house, each at its first own choice](media/friends-rooms.png)
+![Ten real Friends, each in its family home at its first own choice](media/friends-rooms.png)
 
 The full table (what each chose by itself) is in [submission/README.md](submission/README.md#ten-real-friends-ten-characters).
 
@@ -87,14 +92,14 @@ Browser checks (need `npm install --no-save playwright` and `npx playwright inst
 `onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (simulated neighbours),
 `meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.
 Demo video with sound: `node tests/video.mjs` (Microsoft Edge). Everything is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone).
-README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs` (also needs `pngjs`).
+README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs`; the family homes: `node tests/homes.mjs` (both also need `pngjs`).
 
 ## Layout
 
 `games/friend-nook/`: `index.tsx` (React adapter and UI), `engine.ts` (camera, rendering, walking, free will),
 `iso.ts` (projection and depth sorting), `house.ts`, `furniture.ts`, `catalog.ts`, `fx.ts` (living furniture),
 `sim.ts` (needs and actions), `personality.ts` (families), `traits.ts` (per-token traits), `heirlooms.ts` (family
-heirlooms), `memes.ts` (meme mode), `neighbours.ts` + `visit.ts` (simulated neighbours), `audio.ts`,
+heirlooms), `homes.ts` (family homes), `memes.ts` (meme mode), `neighbours.ts` + `visit.ts` (simulated neighbours), `audio.ts`,
 `keepsakes.ts`, `art.ts`, `wardrobe.ts` + `fit.ts` (clothes fitted to any Friend), `game.json` (Gift Box odds).
 Design notes: [DESIGN.md](DESIGN.md).
 

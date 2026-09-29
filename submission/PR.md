@@ -29,6 +29,7 @@ It is the [Rare Friends](https://rarefriends.com/) home loop, playable today: ra
 - **Generation = character strength:** one read-only `generation(tokenId)` call, from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more, refuse more and speak more expressively.
 - **The token itself:** its sprite seed gives a nickname, a favourite colour (its blanket, cushion and rug), a favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects. Two Hoverers are different Friends.
 - **A family heirloom:** each family brings one piece (a bone xylophone for a Skeleton, a mirror ball for a Sparkling…) with an activity only that family has.
+- **A family home:** the family decorates the house too: nine homes on the same floor plan, each with its own walls, wallpaper motif, floors, curtains and rugs (Moonlit Manor with bone wallpaper for a Skeleton, Cloud Loft with clouds and stars for a Hoverer, Stone Lodge for a Colossus…). Only looks change.
 - **Its first own choice, explained:** seconds after the *Meet your Friend* card it picks something it loves, and the game says why ("Humippy's own choice: float on the cloud — its family heirloom").
 - **Four secrets and one day:** the card hides four traits (favourite thing, snack, birthday, quirk) until you find them by watching, feeding, talking and making friends. At 22:00 a recap card sums up the day together; one session is one day, since the SDK keeps no saves.
 - **It sulks, and has neighbours:** left alone too long it sulks and refuses requests until you make up (sooner for a Gen 1 or a Homebody, hardly ever for an Introvert). The front door visits simulated neighbours, FriendSDK's two sample Friends played by the game, not real players: hug, dance or share a snack, and both characters decide how it goes.
@@ -36,9 +37,11 @@ It is the [Rare Friends](https://rarefriends.com/) home loop, playable today: ra
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
 
-**Ten real Friends, one house:** `tests/friends.mjs` plays ten real Friends (eight families, Gen 1 to 6) through the real runtime, read live from mainnet. Each at its first own choice ([full table](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters)):
+**Ten real Friends, ten family homes:** `tests/friends.mjs` plays ten real Friends (eight families, Gen 1 to 6) through the real runtime, read live from mainnet. Each at its first own choice ([full table](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md#ten-real-friends-ten-characters)):
 
-![Ten real Friends in the same house, each at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
+![Ten real Friends, each in its family home at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
+
+![The nine family homes: same floor plan, each family's own walls, wallpaper, floors and rugs](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/homes.png)
 
 ![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
 

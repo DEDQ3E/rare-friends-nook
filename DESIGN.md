@@ -96,6 +96,8 @@ Every family also loves its own heirloom (below).
 - **Family heirloom.** Each family brings one piece into the house (front of the living room) with its own loved
   activity: bone xylophone, mask stand, family photo table, cell garden, wobbly tower, cloud cushion, old boulder
   seat, mirror ball, quiet lantern.
+- **Family home.** The same floor plan decorated per family (`homes.ts`): walls, wallpaper motif, floors, curtains,
+  rugs and trim. Moonlit Manor (Skeleton, bone wallpaper), Backstage (Mask, harlequin diamonds), Cozy Cottage (Family, hearts), Greenhouse Lab (Cellular, cells), Funhouse (Asymmetry, zigzags), Cloud Loft (Hoverer, clouds and stars), Stone Lodge (Colossus, stone walls), Glam Suite (Sparkling, sparkles) and Quiet Library (Hollow, leaves). Neighbours' rooms use their own family's colours. Looks only.
 - **Camera.** The game opens close on the Friend and follows it; the whole house is one tap away.
 - **Sound.** A composed tune per time of day, each with its own synthesized band (marimba morning, vibraphone
   swing, lo-fi Rhodes evening, music-box lullaby in 3/4, disco record for dancing); one-shots such as piano and
@@ -124,5 +126,5 @@ Every family also loves its own heirloom (below).
 ## Scope for the vibeathon
 
 House, camera, walking, depth sorting; needs and clock; 32 activities on 27 kinds of furniture plus nine
-family heirlooms; 9 temperaments with generation strength, per-token traits, wishes, refusals and voice lines;
+family heirlooms; 9 family homes; 9 temperaments with generation strength, per-token traits, wishes, refusals and voice lines;
 shop, wardrobe, Gift Box; Buy mode with a nine-piece catalog; mobile layout; tests. No storage exists in the SDK sandbox: progress resets on reload.

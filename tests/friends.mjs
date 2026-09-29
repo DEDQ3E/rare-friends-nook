@@ -37,7 +37,7 @@ try {
       loves: pick(/Loves: ([^\n]+)/), dislikes: pick(/Dislikes: ([^\n]+)/),
       favorite: pick(/Favourite thing: ([^\n]+)/), colour: pick(/Favourite colour:\s*([^\n]+)/), snack: pick(/Favourite snack: ([^\n]+)/),
       birthday: pick(/Birthday: ([^\n]+)/), quirk: pick(/Quirk: ([^\n—]+)/), says: pick(/Says: [“"]([^”"]+)/),
-      heirloom: pick(/Family heirloom: ([^\n(]+)/), swatch: await card.locator(".fn-swatch").evaluate(e => e.style.background),
+      home: pick(/Family home: ([^·\n]+)/), heirloom: pick(/heirloom: ([^\n(]+)/), swatch: await card.locator(".fn-swatch").evaluate(e => e.style.background),
     };
     const t = lib.traitsFor(id, Number(id), lib.temperamentFor(row.family));
     assert.equal(t.nickname, row.nickname, "traits computed from the same seed");
@@ -77,7 +77,7 @@ writeFileSync("./media/friends.md", md.join("\n") + "\n");
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const tiles = results.map(r => `<figure><div class="shot"><img src="data:image/png;base64,${readFileSync(`${out}/${r.id}-room.png`).toString("base64")}"></div>
   <figcaption><b>${esc(r.nickname)}</b> <small>#${r.id}</small><br>${esc(r.family)} · ${esc(r.generation)} · ${esc(r.temperament)} (${esc(r.strength)})<br>
-  <i style="background:${esc(r.swatch)}"></i>${esc(r.colour)} · ${esc(r.quirk)}<br>Heirloom: ${esc(r.heirloom)}<br><em>Own choice: ${esc(r.first)}</em></figcaption></figure>`).join("");
+  <i style="background:${esc(r.swatch)}"></i>${esc(r.colour)} · ${esc(r.quirk)}<br>${esc(r.home)} · ${esc(r.heirloom)}<br><em>Own choice: ${esc(r.first)}</em></figcaption></figure>`).join("");
 const browser = await chromium.launch(), sheet = await browser.newPage({ viewport: { width: 1900, height: 1000 } });
 await sheet.setContent(`<style>
 body{margin:0;background:#f3e6cf;font:13px/1.45 "Courier New",monospace;color:#2b1d14}
@@ -90,8 +90,8 @@ figure{margin:0;background:#fff8ec;border:3px solid #3b2a1f;box-shadow:3px 3px 0
 figcaption{padding:7px 9px 9px;min-height:100px}b{font-size:15px}small{color:#8a6a50}
 i{display:inline-block;width:11px;height:11px;border:1px solid #2b1d14;margin-right:5px;vertical-align:-1px}
 em{font-style:normal;color:#9b3d2a;font-weight:bold}
-</style><main><h1>Ten real Friends, one house</h1><p>Same rooms, same furniture. Family, generation and the token's own seed make each one different:
-its name, colour (bed, cushion, rug), quirk, family heirloom, and what it chose by itself seconds after moving in.</p>
+</style><main><h1>Ten real Friends, ten family homes</h1><p>Same floor plan, same furniture. Family, generation and the token's own seed make each one different:
+its family home (walls, wallpaper, floors), name, colour (bed, cushion, rug), quirk, family heirloom, and what it chose by itself seconds after moving in.</p>
 <div class="grid">${tiles}</div></main>`);
 await sheet.locator("main").screenshot({ path: "./media/friends-rooms.png" });
 await browser.close();

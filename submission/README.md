@@ -38,11 +38,12 @@ The Friend is the only character, and the game is about who it is.
 - **Generation = character strength.** One read-only `generation(tokenId)` call on the Generations contract sets how strong the character is, from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more about what they love, refuse more often, gesture more and speak more expressively. Every generation plays the full game.
 - **The token itself = what makes it unique.** From the sprite seed the SDK returns, the game derives a nickname, a favourite colour (its blanket, cushion and living-room rug take that colour), a personal favourite activity outside its family's loves, a favourite snack, a birthday, a catchphrase and one of twelve quirks with real effects (chatterbox, quiet one, night snacker, early bird, sleepyhead, neat freak, collector, hummer, bookworm, speedy, sky watcher, cuddle bug). A quirk can even overrule the family: a Bookworm Mask reads although Masks dislike books. Two Hoverers are different Friends.
 - **A family heirloom.** Each family brings one piece of its own into the house, at the front of the living room, with an activity only that family has and loves: a Skeleton rattles a tune on a bone xylophone, a Hoverer floats on its cloud cushion, a Sparkling dances under the mirror ball. There are nine family heirlooms, one per family.
+- **A family home.** The family also decorates the house: nine homes on the same floor plan, each with its own walls, wallpaper motif, floors, curtains and rugs: Moonlit Manor (Skeleton, bone wallpaper), Backstage (Mask, harlequin diamonds), Cozy Cottage (Family, hearts), Greenhouse Lab (Cellular, cells), Funhouse (Asymmetry, zigzags), Cloud Loft (Hoverer, clouds and stars), Stone Lodge (Colossus, stone walls), Glam Suite (Sparkling, sparkles) and Quiet Library (Hollow, leaves). A neighbour's room follows its own family. Only looks change: furniture, activities, prices and odds stay the same.
 - **A voice.** Speech is voiced as a babble of syllables whose pitch and timbre come from the family (a deep slow Colossus, an airy Hoverer, a clacky Skeleton), more expressive with stronger generations.
 - **Memes about it.** The camera button makes a random meme about this Friend: one of twenty-one meme templates in today's formats (gm and gn, POV, +1000 aura, let him cook, locked in, side quest, WAGMI) filled from its own voice lines, temperament, heirloom, needs, found secrets and what it is doing; the ones that fit the moment are the likeliest, over a clean snapshot of it at home (the platform's *Make memes*). *Another meme* rolls a new one; the sandbox cannot save files, so share it as a screenshot.
 
   ![Three random memes about Humippy (Friend #7730)](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/memes.png)
-- **Four secrets to find.** The card shows its family, generation, temperament, heirloom, colour and catchphrase at once, and keeps four of the token's own traits hidden: its favourite thing (found when it does it), favourite snack (feed it), birthday (talk to it) and quirk (become friends). Each find is a line on screen and a little friendship, and the character card fills in as you play.
+- **Four secrets to find.** The card shows its family, generation, temperament, home, heirloom, colour and catchphrase at once, and keeps four of the token's own traits hidden: its favourite thing (found when it does it), favourite snack (feed it), birthday (talk to it) and quirk (become friends). Each find is a line on screen and a little friendship, and the character card fills in as you play.
 - **One day, one arc.** The SDK keeps no saves, so a session is one day together: at 22:00 a recap card shows what it chose by itself and how much of that it loves, what it refused, wishes granted, friendship, secrets found, and a meme of the day. A day is 8 minutes at 1×, under 3 at 3×.
 
   ![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
@@ -68,6 +69,8 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 | Sparkling | Style Icon | bath, mirror, outfits, gifts, vanity | toys | hygiene drops faster |
 | Hollow | Introvert | reading, books, stargazing, aquarium, painting | dancing, games, arcade | social drops slower |
 
+![The nine family homes, drawn by the game: same floor plan, each family's own walls, wallpaper, floors and rugs](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/homes.png)
+
 ![The nine family heirlooms, drawn by the game](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/heirlooms.png)
 
 | Family | Heirloom | Activity |
@@ -84,24 +87,24 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 
 ## Ten real Friends, ten characters
 
-Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK runtime (wallet flow, fresh ownership check, sandboxed iframe) for a fixed list of ten real Generations Friends, with their artwork, family, seed and generation read **live from Robinhood mainnet**; only the wallet account and the ownership answers are mocked, as in `friendsdk test`. Eight of the nine families, generations 1 to 6, and two pairs from one family. Each moved into the same house; the picture shows each one at its first own choice, seconds after the welcome, with the reason the game gave on screen. Then each was left alone at 3× for about four in-game hours.
+Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK runtime (wallet flow, fresh ownership check, sandboxed iframe) for a fixed list of ten real Generations Friends, with their artwork, family, seed and generation read **live from Robinhood mainnet**; only the wallet account and the ownership answers are mocked, as in `friendsdk test`. Eight of the nine families, generations 1 to 6, and two pairs from one family. Each moved into the same floor plan, decorated as its family home; the picture shows each one at its first own choice, seconds after the welcome, with the reason the game gave on screen. Then each was left alone at 3× for about four in-game hours.
 
-![Ten real Friends in the same house, each at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
+![Ten real Friends, each in its family home at its first own choice](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/friends-rooms.png)
 
 | Friend | Family · generation | Nickname | Temperament · strength | Favourite thing | Colour | Quirk | Chose by itself (first 4 in-game hours) |
 |---|---|---|---|---|---|---|---|
-| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Dance ♥, Snack at the bar, Try on a mask ♥, Nap |
-| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Snack at the bar ♥, Play video games, Snack at the bar ♥, Nap |
-| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Play video games ♥, Snack at the bar, Play video games ♥ |
-| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Play video games ♥, Snack at the bar, Stack the wobbly tower ♥, Nap |
-| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Nap ♥, Play with toys, Grab a snack |
-| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Watch TV ♥, Watch TV ♥, Cook a meal |
-| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Dance under the mirror ball ♥, Snack at the bar, Nap, Take a bath ♥ |
-| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Grab a snack ♥, Watch TV ♥, Watch TV ♥, Nap |
-| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Play with toys ♥, Snack at the bar, Nap |
-| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Look at family photos ♥, Cook a meal, Play video games |
+| #87846 | Mask · Gen 1 | Rox | Performer · Legendary | Look through the telescope | Rose | Sleepyhead | Try on a mask ♥, Cook a meal, Try on a mask ♥ |
+| #65001 | Cellular · Gen 1 | Nuraki | Foodie · Legendary | Browse books | Plum | Chatterbox | Snack at the bar ♥, Tend the cell garden ♥, Tend the cell garden ♥, Cook a meal ♥ |
+| #1969 | Asymmetry · Gen 1 | Veluri | Chaos Gremlin · Legendary | Stargaze | Mint | Early bird | Play video games ♥, Play video games ♥, Grab a snack |
+| #15000 | Asymmetry · Gen 5 | Robo | Chaos Gremlin · Gentle | Cook a meal | Sunflower | Night snacker | Play video games ♥, Snack at the bar, Nap, Play with toys ♥ |
+| #7730 | Hoverer · Gen 3 | Humippy | Dreamer · Distinct | Play arcade | Sunflower | Quiet one | Float on the cloud ♥, Play with toys, Grab a snack |
+| #20838 | Colossus · Gen 3 | Yeps | Gentle Giant · Distinct | Watch the fish | Coral | Sky watcher | Daydream ♥, Daydream ♥, Watch TV ♥ |
+| #66666 | Sparkling · Gen 3 | Kikosh | Style Icon · Distinct | Relax | Moss | Sleepyhead | Dance under the mirror ball ♥, Take a bath ♥, Snack at the bar, Nap |
+| #77777 | Skeleton · Gen 4 | Daluno | Night Owl · Clear | Watch the fish | Mint | Sleepyhead | Watch TV ♥, Cook a meal, Nap |
+| #444 | Skeleton · Gen 6 | Kozzy | Night Owl · Mild | Play with toys | Moss | Night snacker | Rattle out a tune ♥, Cook a meal, Play with toys ♥ |
+| #88888 | Family · Gen 5 | Luli | Homebody · Gentle | Flop on the bean bag | Lavender | Night snacker | Look at family photos ♥, Cook a meal, Look at family photos ♥, Read |
 
-♥ = something it loves. Every first choice was something it loves, each for its own reason: Kikosh (Sparkling) danced under the mirror ball and Luli (Family) looked at the family photos, their family heirlooms; Kozzy (Skeleton) went for the toys, its personal favourite, and that secret was found on the spot; the rest followed their temperament. The token matters as much as the family: the Skeletons Daluno (Gen 4) and Kozzy (Gen 6) share one, yet Daluno raided the fridge and watched TV like a Night Owl while Kozzy played with toys; the Asymmetries Veluri (Gen 1) and Robo (Gen 5) both love games, but only Robo stacked the wobbly tower.
+♥ = something it loves. Every first choice was something it loves, each for its own reason: Rox (Mask), Humippy (Hoverer), Kikosh (Sparkling), Kozzy (Skeleton) and Luli (Family) went straight to their family heirlooms; Yeps (Colossus) daydreamed because of its quirk, Sky watcher; the rest followed their temperament. The token matters as much as the family: the Skeletons Daluno (Gen 4) and Kozzy (Gen 6) share one, yet Daluno watched TV like a Night Owl while Kozzy rattled the bone xylophone and later played with toys, its own favourite; the Asymmetries Veluri (Gen 1) and Robo (Gen 5) both love games, but only Robo went on to the toys. Each lives in its family home: the two Skeletons in Moonlit Manor, the two Asymmetries in the Funhouse, Humippy in the Cloud Loft.
 
 
 ## How RF is spent, and the economy
