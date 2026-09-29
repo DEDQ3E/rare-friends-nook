@@ -72,7 +72,6 @@ export function drawShell(ctx: CanvasRenderingContext2D, k: number, sky: Sky) {
   BW(10.9, 11.9, 33, 40, "#A87B4C"); BW(10.95, 11.85, 34, 39, "#C9955E");
   winB(9.95, 10.8, 24, 38);
   BW(11.05, 11.35, 24, 30, "#FFFFFF"); BW(11.1, 11.3, 24.5, 29.5, "#F4F0E6");
-  winL(5.3, 6.0, 22, 38, home.living.curtain);
   LW(6.5, 7.7, 26, 36, "#5A3B26"); LW(6.58, 7.62, 27, 35, "#8FC0E0"); LW(6.62, 7.58, 27, 30, "#7FB069"); LW(7.0, 7.25, 30, 33, "#F2C94C");
   LW(8.7, 9.1, 38, 41.5, "#FFFFFF"); LW(8.75, 9.05, 38.5, 41, "#F4F0E6");
   // rugs
