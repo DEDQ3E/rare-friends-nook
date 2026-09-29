@@ -48,7 +48,7 @@ The Friend is the only character, and the game is about who it is.
 
   ![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
 - **It sulks if you leave it alone.** Too long without attention and it sulks: an angry bubble, a line of its own family ("Even the clouds visited more.") and your requests refused until you make up by petting it, talking to it or opening a Gift Box together. Character decides how soon and how long: a Gen 1 sulks sooner and harder than a Gen 6, a Family Homebody fastest, a Hollow Introvert hardly ever.
-- **Simulated neighbours.** The front door opens a street of neighbours. FriendSDK has no multiplayer, so they are the SDK's two sample Friends (#3412, a Skeleton, and #7730, a Hoverer), played by the game and labelled *simulated* everywhere; they are not real players. A visit takes your Friend into the neighbour's whole house, decorated by its own family like yours (the Skeleton's Moonlit Manor, the Hoverer's Cloud Loft), where the neighbour lives by itself with its own free will. Your Friend is the guest: click the floor to walk around, or hug, say hi, dance or share a snack, and your Friend walks over to the neighbour; how it goes depends on both characters ("Instant besties", "A bit awkward").
+- **Simulated neighbours.** The front door opens a street of neighbours. FriendSDK has no multiplayer, so they are the SDK's two sample Friends (#3412, a Skeleton, and #7730, a Hoverer), played by the game and labelled *simulated* everywhere; they are not real players. A visit takes your Friend into the neighbour's whole house, decorated by its own family like yours (the Skeleton's Moonlit Manor, the Hoverer's Cloud Loft), where the neighbour lives by itself with its own free will. Your Friend is the guest: click the floor to walk around, or hug, say hi, dance or share a snack, and your Friend walks over to the neighbour; how it goes depends on both characters ("Instant besties", "A bit awkward"). Visits have consequences: the neighbour remembers the last one and greets you by it ("You again! Another dance?" or "Oh... it's you."), a good time together fills your Friend's need for company, and a shared snack comes out of your own stock.
 
   ![A simulated visit: Humippy dancing with Sux in Sux's Moonlit Manor](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/visit.png)
 - **A relationship.** A *Meet your Friend* card opens first; seconds after the welcome the Friend makes its first own choice, something it loves, and the game says why on screen ("Humippy's own choice: float on the cloud — its family heirloom"; then at most once a minute); a diary records what it chose by itself, what it refused and which wishes you granted; friendship levels go from Stranger to Forever Friend.
@@ -118,7 +118,7 @@ Four RF sinks, all simulated in the preview: **Gift Boxes** (1 RF, the SDK chanc
 | **Gift Box** (SDK chance game) | 1 RF per box | one keepsake, worth 0.9165 RF on average when sold back | 8.35% edge stays in the game fund; every box reserves the 5 RF top prize |
 | **Food** (consumed by actions) | Snack pack ×4: 1 RF · Groceries ×3 meals: 2 RF | snacks for the fridge and bar, meals for the stove and family dinner | 50% burned, 50% to Friend rewards (proposed split) |
 | **Wardrobe** (cosmetic) | 2–5 RF per piece, 32 RF for all ten | nothing: never refunded | 50% burned, 50% to Friend rewards |
-| **Buy mode** (durable furniture) | 2–6 RF per piece, 37 RF for all nine | new activities; pieces can be moved or put away, never refunded | 50% burned, 50% to Friend rewards |
+| **Buy mode** (durable furniture) | 2–6 RF per piece, 37 RF for all nine | new activities; pieces it loves make its needs drop slower, ones it dislikes faster; pieces can be moved or put away, never refunded | 50% burned, 50% to Friend rewards |
 
 **Keepsakes** (outcomes of `game.json`, same order):
 
@@ -134,7 +134,7 @@ Friendship from a gift grows with character strength (×1 to ×1.5), is ×1.5 fo
 
 **Per box:** expected return 0.9165 RF, standard deviation 0.934 RF, 27% chance of getting 1 RF or more back. **Sessions** (exact distribution, every keepsake sold): 10 boxes return 9.17 RF on average (median 8.75, 90th percentile 13.10, 33.4% of sessions end ahead); 30 boxes return 27.50 RF (median 27.10, 90th percentile 34.30, 29.5% ahead).
 
-Why players keep spending: food runs out (a Foodie eats faster), furniture opens new activities its family loves (a Hoverer lights up at the telescope), outfits are fitted to its own body, and wishes and friendship reward looking after it. Personality never changes prices, odds or rewards.
+Why players keep spending: food runs out (a Foodie eats faster), furniture opens new activities its family loves (a Hoverer lights up at the telescope) and a home full of things it loves keeps it happier for longer, while a piece it dislikes makes it grumble, outfits are fitted to its own body, and wishes and friendship reward looking after it. Personality never changes prices, odds or rewards.
 
 </details>
 

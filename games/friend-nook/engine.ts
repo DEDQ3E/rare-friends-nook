@@ -63,6 +63,7 @@ export type View = Readonly<{
   sulk: number; // make-ups still needed (0 = not sulking)
   needs: Readonly<Needs>; minute: number; mood: number; action: string | null; walking: boolean;
   wish: string | null; friendship: number; stock: Readonly<Stock>; room: Room; speed: number; active: string | null; weather: Weather;
+  comfort: Readonly<{ loved: number; disliked: number; mult: number }>; // mult < 1: needs drop slower
 }>;
 
 const VIEW_W = 480, VIEW_H = 320;           // logical viewport (the 960 × 640 frame at 2×)
@@ -117,6 +118,26 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   type Guest = { sprites: FriendSprites; outfit: Outfit; i: number; j: number; facing: Facing; path: [number, number][]; moving: boolean; clock: number; says: { text: string; until: number } | null; meet: (() => void) | null; followIn: number };
   let guest: Guest | null = null, together: { until: number; anim: "dance" | "hop" } | null = null;
 
+  /* ---------- home comfort ---------- */
+  // pieces with an activity it loves make its needs drop slower, ones it only dislikes faster (compared with the house
+  // it moved into: the starter furniture and its heirloom)
+  const likeOf = (def: string): number => {
+    const ids = ACTIONS.filter(a => a.on.includes(def)).map(a => a.id);
+    return ids.some(id => temper.loves.includes(id)) ? 1 : ids.some(id => temper.dislikes.includes(id)) ? -1 : 0;
+  };
+  const STARTER = new Set([...starterHouse().map(p => p.uid), "heirloom"]);
+  let comfort = { loved: 0, disliked: 0, mult: 1 }, comfortBase = 0;
+  function measureComfort() {
+    let l = 0, d = 0;
+    for (const p of placed) { if (p.def === "ball") continue; const v = likeOf(p.def); if (v > 0) l++; else if (v < 0) d++; }
+    comfort = { loved: l, disliked: d, mult: Math.max(.7, Math.min(1.24, 1 - .06 * ((l - d) - comfortBase))) };
+  }
+  function resetComfortBase() {
+    const h = HEIRLOOM[temper.family], defs = [...starterHouse().map(p => p.def), ...(h ? [h.def.id] : [])].filter(d => d !== "ball");
+    comfortBase = defs.reduce((s, d) => s + likeOf(d), 0); measureComfort();
+  }
+  const GRUMBLE: readonly ((name: string) => string)[] = [n => `That ${n} again...`, n => `Do we really need the ${n}?`, n => `Not a fan of the ${n}.`];
+
   /* ---------- furniture → parts and blocked cells ---------- */
   function rebuild() {
     own();
@@ -137,6 +158,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
         if (ci > i0 && ci < i1 && cj > j0 && cj < j1) blocked[c * GW + a] = 1;
       }
     }
+    measureComfort();
   }
   rebuild();
 
@@ -349,7 +371,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     const gm = dt * GAME_MINUTES_PER_SECOND * speed; // in-game minutes this frame
     minute += gm;
     const asleep = !!doing && doing.phase === "do" && !!doing.action.sleep;
-    decayNeeds(needs, gm / 60, temper, asleep, minute);
+    decayNeeds(needs, gm / 60 * comfort.mult, temper, asleep, minute);
     // left alone too long: it sulks (stronger characters sooner and longer)
     if (!grudge && !asleep && minute - careAt > sulkLimit()) {
       grudge = 1 + Math.round(2 * strength); say(pickLine(temper.voice.sulk), 4); show("angry", 2.5); onEvent({ type: "sulk", grudge });
@@ -428,7 +450,9 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       voiceIn = (35 + Math.random() * 40) * (quirk === "chatterbox" ? .5 : quirk === "quiet" ? 2 : 1);
       const low = NEEDS.filter(k => needs[k] < 25).sort((a, b) => needs[a] - needs[b])[0];
       const line = low ? { hunger: temper.voice.hungry, energy: temper.voice.tired, fun: temper.voice.bored, hygiene: temper.voice.grubby, social: temper.voice.lonely }[low] : pickLine(temper.voice.idle);
-      if (!low || (lastLow[low] ?? -1e9) < minute - 120) { if (low) lastLow[low] = minute; say(line); }
+      const bad = placed.filter(p => !STARTER.has(p.uid) && likeOf(p.def) < 0);
+      if (!low && bad.length && Math.random() < .35) { const p = bad[Math.floor(Math.random() * bad.length)]; say(GRUMBLE[Math.floor(Math.random() * GRUMBLE.length)](DEF[p.def].name.toLowerCase())); show("sweat", 1.8); }
+      else if (!low || (lastLow[low] ?? -1e9) < minute - 120) { if (low) lastLow[low] = minute; say(line); }
       else if (wish) show(ACTION[wish.action].icon as keyof typeof ICONS, 3, true);
       if (!bubble && mood(needs) < 35) show(Math.random() < .5 ? "dots" : "sweat", 2.5);
     }
@@ -698,6 +722,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       // the family's heirloom moves in with the Friend (once; the player may move it or put it away later)
       const h = HEIRLOOM[temperament.family];
       if (h && !heirloomFor) { heirloomFor = temperament.family; placed = placed.filter(p => !p.def.startsWith("heirloom-")); placed.push({ uid: "heirloom", def: h.def.id, i: HEIRLOOM_AT[0], j: HEIRLOOM_AT[1], swap: false }); rebuild(); }
+      resetComfortBase();
     },
     setAccent(a: { top: string; left: string; right: string; light: string }) { myAccent = a; rebuild(); },
     setPaused(v: boolean) { paused = v; if (v) move = { x: 0, y: 0 }; },
@@ -775,6 +800,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     },
     /** Cancel placing; a moved piece goes back where it was. */
     cancelPlacing() { if (placing?.original) { placed.push(placing.original); rebuild(); } placing = null; ghostParts = []; },
+    /** How it feels about a piece: 1 loves an activity on it, -1 dislikes, 0 neither. */
+    likes(def: string) { return likeOf(def); },
     removePiece(uid: string) { if (doing?.target === uid) stop(); placed = placed.filter(p => p.uid !== uid); rebuild(); },
     pieceById(uid: string) { const p = placedById(uid); return p ? { ...p } : null; },
     setKeepsakes(colors: readonly string[]) { keepsakeCount = colors.length; setHutchItems(colors); rebuild(); },
@@ -783,7 +810,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     boostNeed(k: NeedKey, v: number) { needs[k] = clamp(needs[k] + v); },
     preferenceOf(id: string) { return preference(temper, strength, id); },
     view(): View {
-      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null, sulk: grudge, weather: weatherAt(minute) };
+      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null, sulk: grudge, weather: weatherAt(minute), comfort: { ...comfort } };
     },
     /** Meme mode: a clean picture of the Friend and the room around it, cut from the current view. */
     snapshot(): HTMLCanvasElement {

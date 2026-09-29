@@ -12,8 +12,8 @@ for (const [w, h, name] of [[1280, 800, "visit-desktop"], [844, 390, "visit-phon
     const canvas = game.locator("canvas").first(), k = (await canvas.boundingBox()).width / 960;
     const at = (i, j, z) => ({ x: ((i - j) * 18 - 18 + 240) * 2 * k, y: ((i + j) * 9 - z - 88 + 160) * 2 * k });
     const item = game.getByRole("menuitem", { name: /Visit a neighbour/ });
-    for (const [i, j, z] of [[12.05, 4.5, 10], [12.05, 4.5, 4], [11.6, 4.5, 1], [12.05, 4.5, 16]]) { await canvas.click({ position: at(i, j, z) }); await page.waitForTimeout(500); if (await item.isVisible()) break; await page.keyboard.press("Escape"); }
-    await item.click();
+    const door = async () => { for (const [i, j, z] of [[12.05, 4.5, 10], [12.05, 4.5, 4], [11.6, 4.5, 1], [12.05, 4.5, 16]]) { await canvas.click({ position: at(i, j, z) }); await page.waitForTimeout(500); if (await item.isVisible()) break; await page.keyboard.press("Escape"); } await item.click(); };
+    await door();
     const list = game.locator("section[role=dialog]").filter({ hasText: "Neighbours" });
     await list.waitFor({ timeout: 30000 });
     const text = await list.innerText(); assert.match(text, /SIMULATED/i); assert.match(text, /not real players/);
@@ -29,6 +29,10 @@ for (const [w, h, name] of [[1280, 800, "visit-desktop"], [844, 390, "visit-phon
     assert.ok(drawn[2] > 1000, "the room is drawn"); console.log("canvas", drawn.join(" "));
     await game.getByRole("button", { name: "Go home" }).click();
     await page.waitForTimeout(700); await page.screenshot({ path: `${out}/${name}-home.png` }); // home keeps its own family look
+    // a second visit: the neighbour remembers the first
+    await door(); await game.getByRole("button", { name: /sample Friend #/ }).first().click(); await scene.waitFor();
+    const again = await scene.locator(".fn-sub").innerText(); console.log("again →", again); assert.match(again, /Visit 2. Last time/);
+    await game.getByRole("button", { name: "Go home" }).click();
     await game.getByRole("button", { name: "Open your Friend's character card" }).click();
     const diary = await game.locator(".fn-diary li").allInnerTexts(); console.log(diary.slice(0, 3).join(" | "));
     assert.ok(diary.some(s => s.includes("simulated neighbour")));

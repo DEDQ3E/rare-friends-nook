@@ -60,6 +60,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   // a visit to a simulated neighbour (FriendSDK has no multiplayer: the neighbours are its sample Friends, played by the game)
   const [visit, setVisit] = useState<{ n: Neighbour; guestSays: string; hostSays: string; verdict: string; hopAt: number; done: ReadonlySet<string> } | null>(null);
   const visitCanvas = useRef<HTMLCanvasElement | null>(null), away = useRef<Engine | null>(null);
+  // each neighbour remembers your visits (this session): how many, and how the last thing you did together went
+  const [met, setMet] = useState<Readonly<Record<string, { visits: number; score: number; act: string; verdict: string }>>>({});
   const nearby = useMemo(() => neighbours().filter(n => n.id !== friendId), [friendId]);
   const [found, setFound] = useState<ReadonlySet<Secret>>(() => new Set());
   const foundRef = useRef(found); foundRef.current = found;
@@ -299,13 +301,21 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   function startVisit(n: Neighbour) {
     if (paused) return;
     engine.current?.care(); play("select", .5); note(`Visited ${n.traits.nickname} (simulated neighbour)`);
-    setVisit({ n, guestSays: pickOne(temper.voice.hello).split(/(?<=[.!?])\s/)[0], hostSays: n.temper.voice.hello[0].split(/(?<=[.!?])\s/)[0], verdict: "", hopAt: 0, done: new Set() });
+    const m = met[String(n.id)], again: Record<string, string> = { dance: "You again! Another dance?", snack: "You again! Brought snacks?", hug: "You again! Come here.", hi: "You again! Come in, come in." };
+    const hostSays = !m ? n.temper.voice.hello[0].split(/(?<=[.!?])\s/)[0] : m.score > 0 ? again[m.act] ?? again.hi : m.score < 0 ? "Oh... it's you." : "Back again? Come in.";
+    const guestSays = m && m.score < 0 ? "Let's try that again." : pickOne(temper.voice.hello).split(/(?<=[.!?])\s/)[0];
+    setMet(r => ({ ...r, [String(n.id)]: { visits: (m?.visits ?? 0) + 1, score: m?.score ?? 0, act: m?.act ?? "", verdict: m?.verdict ?? "" } }));
+    setVisit({ n, guestSays, hostSays, verdict: m ? `Visit ${m.visits + 1}. Last time: ${m.verdict.toLowerCase() || "just a hello"}` : "", hopAt: 0, done: new Set() });
     setPanel("visit");
   }
   function visitAct(a: VisitAct) {
     if (!visit || paused) return;
+    // a snack for the neighbour comes out of your own stock
+    if (a.id === "snack") { const s = engine.current?.view().stock.snacks ?? 0; if (s <= 0) { flash("No snacks at home. Buy a Snack pack first."); play("select", .3); return; } engine.current?.addStock(-1, 0); }
     const r = react(temper, visit.n.temper, a), first = !visit.done.has(a.id);
-    if (first) { engine.current?.addFriendship(r.score >= 2 ? 4 : r.score >= 1 ? 3 : r.score === 0 ? 1 : 0); engine.current?.boostNeed("social", 6 + 4 * Math.max(0, r.score)); }
+    // a good time together fills its need for company; an awkward one barely helps
+    if (first) { engine.current?.addFriendship(r.score >= 2 ? 4 : r.score >= 1 ? 3 : r.score === 0 ? 1 : 0); engine.current?.boostNeed("social", r.score > 0 ? 35 : r.score === 0 ? 12 : 4); }
+    setMet(m => ({ ...m, [String(visit.n.id)]: { visits: m[String(visit.n.id)]?.visits ?? 1, score: r.score, act: a.id, verdict: r.verdict } }));
     play(r.score > 0 ? "reward" : "select", .5); note(`${a.label} with ${visit.n.traits.nickname}: ${r.verdict.toLowerCase()}`);
     setVisit({ ...visit, guestSays: r.guest, hostSays: r.host, verdict: r.verdict, hopAt: r.score > 0 ? performance.now() : 0, done: new Set([...visit.done, a.id]) });
     away.current?.meet(r.host, r.guest, a.icon, a.id === "dance" ? "dance" : r.score > 0 ? "hop" : null);
@@ -468,7 +478,10 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   function cancelPlace() { engine.current?.cancelPlacing(); setPlacing(null); }
   function putAway(uid: string) {
     const id = bought.get(uid); if (!id || paused) return;
+    const like = engine.current?.likes(id) ?? 0, name = CATALOG_DEF[id].def.name.toLowerCase();
     engine.current?.removePiece(uid); setBought(m => { const n = new Map(m); n.delete(uid); return n; }); setStorage(s => ({ ...s, [id]: (s[id] ?? 0) + 1 }));
+    if (like < 0) { engine.current?.say(`Finally! Bye, ${name}.`); engine.current?.emote("heart", 2); note(`Glad the ${name} is gone`); }
+    else if (like > 0) { engine.current?.say(`Aww, I liked the ${name}.`); engine.current?.emote("sweat", 2); note(`Misses the ${name}`); }
     setMenu(null); play("select", .4); flash(`${CATALOG_DEF[id].def.name} put away. Place it again for free from Buy mode.`);
   }
   useEffect(() => {
@@ -652,7 +665,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
           <small className="fn-away-note">A simulated visit: {visit.n.traits.nickname} is one of FriendSDK's sample Friends, played by the game, not by a real player. Click the floor to walk.</small>
         </div>
         <div className="fn-card fn-away-bar" role="toolbar" aria-label="Things to do together">
-          {VISIT_ACTS.map(a => <button key={a.id} type="button" className="fn-btn fn-small" disabled={paused} onClick={() => visitAct(a)}><img src={icon[a.icon]} alt="" /> {a.label}</button>)}
+          {VISIT_ACTS.map(a => <button key={a.id} type="button" className="fn-btn fn-small" disabled={paused} onClick={() => visitAct(a)}><img src={icon[a.icon]} alt="" /> {a.label}{a.id === "snack" && v ? ` (${v.stock.snacks} left)` : ""}</button>)}
           <button type="button" className="fn-btn fn-small fn-home" onClick={() => { setVisit(null); setPanel(null); }}>Go home</button>
         </div>
       </section>}
@@ -665,6 +678,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
             {nearby.length ? <div className="fn-grid">{nearby.map(n => <button key={String(n.id)} type="button" className="fn-tile" onClick={() => startVisit(n)} disabled={paused}>
               <img src={neighbourPortrait[String(n.id)]} width={60} height={64} alt="" style={{ background: n.traits.accent.light }} />
               <strong>{n.traits.nickname}'s {HOMES[n.family]?.name ?? "room"}</strong><small>{n.family} · {n.temper.title} · sample Friend #{String(n.id)}</small>
+              {met[String(n.id)] && <small>Visited {met[String(n.id)].visits}× · last time: {met[String(n.id)].verdict.toLowerCase() || "just a hello"}</small>}
             </button>)}</div> : <p>No one else lives on this street yet.</p>}
           </>}
           {panel === "recap" && recap && <>
@@ -700,6 +714,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               <dt>Favourite colour</dt><dd><i className="fn-swatch" style={{ background: traits.accent.top }} /> {traits.accent.name} — its blanket, cushion and rug</dd>
               <dt>Favourite snack</dt><dd>{found.has("snack") ? traits.snack : <span className="fn-secret">??? — {SECRET_HINT.snack}</span>}</dd>
               <dt>Birthday</dt><dd>{found.has("birthday") ? traits.birthday.label : <span className="fn-secret">??? — {SECRET_HINT.birthday}</span>}</dd>
+              {v && <><dt>Home comfort</dt><dd>{v.comfort.loved} {v.comfort.loved === 1 ? "thing" : "things"} it loves, {v.comfort.disliked} it dislikes{v.comfort.mult < .995 ? ` · needs drop ${Math.round((1 - v.comfort.mult) * 100)}% slower` : v.comfort.mult > 1.005 ? ` · needs drop ${Math.round((v.comfort.mult - 1) * 100)}% faster` : " · as when it moved in"}</dd></>}
               {home && <><dt>Family home</dt><dd>{home.name}: walls, wallpaper, floors and rugs in its family's style</dd></>}
               {heirloom && <><dt>Family heirloom</dt><dd>{heirloom.def.name}: {heirloom.action.label.toLowerCase()} (living room)</dd></>}
               <dt>Quirk</dt><dd>{found.has("quirk") ? <>{traits.quirk.label}: {traits.quirk.blurb}</> : <span className="fn-secret">??? — {SECRET_HINT.quirk}</span>}</dd>
@@ -759,7 +774,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
           </>}
           {panel === "buy" && <>
             <h2>Buy mode</h2>
-            <p className="fn-sub">New furniture for the house (simulated RF: half burned, half to Friend rewards). Each piece brings its own activity. Hearts show what your Friend loves.</p>
+            <p className="fn-sub">New furniture for the house (simulated RF: half burned, half to Friend rewards). Each piece brings its own activity. Things it loves make its needs drop slower; things it dislikes, faster (and it will grumble).</p>
             <div className="fn-grid">{CATALOG.map(c => {
               const acts = engine.current?.menuFor(c.def.id) ?? [], all = ACTIONS_ON(c.def.id);
               const loved = all.some(a => temper.loves.includes(a)), hated = all.some(a => temper.dislikes.includes(a));

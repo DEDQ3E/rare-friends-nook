@@ -32,7 +32,7 @@ It is the [Rare Friends](https://rarefriends.com/) home loop, playable today: ra
 - **A family home:** the family decorates the house too: nine homes on the same floor plan, each with its own walls, wallpaper motif, floors, curtains, rugs and furniture materials (Moonlit Manor with bone wallpaper and black-lacquer furniture for a Skeleton, Cloud Loft with clouds and stars for a Hoverer, Stone Lodge in dark oak for a Colossus…). Only looks change: the same pieces, activities and prices.
 - **Its first own choice, explained:** seconds after the *Meet your Friend* card it picks something it loves, and the game says why ("Humippy's own choice: float on the cloud — its family heirloom").
 - **Four secrets and one day:** the card hides four traits (favourite thing, snack, birthday, quirk) until you find them by watching, feeding, talking and making friends. At 22:00 a recap card sums up the day together; one session is one day, since the SDK keeps no saves.
-- **It sulks, and has neighbours:** left alone too long it sulks and refuses requests until you make up (sooner for a Gen 1 or a Homebody, hardly ever for an Introvert). The front door visits simulated neighbours, FriendSDK's two sample Friends played by the game, not real players: your Friend steps into the neighbour's whole house, in its family's style, where it lives by itself; hug, dance or share a snack, and both characters decide how it goes.
+- **It sulks, and has neighbours:** left alone too long it sulks and refuses requests until you make up (sooner for a Gen 1 or a Homebody, hardly ever for an Introvert). The front door visits simulated neighbours, FriendSDK's two sample Friends played by the game, not real players: your Friend steps into the neighbour's whole house, in its family's style, where it lives by itself; hug, dance or share a snack (from your own stock), and both characters decide how it goes; the neighbour remembers your last visit.
 - **Memes about it:** the camera makes a random meme, one of twenty-one meme templates in today's formats (gm, POV, +1000 aura, let him cook, WAGMI) filled from its own voice, temperament, heirloom and what it is doing right now (the platform's *Make memes*).
 
 The SDK runtime handles the wallet, Friend selection and the ownership gate; the game adds no wallet code.
@@ -54,7 +54,7 @@ Everything is simulated; you start with 20 RF.
 | **Gift Box** (SDK chance game) | 1 RF per box | one keepsake, 0.9165 RF on average when sold back; 5 RF top prize |
 | **Food** | Snack pack ×4: 1 RF · Groceries ×3 meals: 2 RF | eaten at the fridge, bar, stove and dinner |
 | **Wardrobe** | 2–5 RF per piece | cosmetic |
-| **Buy mode** | 2–6 RF per piece | new activities |
+| **Buy mode** | 2–6 RF per piece | new activities; pieces it loves slow its needs, ones it dislikes speed them |
 
 Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back, with no redemption expiry. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards. The RF prices are example values, set on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average). To price higher, multiply every price and keepsake value by the same factor: the odds, the 91.65% average return and the balance between items stay the same.
 

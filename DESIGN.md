@@ -115,6 +115,11 @@ Every family also loves its own heirloom (below).
 - The camera button: meme mode, a random two-line caption written from the Friend's own character (voice, temperament,
   quirk, heirloom, needs, current activity) over a clean snapshot of it; *Another meme* rolls again.
 - Buy mode: arrows move the piece, R rotates, Enter places, Esc cancels.
+- Home comfort: each piece with an activity it loves (beyond the house it moved into) makes its needs drop 6% slower,
+  each piece it only dislikes 6% faster (between 30% slower and 24% faster); it grumbles about bought pieces it
+  dislikes, and is glad or sorry when one is put away. The character card shows the comfort.
+- Neighbours remember: the next visit is greeted by how the last one went; a good visit fills social (+35), an awkward
+  one barely (+4); a shared snack comes out of your stock.
 
 ## Economy ($RAREFRIENDS, simulated in the preview)
 
