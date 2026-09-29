@@ -161,13 +161,14 @@ https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`919e00e`](https:
 
 ## Playable demo / how to run
 
-**Preview:** https://dedq3e.github.io/rare-friends-nook/ (GitHub Pages, simulated economy). Requires a browser wallet connected to **Robinhood mainnet (chain 4663)** holding a hardwired Rare Friends Generations NFT (generation 1 or higher). On a phone, open the link in the wallet app's browser (for example MetaMask → Browser) and turn the phone sideways.
+**Preview:** https://dedq3e.github.io/rare-friends-nook/ (GitHub Pages, simulated economy). Requires a browser wallet connected to **Robinhood mainnet (chain 4663)** holding a hardwired Rare Friends Generations NFT (generation 1 or higher). On a phone, open the link in the wallet app's browser (for example MetaMask → Browser) and turn the phone sideways. No RF funding or transaction signature is needed for the preview.
 
 **Locally** (Node.js 22 or newer):
 
-```
-git clone https://github.com/DEDQ3E/rare-friends-nook
+```sh
+git clone https://github.com/DEDQ3E/rare-friends-nook.git
 cd rare-friends-nook
+git checkout 919e00ed310db11a9f28100f028605e9772dd8ee
 npm ci
 npm run dev
 ```
@@ -214,6 +215,7 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 - The generation is one public read of the Generations contract from inside the game (the same RPC the SDK sprite reader uses and the child CSP allows). It is never an ownership check; if it fails, the character uses medium strength.
 - Mobile needs the wallet app's browser; in portrait the 3:2 frame is small (the game suggests turning the phone).
 - Sound starts after the first click or key press (browser rule).
+- No funds are at risk in the preview: it never asks for a transaction, a signature or an RF approval; the wallet only connects, switches to Robinhood mainnet and proves ownership. The economy has never run against a deployed contract.
 
 ## Credits
 

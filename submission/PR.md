@@ -42,7 +42,9 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 
 ![The day's recap card: Day 1 with Humippy](https://raw.githubusercontent.com/DEDQ3E/rare-friends-nook/main/media/recap.png)
 
-## How RF is spent, and the economy
+## Costs and rewards (how RF is spent)
+
+Everything is simulated; you start with 20 RF.
 
 | Loop | Player pays | Player gets back |
 |---|---|---|
@@ -51,7 +53,7 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 | **Wardrobe** | 2–5 RF per piece | cosmetic |
 | **Buy mode** | 2–6 RF per piece | new activities |
 
-Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards. The RF prices are example values, set on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average). To price higher, multiply every price and keepsake value by the same factor: the odds, the 91.65% average return and the balance between items stay the same.
+Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back, with no redemption expiry. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards. The RF prices are example values, set on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average). To price higher, multiply every price and keepsake value by the same factor: the odds, the 91.65% average return and the balance between items stay the same.
 
 ## What would be on-chain?
 
@@ -67,7 +69,15 @@ https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`919e00e`](https:/
 
 ## Playable demo / how to run
 
-https://dedq3e.github.io/rare-friends-nook/ (simulated economy). Needs a browser wallet on **Robinhood mainnet (4663)** holding a hardwired Generations NFT (generation 1 or higher); on phones, the wallet app's browser, landscape. Locally: `npm ci && npm run dev` (Node 22+).
+https://dedq3e.github.io/rare-friends-nook/ (simulated economy). Needs a browser wallet on **Robinhood mainnet (4663)** holding a hardwired Generations NFT (generation 1 or higher); on phones, the wallet app's browser, landscape. No RF funding or transaction signature is needed for the preview. Locally, with Node.js 22+:
+
+```sh
+git clone https://github.com/DEDQ3E/rare-friends-nook.git
+cd rare-friends-nook
+git checkout 919e00ed310db11a9f28100f028605e9772dd8ee
+npm ci
+npm run dev
+```
 
 ## How do you play?
 
@@ -81,7 +91,7 @@ Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F
 
 ## Known limitations
 
-No storage in the SDK sandbox (a reload starts fresh); no multiplayer in the SDK, so the neighbours are simulated; the SDK test harness uses its mock Friend #7730; no Hollow Friend was at hand for the ten-Friend run; mobile needs the wallet app's browser; sound starts after the first click.
+No storage in the SDK sandbox (a reload starts fresh); no multiplayer in the SDK, so the neighbours are simulated; the SDK test harness uses its mock Friend #7730; no Hollow Friend was at hand for the ten-Friend run; mobile needs the wallet app's browser; sound starts after the first click. No funds are at risk in the preview: it never asks for a transaction, a signature or an RF approval; the wallet only connects, switches to Robinhood mainnet and proves ownership. The economy has never run against a deployed contract.
 
 ## Credits
 
