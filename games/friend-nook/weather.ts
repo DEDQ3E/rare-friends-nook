@@ -3,8 +3,9 @@
 export type Weather = "clear" | "clouds" | "rain" | "snow" | "storm";
 export const WEATHER_LABEL: Readonly<Record<Weather, string>> = { clear: "Clear", clouds: "Cloudy", rain: "Rain", snow: "Snow", storm: "Storm" };
 
-const SEED = Math.floor(Math.random() * 1e9); // one street per session (both houses read the same module)
-const TABLE: readonly (readonly [Weather, number])[] = [["clear", 34], ["clouds", 26], ["rain", 22], ["snow", 12], ["storm", 6]];
+/** A new sky every launch: one seed per session, shared by both houses (they read the same module). */
+const SEED = (() => { try { return crypto.getRandomValues(new Uint32Array(1))[0]; } catch { return Math.floor(Math.random() * 2 ** 32); } })();
+const TABLE: readonly (readonly [Weather, number])[] = [["clear", 24], ["clouds", 16], ["rain", 28], ["snow", 20], ["storm", 12]]; // percent
 const HOURS = 4;                              // the weather can change every 4 in-game hours
 
 /** The weather at an in-game minute. */
