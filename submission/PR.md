@@ -68,7 +68,7 @@ Paid outcomes only through the SDK chance game. Browser randomness only drives b
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`919e00e`](https://github.com/DEDQ3E/rare-friends-nook/tree/919e00ed310db11a9f28100f028605e9772dd8ee)) · FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`5e028fa`](https://github.com/DEDQ3E/rare-friends-nook/tree/5e028facee8e0d8e8b577db050b7a93b94b073d5)) · FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
@@ -77,7 +77,7 @@ https://dedq3e.github.io/rare-friends-nook/ (simulated economy). Needs a browser
 ```sh
 git clone https://github.com/DEDQ3E/rare-friends-nook.git
 cd rare-friends-nook
-git checkout 919e00ed310db11a9f28100f028605e9772dd8ee
+git checkout 5e028facee8e0d8e8b577db050b7a93b94b073d5
 npm ci
 npm run dev
 ```
