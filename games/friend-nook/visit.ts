@@ -6,6 +6,7 @@ import { Builder, S, depthSort, fillPoly, project } from "./iso.js";
 import type { Temperament } from "./personality.js";
 import type { Accent } from "./traits.js";
 import type { Facing } from "./wardrobe.js";
+import type { HomeTheme } from "./homes.js";
 
 export type VisitAct = Readonly<{ id: string; label: string; like: string; neutral: string; hostNeutral: string; icon: string }>;
 /** Things to do together; `like` is the everyday activity whose taste decides how each Friend feels about it. */
@@ -33,6 +34,7 @@ const WALL = S("#EFE0C4", "#E2CFAE", "#D6BC94"), FLOOR_A = "#C8935E", FLOOR_B = 
 export type VisitScene = Readonly<{
   guest: readonly (readonly string[])[]; host: readonly (readonly string[])[]; // idle frames (down facing)
   accent: Accent; heirloomDef: string | null; t: number; reduced: boolean;
+  home?: HomeTheme; // the neighbour's family home, when its family is known
   guestSays: string; hostSays: string; hop: number; // hop: seconds left of a happy bounce
 }>;
 
@@ -41,8 +43,9 @@ export function drawVisit(ctx: CanvasRenderingContext2D, scene: VisitScene) {
   const W = ctx.canvas.width, H = ctx.canvas.height;
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = "#2b1d14"; ctx.fillRect(0, 0, W, H);
   const b = new Builder(); b.reset();
-  for (let i = 0; i < 5; i++) for (let j = 0; j < 4; j++) b.tp(i, j, i + 1, j + 1, 0, (i + j) % 2 ? FLOOR_A : FLOOR_B);
-  b.box(-.15, 0, .15, 4, 34, WALL); b.box(0, -.15, 5, .15, 34, WALL);
+  const home = scene.home, wall = home ? S(home.frame, home.bed.back, home.bed.left) : WALL, floor = home ? [home.living.wood[0], home.living.wood[1]] : [FLOOR_A, FLOOR_B];
+  for (let i = 0; i < 5; i++) for (let j = 0; j < 4; j++) b.tp(i, j, i + 1, j + 1, 0, floor[(i + j) % 2 ? 0 : 1]);
+  b.box(-.15, 0, .15, 4, 34, wall); b.box(0, -.15, 5, .15, 34, wall);
   b.tp(1.1, 1.5, 3.9, 3.5, .3, scene.accent.top);
   for (const [def, i, j] of [["armchair", .25, 1.3], ["floorlamp", .3, .35], ["plant-living", 4.2, .15]] as const) buildPlaced(b, { uid: def, def, i, j, swap: false });
   if (scene.heirloomDef) buildPlaced(b, { uid: "heirloom", def: scene.heirloomDef, i: 2.6, j: .3, swap: false });

@@ -21,6 +21,7 @@ import { createSoundscape, voiceFor, type Soundscape } from "./audio.js";
 import { personalize, traitsFor } from "./traits.js";
 import { randomMeme, renderMeme, type Meme } from "./memes.js";
 import { HEIRLOOM } from "./heirlooms.js";
+import { HOMES } from "./homes.js";
 import { neighbours, type Neighbour } from "./neighbours.js";
 import { VISIT_ACTS, drawVisit, react, type VisitAct } from "./visit.js";
 import "./style.css";
@@ -99,6 +100,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
   const familyTemper = temperamentFor(family);
   const heirloom = family ? HEIRLOOM[family] : undefined;
+  const home = family ? HOMES[family] : undefined;
   const traits = useMemo(() => (seed === null ? null : traitsFor(friendId, seed, familyTemper)), [friendId, seed, familyTemper]);
   const temper = useMemo(() => personalize(familyTemper, traits), [familyTemper, traits]);
   const nick = traits?.nickname ?? `Friend #${friendId.toString()}`;
@@ -280,7 +282,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
         const r = c.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(320, Math.round(r.width * dpr)), h = Math.round(w * 9 / 16);
         if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
         g.imageSmoothingEnabled = false;
-        drawVisit(g, { guest: sprites.idle.down, host: visit.n.sprites.idle.down, accent: visit.n.traits.accent, heirloomDef: visit.n.heirloom?.def.id ?? null,
+        drawVisit(g, { guest: sprites.idle.down, host: visit.n.sprites.idle.down, accent: visit.n.traits.accent, heirloomDef: visit.n.heirloom?.def.id ?? null, home: HOMES[visit.n.family],
           t: Math.max(0, now - t0) / 1000, reduced: lessMotion, guestSays: visit.guestSays, hostSays: visit.hostSays, hop: 1.4 - (now - visit.hopAt) / 1000 });
       }
       raf = requestAnimationFrame(loop);
@@ -596,7 +598,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
             <span className="fn-chip fn-love">♥ Loves: {familyTemper.loves.map(id => ACTION[id]?.label).filter(Boolean).slice(0, 4).join(", ")}</span>
             <span className="fn-chip fn-hate">✕ Dislikes: {familyTemper.dislikes.map(id => ACTION[id]?.label).filter(Boolean).join(", ") || "nothing, really"}</span>
           </div>
-          {heirloom && <p className="fn-heir"><strong>Family heirloom: {heirloom.def.name}</strong> (in the living room) — {heirloom.blurb}</p>}
+          {(home || heirloom) && <p className="fn-heir">{home && <><strong>Family home: {home.name}</strong>{heirloom ? " · " : ""}</>}{heirloom && <><strong>heirloom: {heirloom.def.name}</strong> (in the living room) — {heirloom.blurb}</>}</p>}
           <p className="fn-sub">Only {nick} has these, and four are secrets. Watch and play to find them:</p>
           <ul className="fn-mine">
             <li><strong>Favourite colour:</strong> <i className="fn-swatch" style={{ background: traits.accent.top }} /> {traits.accent.name}</li>
@@ -643,11 +645,11 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
             <p className="fn-sub">Sample Friends that come with FriendSDK, played by the game. They are not real players: FriendSDK has no multiplayer yet.</p>
             {nearby.length ? <div className="fn-grid">{nearby.map(n => <button key={String(n.id)} type="button" className="fn-tile" onClick={() => startVisit(n)} disabled={paused}>
               <img src={neighbourPortrait[String(n.id)]} width={60} height={64} alt="" style={{ background: n.traits.accent.light }} />
-              <strong>{n.traits.nickname}'s room</strong><small>{n.family} · {n.temper.title} · sample Friend #{String(n.id)}</small>
+              <strong>{n.traits.nickname}'s {HOMES[n.family]?.name ?? "room"}</strong><small>{n.family} · {n.temper.title} · sample Friend #{String(n.id)}</small>
             </button>)}</div> : <p>No one else lives on this street yet.</p>}
           </>}
           {panel === "visit" && visit && <>
-            <h2>{visit.n.traits.nickname}'s room <span className="fn-sim">simulated neighbour</span></h2>
+            <h2>{visit.n.traits.nickname}'s {HOMES[visit.n.family]?.name ?? "room"} <span className="fn-sim">simulated neighbour</span></h2>
             <canvas ref={visitCanvas} className="fn-visit" role="img" aria-label={`${nick} visiting ${visit.n.traits.nickname}`} />
             <p className="fn-sub">{visit.verdict ? <strong>{visit.verdict}</strong> : <>{visit.n.traits.nickname} is a {visit.n.temper.title}. What will {nick} think?</>}</p>
             <div className="fn-row">{VISIT_ACTS.map(a => <button key={a.id} type="button" className="fn-btn fn-small" disabled={paused} onClick={() => visitAct(a)}><img src={icon[a.icon]} alt="" /> {a.label}</button>)}</div>
@@ -687,6 +689,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               <dt>Favourite colour</dt><dd><i className="fn-swatch" style={{ background: traits.accent.top }} /> {traits.accent.name} — its blanket, cushion and rug</dd>
               <dt>Favourite snack</dt><dd>{found.has("snack") ? traits.snack : <span className="fn-secret">??? — {SECRET_HINT.snack}</span>}</dd>
               <dt>Birthday</dt><dd>{found.has("birthday") ? traits.birthday.label : <span className="fn-secret">??? — {SECRET_HINT.birthday}</span>}</dd>
+              {home && <><dt>Family home</dt><dd>{home.name}: walls, wallpaper, floors and rugs in its family's style</dd></>}
               {heirloom && <><dt>Family heirloom</dt><dd>{heirloom.def.name}: {heirloom.action.label.toLowerCase()} (living room)</dd></>}
               <dt>Quirk</dt><dd>{found.has("quirk") ? <>{traits.quirk.label}: {traits.quirk.blurb}</> : <span className="fn-secret">??? — {SECRET_HINT.quirk}</span>}</dd>
               <dt>Catchphrase</dt><dd>“{traits.catchphrase}”</dd></>}

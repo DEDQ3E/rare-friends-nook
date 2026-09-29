@@ -48,7 +48,7 @@ try {
   await game.getByRole("button", { name: "Another meme" }).click(); await wait(2800);
   await game.getByRole("button", { name: "Back to the house" }).click(); await wait(1200);
   await zoom(false); await use(12.05, 4.5, 10, "Visit a neighbour");                  // the front door: a simulated neighbour
-  await game.getByRole("button", { name: /'s room/ }).first().click({ timeout: 30000 }); await wait(1800);
+  await game.getByRole("button", { name: /sample Friend #/ }).first().click({ timeout: 30000 }); await wait(1800);
   await game.getByRole("button", { name: "Hug" }).click(); await wait(2300);
   await game.getByRole("button", { name: "Dance together" }).click(); await wait(2300);
   await game.getByRole("button", { name: "Go home" }).click(); await zoom(true); await wait(800);

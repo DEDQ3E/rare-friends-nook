@@ -2,11 +2,14 @@
  * (see Builder.fiFx / fjFx / tpFx) whose drawings read this shared state every frame. The Friend's own
  * artwork is never drawn here. */
 import type { QuadAt } from "./iso.js";
+import { DEFAULT_HOME, type HomeTheme } from "./homes.js";
 
 /** Current time (seconds), the actions being done right now, and darkness 0…1. Updated by the engine. */
 export const FX = { t: 0, acts: new Set<string>(), dark: 0, calm: false,
   /** The Friend's favourite colour: blanket, cushions and the living-room rug. */
-  accent: { top: "#8E7CC3", left: "#7462A8", right: "#5F4F93", light: "#B3A5E0" } };
+  accent: { top: "#8E7CC3", left: "#7462A8", right: "#5F4F93", light: "#B3A5E0" },
+  /** The family home: walls, wallpaper, floors, curtains and rugs. */
+  home: DEFAULT_HOME as HomeTheme };
 
 /** Fill the sub-rectangle [u0, u1] × [v0, v1] of a face (u along the face, v up). */
 export function quad(ctx: CanvasRenderingContext2D, at: QuadAt, u0: number, v0: number, u1: number, v1: number, color: string) {

@@ -2,6 +2,7 @@
  * loop (needs, actions, free will, wishes, voice). React only shows panels and the HUD around it. */
 import { Builder, depthSort, fillPoly, lit, withMoving, makePart, pointInPoly, project, unproject, type Part } from "./iso.js";
 import { CELL, COLS, GH, GW, ROWS, buildStructure, drawShell, edgeOpen, roomAt, type Room, type Sky } from "./house.js";
+import { homeFor } from "./homes.js";
 import { DEF, buildPlaced, footprint, placePoint, starterHouse, setBallLift, setHutchItems, type Placed } from "./furniture.js";
 import { ACTION, ACTIONS, DAY_MINUTES, GAME_MINUTES_PER_SECOND, NEEDS, actionsOn, clamp, darkness, decayNeeds, desire, isNight, mood, type ActionDef, type NeedKey, type Needs, type Stock } from "./sim.js";
 import { BALANCED, preference, refuseChance, type Temperament } from "./personality.js";
@@ -623,6 +624,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     setOutfit(o: Outfit) { outfit = o; },
     setCharacter(temperament: Temperament, s: number, q: string | null = null) {
       temper = temperament; strength = s; quirk = q;
+      // the family decorates the house its own way (walls, wallpaper, floors, curtains, rugs)
+      const home = homeFor(temperament.family); if (FX.home !== home) { FX.home = home; rebuild(); }
       // the family's heirloom moves in with the Friend (once; the player may move it or put it away later)
       const h = HEIRLOOM[temperament.family];
       if (h && !heirloomFor) { heirloomFor = temperament.family; placed = placed.filter(p => !p.def.startsWith("heirloom-")); placed.push({ uid: "heirloom", def: h.def.id, i: HEIRLOOM_AT[0], j: HEIRLOOM_AT[1], swap: false }); rebuild(); }

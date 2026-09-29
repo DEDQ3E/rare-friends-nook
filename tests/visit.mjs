@@ -18,7 +18,7 @@ for (const [w, h, name] of [[1280, 800, "visit-desktop"], [844, 390, "visit-phon
     const text = await list.innerText(); assert.match(text, /SIMULATED/i); assert.match(text, /not real players/);
     console.log(name, text.split("\n").filter(Boolean).slice(0, 6).join(" | "));
     await page.screenshot({ path: `${out}/${name}-list.png` });
-    await game.getByRole("button", { name: /'s room/ }).first().click();
+    await game.getByRole("button", { name: /sample Friend #/ }).first().click();
     const scene = game.locator("section[role=dialog]").filter({ hasText: "simulated neighbour" });
     await scene.waitFor();
     for (const act of ["Hug", "Dance together"]) { await game.getByRole("button", { name: act }).click(); await page.waitForTimeout(900); console.log(act, "→", await scene.locator(".fn-sub").innerText()); }
