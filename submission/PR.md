@@ -60,7 +60,7 @@ Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% 
 
 ## What would be on-chain?
 
-Nothing in this build. The Gift Box is the SDK's `ChanceGame` with this `game.json` (`buy`, `play`, `settle`, `redeem` into the Friend's NFT wallet). Food, clothes and furniture need a custom RF integration; needs, friendship and the house need storage FriendSDK v0.1.3 does not supply.
+Nothing in this build. The Gift Box is the SDK's `ChanceGame` with this `game.json` (`buy`, `play`, `settle`, `redeem` into the Friend's NFT wallet). Food, clothes and furniture need a custom RF integration; needs, friendship and the house need storage FriendSDK v0.1.4 does not supply.
 
 ## How does it use randomness?
 
@@ -68,7 +68,7 @@ Paid outcomes only through the SDK chance game. Browser randomness only drives b
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`2e8ba84`](https://github.com/DEDQ3E/rare-friends-nook/tree/2e8ba842cc8891af70b5a1337c3f7de97cf5b2f8)) · FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`2e8ba84`](https://github.com/DEDQ3E/rare-friends-nook/tree/2e8ba842cc8891af70b5a1337c3f7de97cf5b2f8)) · FriendSDK v0.1.4, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
@@ -90,7 +90,7 @@ Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F
 
 `npm run typecheck`, `friendsdk check`, `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), ten real Friends read live from mainnet, and browser checks: furniture, the Gift Box through the SDK confirmations, Buy mode, a full day with secrets and the recap, sound and mute, phone sizes, 60 fps. The live Pages build is byte-identical to `docs/`.
 
-**Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build (FriendSDK v0.1.3), on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it. The automated checks and the demo video use the SDK's mock wallet.
+**Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it. The automated checks and the demo video use the SDK's mock wallet. The v0.1.4 preview bundle was scanned: neither `runtime.js` nor `game.js` contains transaction code (no `eth_sendTransaction`, `eth_sendRawTransaction`, signing, `writeContract` or ERC-20 `transferFrom`); the game reads the generation with a bare read-only client.
 
 ## Known limitations
 
@@ -98,4 +98,4 @@ No storage in the SDK sandbox (a reload starts fresh); no multiplayer in the SDK
 
 ## Credits
 
-DEDQ3E. FriendSDK v0.1.3 and the Generations artwork by Rare Friends; the neighbours use the SDK's sample Friend artwork. Wardrobe fitting reused from the builder's *Rare Friends: Expeditions*. No third-party assets. Apache-2.0.
+DEDQ3E. FriendSDK v0.1.4 and the Generations artwork by Rare Friends; the neighbours use the SDK's sample Friend artwork. Wardrobe fitting reused from the builder's *Rare Friends: Expeditions*. No third-party assets. Apache-2.0.

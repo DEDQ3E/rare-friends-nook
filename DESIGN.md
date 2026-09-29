@@ -1,6 +1,6 @@
 # Rare Friends: Friend Nook — design
 
-Vibeathon category: **Character Spotlight**. Built with FriendSDK v0.1.3.
+Vibeathon category: **Character Spotlight**. Built with FriendSDK v0.1.4.
 
 ## Pitch
 

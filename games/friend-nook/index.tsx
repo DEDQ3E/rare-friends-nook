@@ -7,7 +7,8 @@ import { formatGameAmount } from "@rarefriends/friendsdk/ui";
 import { createFriendSoundKit, type FriendSoundCue, type FriendSoundKit } from "@rarefriends/friendsdk/sounds";
 import { GENERATION_SPRITE_MANIFEST, createFriendReader, spriteFrame } from "@rarefriends/friendsdk/sprites";
 import { GENERATION_ELIGIBILITY_ABI } from "@rarefriends/friendsdk/identity";
-import { createFriendPublicClient } from "@rarefriends/friendsdk/wallet";
+import { createClient, http } from "viem";
+import { readContract } from "viem/actions";
 import { createEngine, pieceThumb, type Engine, type EngineEvent, type FriendSprites, type View } from "./engine.js";
 import { ACTION, DAY_MINUTES, NEEDS, NEED_LABEL, clockText, hourOf, moodLabel, type ActionDef, type NeedKey } from "./sim.js";
 import { BOND_LEVELS, BOND_TITLES, STRENGTH_LABEL, bondLevel, preference, strengthOf, temperamentFor } from "./personality.js";
@@ -143,8 +144,10 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   useEffect(() => {
     let alive = true; setGeneration(undefined);
     // Character strength only: a public, read-only lookup of this Friend's generation attribute. It is not an
-    // ownership check (the SDK runtime verifies ownership before the game starts) and never gates play.
-    createFriendPublicClient().readContract({ address: GENERATION_SPRITE_MANIFEST.generations, abi: GENERATION_ELIGIBILITY_ABI, functionName: "generation", args: [friendId] })
+    // ownership check (the SDK runtime verifies ownership before the game starts) and never gates play. A bare client
+    // with the one read it needs (as the SDK's own artwork reader since v0.1.4), so no transaction code is bundled.
+    const reader = createClient({ transport: http(GENERATION_SPRITE_MANIFEST.rpcUrl, { retryCount: 1, timeout: 12_000 }), cacheTime: 0 });
+    readContract(reader, { address: GENERATION_SPRITE_MANIFEST.generations, abi: GENERATION_ELIGIBILITY_ABI, functionName: "generation", args: [friendId] })
       .then(v => { if (alive) setGeneration(Number(v)); }).catch(() => { if (alive) setGeneration(null); });
     return () => { alive = false; };
   }, [friendId]);

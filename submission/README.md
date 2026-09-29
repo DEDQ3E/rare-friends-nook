@@ -148,7 +148,7 @@ Nothing in this build; no transaction is ever sent. The Gift Box needs no new co
 - `play` burns a box and commits the opening; a sponsor pays the Dice fee, the oracle records one random word, and anyone can `settle`: the keepsake is minted as an ERC-1155 reward into the canonical NFT wallet.
 - `redeem` burns a keepsake for its fixed RF, back into the same wallet, with no expiry.
 
-The hutch would read the Friend wallet's keepsake balances. Food, clothes and furniture would be RF purchases into the Friend wallet with the 50% burn / 50% rewards split, which needs a custom RF integration; needs, the clock, friendship and the house layout need storage that FriendSDK v0.1.3 does not supply.
+The hutch would read the Friend wallet's keepsake balances. Food, clothes and furniture would be RF purchases into the Friend wallet with the 50% burn / 50% rewards split, which needs a custom RF integration; needs, the clock, friendship and the house layout need storage that FriendSDK v0.1.4 does not supply.
 
 </details>
 
@@ -160,7 +160,7 @@ The hutch would read the Friend wallet's keepsake balances. Food, clothes and fu
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`2e8ba84`](https://github.com/DEDQ3E/rare-friends-nook/tree/2e8ba842cc8891af70b5a1337c3f7de97cf5b2f8)). FriendSDK v0.1.3, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit: [`2e8ba84`](https://github.com/DEDQ3E/rare-friends-nook/tree/2e8ba842cc8891af70b5a1337c3f7de97cf5b2f8)). FriendSDK v0.1.4, React 19, TypeScript, Canvas 2D, Web Audio. Everything is drawn and synthesized in code; no image or sound files.
 
 ## Playable demo / how to run
 
@@ -202,7 +202,8 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 - `npm run typecheck`, `npm run check` (`friendsdk check`: valid, expected reward 0.9165 RF, maximum 5 RF), `npm test` (`friendsdk test`: PASS at 960 px).
 - Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), the first own choice, secrets found by playing and the day's recap, sulking and making up, a visit to a simulated neighbour, random memes, activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
 - **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots use the same live reads for #7730.
-- **Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build (FriendSDK v0.1.3), on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it.
+- **Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it.
+- **No transaction code:** The v0.1.4 preview bundle was scanned: neither `runtime.js` nor `game.js` contains transaction code (no `eth_sendTransaction`, `eth_sendRawTransaction`, signing, `writeContract` or ERC-20 `transferFrom`); the game reads the generation with a bare read-only client.
 - **Video:** `tests/video.mjs` records the demo above, picture and sound together, straight from the running game.
 - **Music:** `tests/music.mjs` records every track straight from the game's audio graph to check the mix (similar loudness across tracks, no clipping).
 - `npm run docs` (`tests/docs.ts`) checks that every price, odd and value in this file and the README matches `game.json` and the code.
@@ -222,4 +223,4 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 
 ## Credits
 
-Game design, code, pixel art, music and sound: DEDQ3E. FriendSDK v0.1.3 and the Rare Friends Generations artwork by Rare Friends. The neighbours use the SDK's own sample Friend artwork (`examples/fishing/sample-sprites.ts`, SDK-supplied, see its NOTICE.md). The wardrobe fitting (`fit.ts`, `wardrobe.ts`) is reused from the builder's own entry *Rare Friends: Expeditions*. No third-party assets. License: Apache-2.0.
+Game design, code, pixel art, music and sound: DEDQ3E. FriendSDK v0.1.4 and the Rare Friends Generations artwork by Rare Friends. The neighbours use the SDK's own sample Friend artwork (`examples/fishing/sample-sprites.ts`, SDK-supplied, see its NOTICE.md). The wardrobe fitting (`fit.ts`, `wardrobe.ts`) is reused from the builder's own entry *Rare Friends: Expeditions*. No third-party assets. License: Apache-2.0.
