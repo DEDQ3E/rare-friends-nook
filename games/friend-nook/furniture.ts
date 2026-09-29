@@ -247,6 +247,9 @@ export function footprint(p: Placed): [number, number, number, number] {
   return [Math.min(a, c), Math.min(b, d), Math.max(a, c), Math.max(b, d)];
 }
 export function buildPlaced(b: Builder, p: Placed) {
-  const d = DEF[p.def]; b.place(p.uid, d.origin[0], d.origin[1], p.i, p.j, p.swap); d.build(b); b.reset();
+  const d = DEF[p.def], from = b.parts.length; b.place(p.uid, d.origin[0], d.origin[1], p.i, p.j, p.swap); d.build(b); b.reset();
+  // the family home's materials (heirlooms keep their own family colours)
+  const map = FX.home.furniture;
+  if (map && !p.def.startsWith("heirloom-")) for (let n = from; n < b.parts.length; n++) b.parts[n].polys = b.parts[n].polys.map(q => (map[q.fill] ? { ...q, fill: map[q.fill] } : q));
 }
 

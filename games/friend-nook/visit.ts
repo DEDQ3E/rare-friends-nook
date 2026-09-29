@@ -2,6 +2,7 @@
  * they do together. How it goes depends on both characters (what each one loves or dislikes, and family). */
 import { drawFriend, feetRow } from "./art.js";
 import { buildPlaced } from "./furniture.js";
+import { FX } from "./fx.js";
 import { Builder, S, depthSort, fillPoly, project } from "./iso.js";
 import type { Temperament } from "./personality.js";
 import type { Accent } from "./traits.js";
@@ -47,8 +48,10 @@ export function drawVisit(ctx: CanvasRenderingContext2D, scene: VisitScene) {
   for (let i = 0; i < 5; i++) for (let j = 0; j < 4; j++) b.tp(i, j, i + 1, j + 1, 0, floor[(i + j) % 2 ? 0 : 1]);
   b.box(-.15, 0, .15, 4, 34, wall); b.box(0, -.15, 5, .15, 34, wall);
   b.tp(1.1, 1.5, 3.9, 3.5, .3, scene.accent.top);
+  const own = FX.home; if (home) FX.home = home; // the neighbour's furniture is in its own family's materials
   for (const [def, i, j] of [["armchair", .25, 1.3], ["floorlamp", .3, .35], ["plant-living", 4.2, .15]] as const) buildPlaced(b, { uid: def, def, i, j, swap: false });
   if (scene.heirloomDef) buildPlaced(b, { uid: "heirloom", def: scene.heirloomDef, i: 2.6, j: .3, swap: false });
+  FX.home = own;
   const parts = depthSort(b.parts);
   const xa = Math.min(...parts.map(p => p.x0)), xb = Math.max(...parts.map(p => p.x1)), ya = Math.min(...parts.map(p => p.y0)) - 18, yb = Math.max(...parts.map(p => p.y1));
   const s = Math.min(W / (xb - xa + 8), H / (yb - ya + 8));

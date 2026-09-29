@@ -19,9 +19,9 @@
     "swatch": "rgb(229, 143, 176)",
     "first": "try on a mask — its family heirloom",
     "chose": [
-      "08:08 Try on a mask (loves it)",
-      "09:14 Cook a meal",
-      "10:40 Try on a mask (loves it)"
+      "08:09 Try on a mask (loves it)",
+      "09:33 Dance (loves it)",
+      "11:15 Cook a meal"
     ],
     "wishes": [],
     "errors": []
@@ -44,12 +44,11 @@
     "home": "Greenhouse Lab",
     "heirloom": "Cell garden",
     "swatch": "rgb(160, 98, 142)",
-    "first": "snack at the bar — a Foodie loves this",
+    "first": "cook a meal — a Foodie loves this",
     "chose": [
-      "08:15 Snack at the bar (loves it)",
-      "09:09 Tend the cell garden (loves it)",
-      "09:56 Tend the cell garden (loves it)",
-      "11:08 Cook a meal (loves it)"
+      "08:20 Cook a meal (loves it)",
+      "09:46 Tend the cell garden (loves it)",
+      "10:47 Play video games"
     ],
     "wishes": [],
     "errors": []
@@ -75,8 +74,9 @@
     "first": "play video games — a Chaos Gremlin loves this",
     "chose": [
       "08:11 Play video games (loves it)",
-      "09:50 Play video games (loves it)",
-      "11:47 Grab a snack"
+      "09:12 Play video games (loves it)",
+      "10:38 Snack at the bar",
+      "11:34 Take a bath"
     ],
     "wishes": [],
     "errors": []
@@ -99,12 +99,12 @@
     "home": "Funhouse",
     "heirloom": "Wobbly tower",
     "swatch": "rgb(242, 201, 76)",
-    "first": "play video games — a Chaos Gremlin loves this",
+    "first": "cook a meal — its favourite thing (secret found)",
     "chose": [
-      "08:11 Play video games (loves it)",
-      "09:34 Snack at the bar",
-      "10:35 Nap",
-      "11:56 Play with toys (loves it)"
+      "08:17 Cook a meal (loves it)",
+      "09:39 Stack the wobbly tower (loves it)",
+      "10:26 Stack the wobbly tower (loves it)",
+      "11:34 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -130,8 +130,8 @@
     "first": "float on the cloud — its family heirloom",
     "chose": [
       "08:09 Float on the cloud (loves it)",
-      "09:34 Play with toys",
-      "11:20 Grab a snack"
+      "09:25 Snack at the bar",
+      "10:35 Play with toys"
     ],
     "wishes": [],
     "errors": []
@@ -157,8 +157,8 @@
     "first": "daydream — its quirk: sky watcher",
     "chose": [
       "08:21 Daydream (loves it)",
-      "09:23 Daydream (loves it)",
-      "10:44 Watch TV (loves it)"
+      "10:10 Cook a meal",
+      "11:55 Play video games"
     ],
     "wishes": [],
     "errors": []
@@ -183,10 +183,10 @@
     "swatch": "rgb(155, 179, 92)",
     "first": "dance under the mirror ball — its family heirloom",
     "chose": [
-      "08:09 Dance under the mirror ball (loves it)",
-      "09:17 Take a bath (loves it)",
-      "10:38 Snack at the bar",
-      "11:43 Nap"
+      "08:08 Dance under the mirror ball (loves it)",
+      "09:16 Take a bath (loves it)",
+      "10:48 Grab a snack",
+      "11:51 Read"
     ],
     "wishes": [],
     "errors": []
@@ -212,8 +212,8 @@
     "first": "watch TV — a Night Owl loves this",
     "chose": [
       "08:12 Watch TV (loves it)",
-      "10:01 Cook a meal",
-      "11:58 Nap"
+      "09:53 Snack at the bar",
+      "10:56 Watch TV (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -236,11 +236,11 @@
     "home": "Moonlit Manor",
     "heirloom": "Bone xylophone",
     "swatch": "rgb(155, 179, 92)",
-    "first": "rattle out a tune — its family heirloom",
+    "first": "play with toys — its favourite thing (secret found)",
     "chose": [
-      "08:09 Rattle out a tune (loves it)",
-      "09:20 Cook a meal",
-      "10:59 Play with toys (loves it)"
+      "08:18 Play with toys (loves it)",
+      "09:56 Cook a meal",
+      "11:53 Nap"
     ],
     "wishes": [],
     "errors": []
@@ -266,9 +266,9 @@
     "first": "look at family photos — its family heirloom",
     "chose": [
       "08:08 Look at family photos (loves it)",
-      "09:09 Cook a meal",
-      "11:02 Look at family photos (loves it)",
-      "11:51 Read"
+      "09:10 Cook a meal",
+      "10:44 Read",
+      "11:54 Read"
     ],
     "wishes": [],
     "errors": []

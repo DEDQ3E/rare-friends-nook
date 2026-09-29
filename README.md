@@ -31,8 +31,9 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
 - **Family heirlooms:** nine family heirlooms, one per family, move in with the Friend (a bone xylophone for a
   Skeleton, a cloud cushion for a Hoverer, a mirror ball for a Sparkling…), each with an activity its family loves.
 - **Family homes:** the family also decorates the house: nine homes on the same floor plan, each with its own walls,
-  wallpaper motif, floors, curtains and rugs (Moonlit Manor with bone wallpaper for a Skeleton, Cloud Loft with clouds
-  and stars for a Hoverer, Stone Lodge for a Colossus…). Only looks change; furniture, activities and prices do not.
+  wallpaper motif, floors, curtains, rugs and furniture materials (Moonlit Manor with bone wallpaper and black-lacquer
+  furniture for a Skeleton, Cloud Loft with clouds and stars for a Hoverer, Stone Lodge in dark oak for a Colossus…).
+  Only looks change: the same pieces in the same places, with the same activities and prices.
 - **Hints:** the lowest need, and one thing in the house that raises it, with an arrow and a one-tap button.
 - **Sound:** a composed soundtrack for each time of day (marimba morning, vibraphone-and-Rhodes swing, lo-fi
   evening with vinyl crackle, a music-box lullaby in 3/4) and a disco record to dance to, a sound for every activity,

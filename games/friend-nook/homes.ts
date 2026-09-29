@@ -1,5 +1,6 @@
 /** Family homes: each of the nine families moves into the same floor plan decorated its own way (walls, wallpaper
- * motif, floors, curtains, rugs and trim). Only looks change: furniture, activities, prices and odds stay the same. */
+ * motif, floors, curtains, rugs, trim and furniture materials). Only looks change: the same furniture pieces,
+ * activities, prices and odds. */
 
 /** A wallpaper motif: small pixel pictures ("#" = paint) cycled across the bedroom walls, or brick courses. */
 export type Motif = Readonly<{ kind: "dots" } | { kind: "bricks" } | { kind: "stamps"; stamps: readonly (readonly string[])[] }>;
@@ -15,7 +16,27 @@ export type HomeTheme = Readonly<{
   seam: string; skirting: string; frame: string; frameSide: string;
   /** Interior walls: [cap, left face, right face]. */
   inner: readonly [string, string, string];
+  /** Furniture recoloured in the family's materials (original colour → new), or none for the original look. */
+  furniture?: Readonly<Record<string, string>>;
 }>;
+
+/* ---------- furniture materials ---------- */
+const rgb = (h: string) => [1, 3, 5].map(k => parseInt(h.slice(k, k + 2), 16));
+const hex = (c: number[]) => "#" + c.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join("").toUpperCase();
+/** Tones of a base colour: f < 1 darkens, f > 1 mixes toward white. */
+const tone = (base: string, f: number) => hex(rgb(base).map(v => (f <= 1 ? v * f : v + (255 - v) * (f - 1))));
+/** The furniture palette in furniture.ts, lightest first: light wood (with its door panels), dark wood, the sofa and the reading chair. */
+const ORIGINAL = {
+  wood: ["#B7875A", "#A57A4F", "#9A6E45", "#835C38"], dark: ["#8A5A3A", "#6E4630", "#5A3B26"],
+  sofa: ["#8CB3DA", "#6C97C4", "#4F7CAC", "#3D6592", "#34587F"], chair: ["#A9D3A4", "#8FBF8A", "#6FA86A", "#5A9056"],
+} as const;
+const STEPS = { wood: [1, .9, .84, .72], dark: [1, .8, .65], sofa: [1.22, 1, .8, .66, .56], chair: [1.14, 1, .85, .72] } as const;
+/** Map the original furniture palette onto a family's materials (each given as its main tone). */
+const materials = (m: Readonly<Record<keyof typeof ORIGINAL, string>>): Record<string, string> => {
+  const out: Record<string, string> = {};
+  for (const k of Object.keys(ORIGINAL) as (keyof typeof ORIGINAL)[]) ORIGINAL[k].forEach((c, n) => { out[c] = tone(m[k], STEPS[k][n]); });
+  return out;
+};
 
 const stamps = (...s: (readonly string[])[]): Motif => ({ kind: "stamps", stamps: s });
 const BONE = ["#...#", "#####", "#...#"], DIAMOND = ["..#..", ".###.", "#####", ".###.", "..#.."], HEART = [".#.#.", "#####", ".###.", "..#.."];
@@ -42,6 +63,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#6B5F7E", stripe: "#5D5270", wood: ["#7A5A48", "#70523F", "#846351"], curtain: "#8E2F45", rug: ["#5D5270", "#7B6F92"] },
     dining: { wood: ["#6A4B3C", "#624436", "#735244"], rug: ["#8E2F45", "#A8455B"] },
     seam: "#5A4033", skirting: "#3E2E3A", frame: "#2E2433", frameSide: "#241C29", inner: ["#2E2433", "#8D86A6", "#7A7394"],
+    furniture: materials({ wood: "#5E5468", dark: "#3A3140", sofa: "#8E2F45", chair: "#6B5F7E" }),
   },
   Mask: {
     name: "Backstage", motif: stamps(DIAMOND),
@@ -51,6 +73,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#7E2E3C", stripe: "#C99A3A", wood: ["#8A4B32", "#80442D", "#945339"], curtain: "#6E1A28", rug: ["#E8B94A", "#F2CF6B"] },
     dining: { wood: ["#7E4430", "#743E2B", "#884A35"], rug: ["#6E1A28", "#8E2F45"] },
     seam: "#6B3524", skirting: "#3A1E24", frame: "#2E1A1F", frameSide: "#231317", inner: ["#2E1A1F", "#D9B98A", "#C4A276"],
+    furniture: materials({ wood: "#9E5A3C", dark: "#5E2A22", sofa: "#D9A93F", chair: "#7E2E3C" }),
   },
   Family: {
     name: "Cozy Cottage", motif: stamps(HEART),
@@ -60,6 +83,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#E9C39B", stripe: "#DDB085", wood: ["#D9A066", "#D19659", "#DDA86F"], curtain: "#D95F6E", rug: ["#E86F7E", "#F09AA5"] },
     dining: { wood: ["#C98B55", "#C0814C", "#CF935E"], rug: ["#F2A65A", "#F7C08A"] },
     seam: "#B98450", skirting: "#8A5A3A", frame: "#6E4630", frameSide: "#5A3B26", inner: ["#6E4630", "#F3DCC0", "#E6C9A8"],
+    furniture: materials({ wood: "#C99B6A", dark: "#8A5A3A", sofa: "#E86F7E", chair: "#F2A65A" }),
   },
   Cellular: {
     name: "Greenhouse Lab", motif: stamps(CELL),
@@ -69,6 +93,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#A9D9B0", stripe: "#96CC9E", wood: ["#CDB483", "#C4AA78", "#D4BC8C"], curtain: "#5FAF7A", rug: ["#6FBF8F", "#94D1AB"] },
     dining: { wood: ["#BFA374", "#B69969", "#C7AB7C"], rug: ["#C6E36B", "#D8EE8C"] },
     seam: "#A88E5E", skirting: "#4F7F5E", frame: "#3F6A4E", frameSide: "#325841", inner: ["#3F6A4E", "#DDF0DF", "#C8E4CC"],
+    furniture: materials({ wood: "#D4BC8C", dark: "#9C8457", sofa: "#6FBF8F", chair: "#C6E36B" }),
   },
   Asymmetry: {
     name: "Funhouse", motif: stamps(ZIGZAG),
@@ -78,6 +103,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#F25F5C", stripe: "#F7E35A", wood: ["#D9A066", "#E3B35C", "#C98BB9"], curtain: "#3FB6A8", rug: ["#F7E35A", "#F29E4C"] },
     dining: { wood: ["#C98B55", "#8FB8C4", "#CF935E"], rug: ["#3FB6A8", "#6FD1C4"] },
     seam: "#9E6B40", skirting: "#3D3A6B", frame: "#2E2B55", frameSide: "#232046", inner: ["#2E2B55", "#9CD8CF", "#7DC7BC"],
+    furniture: materials({ wood: "#E3B35C", dark: "#3D3A6B", sofa: "#F25F5C", chair: "#3FB6A8" }),
   },
   Hoverer: {
     name: "Cloud Loft", motif: stamps(CLOUD, STAR),
@@ -87,6 +113,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#B9CDEB", stripe: "#A7BFE4", wood: ["#E4CBA0", "#DCC294", "#E9D3AC"], curtain: "#8FB4E0", rug: ["#B8A6E6", "#CFC2F0"] },
     dining: { wood: ["#D6BA8C", "#CEB082", "#DDC296"], rug: ["#8FB4E0", "#AFC9EE"] },
     seam: "#C2A274", skirting: "#5E6FA3", frame: "#4A5A8C", frameSide: "#3A4873", inner: ["#4A5A8C", "#E4EEFB", "#CFDDF2"],
+    furniture: materials({ wood: "#E6D3B3", dark: "#B8A58A", sofa: "#8FB4E0", chair: "#B8A6E6" }),
   },
   Colossus: {
     name: "Stone Lodge", motif: { kind: "bricks" },
@@ -96,6 +123,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#A09482", stripe: "#8F8473", wood: ["#8A5E3C", "#805636", "#946643"], curtain: "#6E8B4E", rug: ["#B5553C", "#C9745C"] },
     dining: { wood: ["#7A5234", "#704B2F", "#83593A"], rug: ["#B5553C", "#C9745C"] },
     seam: "#5E4029", skirting: "#4A433A", frame: "#3A342D", frameSide: "#2D2823", inner: ["#3A342D", "#C4BBAE", "#AFA597"],
+    furniture: materials({ wood: "#7A5234", dark: "#4A3222", sofa: "#6E8B4E", chair: "#B5553C" }),
   },
   Sparkling: {
     name: "Glam Suite", motif: stamps(SPARKLE, DOT),
@@ -105,6 +133,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#E6C4E8", stripe: "#E0B84A", wood: ["#F1E6DC", "#E9DDD2", "#F6EDE5"], curtain: "#C77DDB", rug: ["#F2A5C8", "#F7C4DA"] },
     dining: { wood: ["#EADCCF", "#E2D3C5", "#F0E4D8"], rug: ["#C77DDB", "#DDA4EA"] },
     seam: "#D8C8BC", skirting: "#B98CC4", frame: "#8E5A9E", frameSide: "#744883", inner: ["#8E5A9E", "#FBE3EE", "#F2CFE0"],
+    furniture: materials({ wood: "#F4EDE6", dark: "#D9B45A", sofa: "#F2A5C8", chair: "#C77DDB" }),
   },
   Hollow: {
     name: "Quiet Library", motif: stamps(LEAF),
@@ -114,6 +143,7 @@ export const HOMES: Readonly<Record<string, HomeTheme>> = {
     living: { wall: "#7F917E", stripe: "#6F8170", wood: ["#7A5234", "#704B2F", "#83593A"], curtain: "#4F6B55", rug: ["#B59A6A", "#C9B083"] },
     dining: { wood: ["#6F4A2F", "#66442B", "#784F33"], rug: ["#4F6B55", "#6A8670"] },
     seam: "#4E3524", skirting: "#3E4A3C", frame: "#2F3A2E", frameSide: "#242D23", inner: ["#2F3A2E", "#C9D2C3", "#B4BFAE"],
+    furniture: materials({ wood: "#6F4A2F", dark: "#4E3524", sofa: "#4F6B55", chair: "#B59A6A" }),
   },
 };
 
