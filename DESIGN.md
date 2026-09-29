@@ -117,6 +117,9 @@ Every family also loves its own heirloom (below).
 - **Shop** (simulated RF spend): snacks and meals (consumed by the fridge and the stove), clothes, and
   furniture/decor for Buy mode. Spent RF is split 50% burned, 50% to Friend rewards (simulated, labeled).
 - Every price and odd shown in the UI is read from code or `game.json`; tests check the docs against them.
+- The RF prices are example values on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF
+  back). To price higher, multiply every price and keepsake value by the same factor: odds, the 91.65% return and
+  the balance between items stay the same.
 
 ## Scope for the vibeathon
 

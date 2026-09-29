@@ -35,8 +35,9 @@ snack, a birthday, a catchphrase and a quirk that no other Friend has.
   evening with vinyl crackle, a music-box lullaby in 3/4) and a disco record to dance to, a sound for every activity,
   footsteps by floor, finches, an owl; all synthesized with Web Audio.
 - **Economy (simulated):** Gift Box on the SDK chance game (1 RF, five keepsakes worth 0.9165 RF on average when
-  sold back), food, clothes and Buy-mode furniture as RF sinks. Prices are proposed terms in RF, on the scale of the
-  SDK's reference games (1 RF per consumable, about 0.90 RF back on average). Details in [submission/README.md](submission/README.md).
+  sold back), food, clothes and Buy-mode furniture as RF sinks. The RF prices are example values on the scale of the
+  SDK's reference games (1 RF per consumable, about 0.90 RF back on average); to price higher, multiply every price
+  and keepsake value by the same factor, which keeps the odds, the 91.65% return and the balance. Details in [submission/README.md](submission/README.md).
 
 ![The nine family heirlooms](media/heirlooms.png)
 
@@ -85,7 +86,7 @@ Browser checks (need `npm install --no-save playwright` and `npx playwright inst
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`,
 `onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (simulated neighbours),
 `meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.
-Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The published build is also played by hand with a real wallet on Robinhood mainnet (computer and phone).
+Demo video with sound: `node tests/video.mjs` (Microsoft Edge). Everything is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone).
 README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs` (also needs `pngjs`).
 
 ## Layout

@@ -106,7 +106,7 @@ Not only the SDK's sample Friend: `tests/friends.mjs` runs the game's real SDK r
 
 ## How RF is spent, and the economy
 
-Four RF sinks, all simulated in the preview: **Gift Boxes** (1 RF, the SDK chance game: one of five keepsakes, 0.9165 RF back on average if sold), **food** (snacks and meals the Friend eats), **clothes** and **furniture** (Buy mode). Only keepsakes pay RF back. Personality never changes prices, odds or rewards. Prices are proposed terms in RF, on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average).
+Four RF sinks, all simulated in the preview: **Gift Boxes** (1 RF, the SDK chance game: one of five keepsakes, 0.9165 RF back on average if sold), **food** (snacks and meals the Friend eats), **clothes** and **furniture** (Buy mode). Only keepsakes pay RF back. Personality never changes prices, odds or rewards. The RF prices are example values, set on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average). To price higher, multiply every price and keepsake value by the same factor: the odds, the 91.65% average return and the balance between items stay the same.
 
 <details><summary><b>Prices, keepsake odds and session statistics</b></summary>
 
@@ -187,18 +187,18 @@ On Windows, `play.bat` serves the prebuilt `docs/` folder on http://localhost:41
 
 ## Costs and rewards
 
-Preview balance: 20 RF (simulated, from the SDK). Gift Box 1 RF (odds and values above). Snack pack ×4: 1 RF; Groceries ×3 meals: 2 RF; the house starts with 3 snacks and 2 meals. Clothes 2–5 RF, furniture 2–6 RF, never refunded. Only keepsakes pay RF back, at their fixed values, through the SDK's `redeem`.
+Preview balance: 20 RF (simulated, from the SDK). Gift Box 1 RF (odds and values above). Snack pack ×4: 1 RF; Groceries ×3 meals: 2 RF; the house starts with 3 snacks and 2 meals. Clothes 2–5 RF, furniture 2–6 RF, never refunded. Only keepsakes pay RF back, at their fixed values, through the SDK's `redeem`. All prices are example values: to price higher, multiply every price and keepsake value by the same factor.
 
 ## What have you tested?
 
-Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound, phone sizes and 60 fps; ten real Friends were played live from mainnet; the published build was played by hand with a real wallet on Robinhood mainnet, on a computer and on a phone; a docs check ties every number here to the code.
+Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound, phone sizes and 60 fps; ten real Friends were played live from mainnet; the whole game was also checked by hand with a real wallet on Robinhood mainnet, on a computer and on a phone; a docs check ties every number here to the code.
 
 <details><summary><b>All checks</b></summary>
 
 - `npm run typecheck`, `npm run check` (`friendsdk check`: valid, expected reward 0.9165 RF, maximum 5 RF), `npm test` (`friendsdk test`: PASS at 960 px).
 - Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), the first own choice, secrets found by playing and the day's recap, sulking and making up, a visit to a simulated neighbour, random memes, activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
 - **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots use the same live reads for #7730.
-- **Real wallet:** the published build (FriendSDK v0.1.3) was played by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house and care, the Gift Box and purchases through the SDK confirmations (simulated economy, no RF spent), a neighbour visit and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it.
+- **Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build (FriendSDK v0.1.3), on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it.
 - **Video:** `tests/video.mjs` records the demo above, picture and sound together, straight from the running game.
 - **Music:** `tests/music.mjs` records every track straight from the game's audio graph to check the mix (similar loudness across tracks, no clipping).
 - `npm run docs` (`tests/docs.ts`) checks that every price, odd and value in this file and the README matches `game.json` and the code.

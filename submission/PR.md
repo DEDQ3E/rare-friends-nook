@@ -51,7 +51,7 @@ The SDK runtime handles the wallet, Friend selection and the ownership gate; the
 | **Wardrobe** | 2–5 RF per piece | cosmetic |
 | **Buy mode** | 2–6 RF per piece | new activities |
 
-Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards. Prices are proposed terms in RF, on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average).
+Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards. The RF prices are example values, set on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average). To price higher, multiply every price and keepsake value by the same factor: the odds, the 91.65% average return and the balance between items stay the same.
 
 ## What would be on-chain?
 
@@ -77,7 +77,7 @@ Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F
 
 `npm run typecheck`, `friendsdk check`, `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), ten real Friends read live from mainnet, and browser checks: furniture, the Gift Box through the SDK confirmations, Buy mode, a full day with secrets and the recap, sound and mute, phone sizes, 60 fps. The live Pages build is byte-identical to `docs/`.
 
-**Real wallet:** the published build (FriendSDK v0.1.3) was played by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house and care, the Gift Box and purchases through the SDK confirmations (simulated economy, no RF spent), a neighbour visit and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it. The automated checks and the demo video use the SDK's mock wallet.
+**Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build (FriendSDK v0.1.3), on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it. The automated checks and the demo video use the SDK's mock wallet.
 
 ## Known limitations
 
