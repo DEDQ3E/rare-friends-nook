@@ -22,9 +22,11 @@ await testGame("./games/friend-nook", { width: 1280, height: 800, timeout: 30000
     await openShop();
     const tile = shop.locator("button.fn-tile").filter({ hasText: "Special treat" });
     assert.match(await tile.innerText(), /1 RF/); assert.equal(await shop.locator("button.fn-tile").filter({ hasText: "Birthday cake" }).count(), 0, "no cake before its birthday is known");
+    await shop.locator("button.fn-tile").filter({ hasText: "Snack pack" }).click(); // food: 1 RF, half burned, half to Friend rewards
+    assert.equal(await balance(), start - 1, "a snack pack costs 1 RF");
     await tile.click();
     await toast(/Special treat added \(1 RF: 0\.5 RF burned, 0\.5 RF to Friend rewards/).waitFor({ timeout: 5000 });
-    assert.equal(await balance(), start - 1, "a treat costs 1 RF");
+    assert.equal(await balance(), start - 2, "a treat costs 1 RF");
     await page.screenshot({ path: `${out}/treats-shop.png` });
     await game.getByRole("button", { name: "Close" }).click();
 
@@ -62,6 +64,17 @@ await testGame("./games/friend-nook", { width: 1280, height: 800, timeout: 30000
     assert.ok(diary.some(s => s.includes("Birthday party at the dining table")) && diary.some(s => s.includes("Shared a special treat")) && diary.some(s => s.includes("Bought a birthday cake")));
     await game.getByRole("button", { name: "Close" }).click();
     await openShop(); assert.match(await shop.locator("button.fn-tile").filter({ hasText: "Birthday cake" }).innerText(), /Celebrated this session/, "once per session");
+    await game.getByRole("button", { name: "Close" }).click();
+
+    // where it all went: 1 RF food + 1 RF treat + 3 RF cake = 5 RF spent, 4 RF burned, 1 RF to Friend rewards
+    assert.match(await game.locator(".fn-money small").innerText(), /4 RF burned/, "the HUD counts what was burned");
+    await game.locator(".fn-money").click();
+    const rf = game.locator("section[role=dialog]").filter({ hasText: "Where your RF went" }); await rf.waitFor();
+    const rows = await rf.locator("table.fn-rf tbody tr").evaluateAll(trs => trs.map(tr => [...tr.children].map(c => c.textContent.trim())));
+    assert.deepEqual(rows, [["Food", "1 RF", "0.5 RF", "0.5 RF"], ["Special treats", "1 RF", "0.5 RF", "0.5 RF"], ["Birthday cake", "3 RF", "3 RF", "0 RF"], ["Wardrobe", "0 RF", "0 RF", "0 RF"], ["Furniture", "0 RF", "0 RF", "0 RF"]]);
+    assert.deepEqual(await rf.locator("table.fn-rf tfoot th").allInnerTexts(), ["Total", "5 RF", "4 RF", "1 RF"]);
+    assert.match(await rf.innerText(), /Gift Boxes are the game's own stake[^\n]*0 opened × 1 RF = 0 RF staked/);
+    await page.screenshot({ path: `${out}/rf-panel.png` });
     assert.deepEqual(errors, []);
   } });
 console.log("ok");

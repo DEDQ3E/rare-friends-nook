@@ -133,7 +133,7 @@ Every family also loves its own heirloom (below).
 - **Gift Box** (the SDK chance game, `game.json`): 1 RF. Opens one keepsake of five rarity tiers, which gives
   Friendship when opened. Kept keepsakes stand in the hutch; any keepsake can be sold back for RF (redeem).
 - **Shop** (simulated RF spend): snacks and meals (consumed by the fridge and the stove), clothes, and
-  furniture/decor for Buy mode. Spent RF is split 50% burned, 50% to Friend rewards (simulated, labeled).
+  furniture/decor for Buy mode. Spent RF is split 50% burned, 50% to Friend rewards (simulated, labeled); the special treat (1 RF) the same way, the birthday cake (3 RF) 100% burned. `ledger.ts` keeps the books per source (food, treats, cake, wardrobe, furniture); the HUD shows an *RF burned* counter and opens *Where your RF went* (spent, burned, to Friend rewards per source; the Gift Box stake separately).
 - Every price and odd shown in the UI is read from code or `game.json`; tests check the docs against them.
 - The RF prices are example values on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF
   back). To price higher, multiply every price and keepsake value by the same factor: odds, the 91.65% return and

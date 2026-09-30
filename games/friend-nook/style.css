@@ -20,7 +20,8 @@
 .fn-doing{color:#3a7a3a!important}
 .fn-tools{position:absolute;top:10px;right:10px;display:flex;gap:6px;align-items:stretch}
 .fn-tools .fn-card{position:static}
-.fn-money{padding:4px 10px;display:flex;flex-direction:column;justify-content:center}
+.fn-money{padding:4px 10px;display:flex;flex-direction:column;justify-content:center;cursor:pointer}
+.fn-rf th:not(:first-child),.fn-rf td:not(:first-child){text-align:right}.fn-rf tfoot th{border-top:2px solid currentColor}
 .fn-money strong{font-size:14px}
 .fn-icon{width:40px;min-height:40px;background:var(--paper);border:3px solid var(--line);font-size:18px;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 rgba(58,42,30,.35)}
 .fn-icon img{image-rendering:pixelated;width:27px;height:27px}

@@ -11,7 +11,7 @@ import { createClient, http } from "viem";
 import { readContract } from "viem/actions";
 import { createEngine, pieceThumb, type Engine, type EngineEvent, type FriendSprites, type View } from "./engine.js";
 import { ACTION, DAY_MINUTES, NEEDS, NEED_LABEL, clockText, hourOf, moodLabel, setTreatName, type ActionDef, type NeedKey } from "./sim.js";
-import { CAKE_PRICE, EMPTY_LEDGER, TREAT_PRICE, split, spend, type Ledger, type Source } from "./ledger.js";
+import { CAKE_PRICE, EMPTY_LEDGER, SOURCES, SOURCE_LABEL, TREAT_PRICE, split, spend, totals, type Ledger, type Source } from "./ledger.js";
 import { BOND_LEVELS, BOND_TITLES, STRENGTH_LABEL, bondLevel, preference, strengthOf, temperamentFor } from "./personality.js";
 import { DEF } from "./furniture.js";
 import { ROOM_NAME } from "./house.js";
@@ -31,7 +31,7 @@ import "./style.css";
 
 const rfText = (value: bigint) => `${formatGameAmount(value, 18)} RF`;
 type Menu = { kind: "object"; uid: string; def: string; x: number; y: number } | { kind: "friend"; x: number; y: number } | null;
-type Panel = "neighbours" | "visit" | "recap" | "meme" | "profile" | "wardrobe" | "keepsakes" | "gift" | "shop" | "buy" | "help" | null;
+type Panel = "neighbours" | "visit" | "recap" | "meme" | "profile" | "wardrobe" | "keepsakes" | "gift" | "shop" | "buy" | "rf" | "help" | null;
 const RF = 10n ** 18n;
 const FACINGS: readonly Facing[] = ["right", "left", "up", "down"];
 const DEF_OFFERS = (action: string) => ["bed", "wardrobe", "windowseat", "toychest", "bathtub", "bathsink", "counter", "fridge", "stool", "chair-n", "tv", "sofa", "bookshelf", "armchair", "record", "ball", "hutch"].some(d => ACTION[action]?.on.includes(d));
@@ -83,6 +83,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [owned, setOwned] = useState<ReadonlySet<string>>(() => new Set());
   const [spent, setSpent] = useState(0n);
   const [ledger, setLedger] = useState<Ledger>(EMPTY_LEDGER);
+  const tot = useMemo(() => totals(ledger), [ledger]);
   const pay = useCallback((source: Source, cost: bigint) => { setSpent(n => n + cost); setLedger(l => spend(l, source, cost)); }, []);
   const [cake, setCake] = useState<"none" | "asked" | "bought" | "served">("none"); // the birthday cake, once per session
   const askedCake = useRef(false);
@@ -613,8 +614,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
 
       {/* top right: money and tools */}
       <div className="fn-tools">
-        <div className="fn-card fn-money" title="Simulated $RAREFRIENDS balance"><strong>{rfText(balance)}</strong><small>simulated</small></div>
-        <button type="button" className="fn-icon" onClick={() => setPanel("shop")} aria-label="Shop" title="Shop: food and clothes"><img src={icon.apple} alt="" /></button>
+        <div className="fn-card fn-money" role="button" tabIndex={0} aria-label="Where your RF went" title="Simulated $RAREFRIENDS balance: click to see where it went" onClick={() => setPanel("rf")} onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPanel("rf"); } }}><strong>{rfText(balance)}</strong><small>simulated · {rfText(tot.burned)} burned</small></div>
+        <button type="button" className="fn-icon" onClick={() => setPanel("shop")} aria-label="Shop" title="Shop: food, treats and clothes"><img src={icon.apple} alt="" /></button>
         <button type="button" className="fn-icon" onClick={() => placing ? cancelPlace() : setPanel("buy")} aria-pressed={!!placing} aria-label="Buy mode: furniture" title="Buy mode: furniture"><img src={icon.sofa} alt="" /></button>
         <button type="button" className="fn-icon" onClick={() => setZoomed(z => !z)} aria-pressed={zoomed} aria-label={zoomed ? "Zoom out" : "Zoom in"} title="Zoom">{zoomed ? "−" : "+"}</button>
         <button type="button" className="fn-icon" onClick={toggleSound} aria-pressed={!muted} aria-label={muted ? "Sound off" : "Sound on"} title="Sound"><img src={muted ? icon.mute : icon.speaker} alt="" /></button>
@@ -816,6 +817,15 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               {cake !== "none" && <button type="button" className="fn-tile" disabled={paused || cake === "served"} onClick={buyCake}><img src={icon.gift} alt="" /><strong>Birthday cake</strong><small>{cake === "served" ? "Celebrated this session" : cake === "bought" ? "Serve it at the dining table" : `${rfText(CAKE_PRICE)} · all burned · shared at the dining table`}</small></button>}
               <button type="button" className="fn-tile" onClick={() => setPanel("wardrobe")}><img src={icon.hat} alt="" /><strong>Clothes</strong><small>Open the wardrobe</small></button>
             </div>
+          </>}
+          {panel === "rf" && <>
+            <h2>Where your RF went <span className="fn-sim">simulated</span></h2>
+            <p className="fn-sub">This session {rfText(tot.spent)} went on {nick}'s life (you started with {rfText(snapshot?.rfBalance ?? 0n)}, {rfText(balance)} left). A reload starts a fresh session.</p>
+            <table className="fn-odds fn-rf"><thead><tr><th>Source</th><th>Spent</th><th>Burned</th><th>To Friend rewards</th></tr></thead><tbody>
+              {SOURCES.map(src => { const p = split(src, ledger[src]); return <tr key={src}><td>{SOURCE_LABEL[src]}</td><td>{rfText(ledger[src])}</td><td>{rfText(p.burned)}</td><td>{rfText(p.rewards)}</td></tr>; })}
+            </tbody><tfoot><tr><th>Total</th><th>{rfText(tot.spent)}</th><th>{rfText(tot.burned)}</th><th>{rfText(tot.rewards)}</th></tr></tfoot></table>
+            <p className="fn-note"><strong>Gift Boxes</strong> are the game's own stake and are not part of this burn: {giftsOpened} opened × {rfText(definition.price)} = {rfText(definition.price * BigInt(giftsOpened))} staked in the game fund (every box reserves the top prize). Keepsakes pay RF back when you sell them, at the fixed values of the Gift Box table, redeemed through the SDK.</p>
+            <p className="fn-note">Everything here is simulated and the burned / Friend rewards split is a proposal. Personality never changes prices, odds or rewards.</p>
           </>}
           {panel === "buy" && <>
             <h2>Buy mode</h2>
