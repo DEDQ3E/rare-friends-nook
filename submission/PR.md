@@ -18,7 +18,7 @@ Full submission: [`submissions/friend-nook/README.md`](https://github.com/DEDQ3E
 
 ## What did you build?
 
-A life sim with one star: a 12 × 10 tile isometric pixel house with day and night and weather in the windows, five needs and 32 things to do on 28 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself. The house is alive (TV, fish, a turning record, bath bubbles) with a synthesized soundtrack for each time of day and a sound for every activity.
+A life sim with one star: a 12 × 10 tile isometric pixel house with day and night and weather in the windows, five needs and 34 things to do on 28 kinds of furniture. Click furniture to choose, or leave your Friend alone and watch it choose by itself. The house is alive (TV, fish, a turning record, bath bubbles) with a synthesized soundtrack for each time of day and a sound for every activity.
 
 It is the [Rare Friends](https://rarefriends.com/) home loop, playable today: raise your Friend's Happiness meter, feed it, give it Gift Box keepsakes and upgrade its home in Buy mode (a big plant, a toy piano, an arcade cabinet…). A virtual pet and familiar care game, with the Friend's own character as the star.
 
@@ -53,10 +53,12 @@ Everything is simulated; you start with 20 RF.
 |---|---|---|
 | **Gift Box** (SDK chance game) | 1 RF per box | one keepsake, 0.9165 RF on average when sold back; 5 RF top prize |
 | **Food** | Snack pack ×4: 1 RF · Groceries ×3 meals: 2 RF | eaten at the fridge, bar, stove and dinner |
+| **Special treat** | 1 RF per portion (its favourite snack once found) | a wish it sometimes makes; extra friendship, and it reveals the snack secret |
+| **Birthday cake** | 3 RF, once a session, after its birthday is found | a party at the dining table (100% burned) |
 | **Wardrobe** | 2–5 RF per piece | cosmetic |
 | **Buy mode** | 2–6 RF per piece | new activities; pieces it loves slow its needs, ones it dislikes speed them |
 
-Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back, with no redemption expiry. Food, clothes and furniture: 50% burned, 50% to Friend rewards (proposed, simulated). Personality never changes prices, odds or rewards. The RF prices are example values, set on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average). To price higher, multiply every price and keepsake value by the same factor: the odds, the 91.65% average return and the balance between items stay the same.
+Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% (1.4 RF), Golden Locket 7% (2.5 RF), Star in a Jar 3% (5 RF); keep them in the hutch or sell them back, with no redemption expiry. Food, treats, clothes and furniture: 50% burned, 50% to Friend rewards; the birthday cake is 100% burned (proposed, simulated). Personality never changes prices, odds or rewards. The RF prices are example values, set on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF back on average). To price higher, multiply every price and keepsake value by the same factor: the odds, the 91.65% average return and the balance between items stay the same.
 
 ## What would be on-chain?
 

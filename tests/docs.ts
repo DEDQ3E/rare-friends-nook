@@ -53,7 +53,7 @@ expect(Math.min(...cat) === 2 && Math.max(...cat) === 6, "furniture prices 2–6
 expect(index.includes("const cost = 10n ** 18n;") && index.includes("engine.current?.addStock(4, 0)"), "snack pack: 1 RF for 4");
 expect(index.includes("const cost = 2n * 10n ** 18n;") && index.includes("engine.current?.addStock(0, 3)"), "groceries: 2 RF for 3 meals");
 inDocs("Snack pack ×4: 1 RF", ["submission/README.md"]); inDocs("Groceries ×3 meals: 2 RF", ["submission/README.md"]);
-expect(engine.includes("const stock: Stock = { snacks: 3, meals: 2 };"), "starting stock 3 snacks, 2 meals");
+expect(engine.includes("const stock: Stock = { snacks: 3, meals: 2, treats: 0, cakes: 0 };"), "starting stock 3 snacks, 2 meals");
 inDocs("3 snacks and 2 meals", ["submission/README.md"]);
 // content counts
 const furnitureKinds = new Set([...FURNITURE, ...CATALOG.map(c => c.def)].filter(f => ACTIONS.some(a => a.on.includes(f.id))).map(f => f.id));

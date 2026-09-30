@@ -56,7 +56,8 @@ export type ActionDef = Readonly<{
   done?: Readonly<Partial<Needs>>;  // one-off change when finished
   pose: Pose;
   anim: Anim;
-  uses?: "snack" | "meal";
+  uses?: "snack" | "meal" | "treat" | "cake";
+  hidden?: boolean;               // not in any menu (the game starts it itself)
   when?: "night" | "day";
   withYou?: boolean;              // you take part (counts as company)
   panel?: "wardrobe" | "keepsakes" | "gift" | "neighbours";
@@ -98,20 +99,28 @@ export const ACTIONS: readonly ActionDef[] = [
   { id: "talk", label: "Talk", on: ["friend"], minutes: 8, done: { social: 12 }, pose: "stand", anim: "bounce", withYou: true, icon: "chat" },
   { id: "gift", label: "Open a Gift Box", on: ["friend"], minutes: 5, pose: "stand", anim: "hop", withYou: true, panel: "gift", icon: "gift" },
   // one family heirloom per family (only the Friend's own family's piece is in its house)
+  // a paid special treat (1 RF; the Friend's favourite snack once that secret is found) and the birthday party (3 RF cake)
+  { id: "treat", get label() { return treatName ? `${treatName[0].toUpperCase()}${treatName.slice(1)} (treat)` : "Special treat"; }, on: ["fridge"], minutes: 12, done: { hunger: 14, fun: 22 }, pose: "stand", anim: "bounce", uses: "treat", icon: "apple" },
+  { id: "party", label: "Birthday party", on: ["dtable", "chair-n", "chair-s"], seat: "chair", minutes: 30, done: { fun: 40, hunger: 25, social: 35 }, pose: "seat", anim: "bounce", uses: "cake", withYou: true, hidden: true, icon: "gift" },
   ...HEIRLOOMS.map(h => h.action),
 ];
+let treatName: string | null = null;
+/** The special treat is unnamed until the favourite-snack secret is found; then it is that snack. */
+export function setTreatName(name: string | null) { treatName = name; }
 export const ACTION: Readonly<Record<string, ActionDef>> = Object.fromEntries(ACTIONS.map(a => [a.id, a]));
 
 export const available = (a: ActionDef, minute: number) => !a.when || (a.when === "night") === isNight(minute);
-export const actionsOn = (def: string, minute: number) => ACTIONS.filter(a => a.on.includes(def) && available(a, minute));
+export const actionsOn = (def: string, minute: number) => ACTIONS.filter(a => a.on.includes(def) && !a.hidden && available(a, minute));
 
-export type Stock = { snacks: number; meals: number };
+export type Stock = { snacks: number; meals: number; treats: number; cakes: number };
+/** Which stock an action eats from. */
+export const STOCK_OF = { snack: "snacks", meal: "meals", treat: "treats", cake: "cakes" } as const;
 
 /** Free will: how much the Friend wants to do this right now (0 = never). */
 export function desire(a: ActionDef, n: Needs, t: Temperament, strength: number, minute: number, stock: Stock): number {
   if (!available(a, minute) || a.panel || a.withYou) return 0;
-  if (a.uses === "snack" && stock.snacks <= 0) return 0;
-  if (a.uses === "meal" && stock.meals <= 0) return 0;
+  if (a.uses === "treat" || a.uses === "cake") return 0; // paid extras are given by you, never taken by free will
+  if (a.uses && stock[STOCK_OF[a.uses]] <= 0) return 0;
   const hours = a.minutes / 60;
   let value = 0;
   for (const k of Object.keys({ ...a.rates, ...a.done }) as NeedKey[]) {

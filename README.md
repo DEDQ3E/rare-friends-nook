@@ -23,7 +23,7 @@ snack, a birthday and a catchphrase, and quirks read from the shape of its own p
 
 ## What's in it
 
-- **The house:** 12 × 10 tiles, five rooms, cut-away walls, day and night, 32 activities on furniture that
+- **The house:** 12 × 10 tiles, five rooms, cut-away walls, day and night, 34 activities on furniture that
   animates while it's used (TV channels and a video game, swimming fish, a turning record, a sizzling pan).
 - **The Friend:** its canonical Generations frames in four facings, never recoloured, rotated or reshaped;
   clothes fitted to its own silhouette. Needs (hunger, energy, fun, hygiene, social), free will, wishes,

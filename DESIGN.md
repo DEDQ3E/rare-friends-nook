@@ -141,6 +141,6 @@ Every family also loves its own heirloom (below).
 
 ## Scope for the vibeathon
 
-House, camera, walking, depth sorting; needs and clock; 32 activities on 27 kinds of furniture plus nine
+House, camera, walking, depth sorting; needs and clock; 34 activities on 28 kinds of furniture plus nine
 family heirlooms; 9 family homes; 9 temperaments with generation strength, per-token traits, wishes, refusals and voice lines;
 shop, wardrobe, Gift Box; Buy mode with a nine-piece catalog; mobile layout; tests. No storage exists in the SDK sandbox: progress resets on reload.

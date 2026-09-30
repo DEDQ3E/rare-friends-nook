@@ -10,7 +10,8 @@ import { GENERATION_ELIGIBILITY_ABI } from "@rarefriends/friendsdk/identity";
 import { createClient, http } from "viem";
 import { readContract } from "viem/actions";
 import { createEngine, pieceThumb, type Engine, type EngineEvent, type FriendSprites, type View } from "./engine.js";
-import { ACTION, DAY_MINUTES, NEEDS, NEED_LABEL, clockText, hourOf, moodLabel, type ActionDef, type NeedKey } from "./sim.js";
+import { ACTION, DAY_MINUTES, NEEDS, NEED_LABEL, clockText, hourOf, moodLabel, setTreatName, type ActionDef, type NeedKey } from "./sim.js";
+import { CAKE_PRICE, EMPTY_LEDGER, TREAT_PRICE, split, spend, type Ledger, type Source } from "./ledger.js";
 import { BOND_LEVELS, BOND_TITLES, STRENGTH_LABEL, bondLevel, preference, strengthOf, temperamentFor } from "./personality.js";
 import { DEF } from "./furniture.js";
 import { ROOM_NAME } from "./house.js";
@@ -70,9 +71,9 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const bestRef = useRef(""); bestRef.current = bestText;
   const [found, setFound] = useState<ReadonlySet<Secret>>(() => new Set());
   const foundRef = useRef(found); foundRef.current = found;
-  const [recap, setRecap] = useState<{ day: number; own: number; loved: number; refused: number; wishes: number; gifts: number; sulks: number; level: number; found: number; url: string; alt: string; best: string } | null>(null);
+  const [recap, setRecap] = useState<{ day: number; own: number; loved: number; refused: number; wishes: number; gifts: number; sulks: number; treats: number; cake: boolean; level: number; found: number; url: string; alt: string; best: string } | null>(null);
   const lastGift = useRef<{ name: string; rare: boolean; at: number } | null>(null); // for the Gift Box meme
-  const dayStats = useRef({ own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0, sulks: 0 }), recapDay = useRef(0);
+  const dayStats = useRef({ own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0, sulks: 0, treats: 0, cake: false }), recapDay = useRef(0);
   const [toast, setToast] = useState("");
   const [speed, setSpeed] = useState(1);
   const [zoomed, setZoomed] = useState(true); // the Friend is the star: start close, the whole house is one tap away
@@ -81,6 +82,10 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [outfit, setOutfit] = useState<Outfit>({});
   const [owned, setOwned] = useState<ReadonlySet<string>>(() => new Set());
   const [spent, setSpent] = useState(0n);
+  const [ledger, setLedger] = useState<Ledger>(EMPTY_LEDGER);
+  const pay = useCallback((source: Source, cost: bigint) => { setSpent(n => n + cost); setLedger(l => spend(l, source, cost)); }, []);
+  const [cake, setCake] = useState<"none" | "asked" | "bought" | "served">("none"); // the birthday cake, once per session
+  const askedCake = useRef(false);
   const [greeted, setGreeted] = useState(false);
   const [busy, setBusy] = useState(false), [error, setError] = useState("");
   const [reveal, setReveal] = useState<GamePlay | null>(null);
@@ -106,12 +111,15 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const mutedRef = useRef(false);
   const toastTimer = useRef(0);
 
-  const familyTemper = temperamentFor(family);
+  const familyTemper = useMemo(() => temperamentFor(family), [family]); // stable, so traits and the effects that depend on them do not rerun every render
   const heirloom = family ? HEIRLOOM[family] : undefined;
   const home = family ? HOMES[family] : undefined;
   const traits = useMemo(() => (seed === null || !sprites ? null : traitsFor(friendId, seed, familyTemper, sprites)), [friendId, seed, sprites, familyTemper]);
   const temper = useMemo(() => personalize(familyTemper, traits), [familyTemper, traits]);
   const nick = traits?.nickname ?? `Friend #${friendId.toString()}`;
+  // a paid special treat: unnamed until the favourite-snack secret is found, then that snack
+  setTreatName(traits && found.has("snack") ? traits.snack : null);
+  const treatLabel = traits && found.has("snack") ? `${traits.snack[0].toUpperCase()}${traits.snack.slice(1)} (treat)` : "Special treat";
   const strength = strengthOf(generation ?? null);
   const balance = snapshot ? snapshot.rfBalance - spent : 0n;
 
@@ -192,6 +200,11 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (e.type === "sulk") { dayStats.current.sulks++; note("Sulking: left alone too long"); flash(`${nick} is sulking: you left it alone too long. Pet it or talk to it to make up.`); play("impact", .35); }
     if (e.type === "forgive") { note("Made up with you"); flash(`${nick} forgave you.`); play("reward", .5); }
     if (e.type === "wishDone") dayStats.current.wishes++;
+    if (e.type === "done" && e.action === "treat") { dayStats.current.treats++; note("Shared a special treat"); play("reward", .5); if (!discover("snack")) flash(`${nick} loved its treat. A little extra friendship.`); }
+    if (e.type === "done" && e.action === "party") {
+      setCake("served"); dayStats.current.cake = true; note("Birthday party at the dining table: the cake is shared");
+      flash(`Happy birthday, ${nick}! The cake is shared at the dining table.`); play("reveal-legendary", .6); engine.current?.emote("sparkle", 3); engine.current?.addFriendship(10);
+    }
     if (e.type === "done" && SNACK_ACTIONS.includes(e.action)) discover("snack");
     if (e.type === "done" && e.action === "talk") discover("birthday");
     if (e.type === "start" && !e.auto && e.action === traits?.favorite) discover("favorite");
@@ -216,8 +229,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (e.type === "wishDone") note(`Wish granted: ${ACTION[e.action].label.toLowerCase()} (+${e.points} friendship)`);
     if (e.type === "panel") { setPanel(e.panel); play("select", .5); }
     else if (e.type === "refuse") play("impact", .4);
-    else if (e.type === "noStock") flash(e.kind === "snack" ? "No snacks left. Buy some in the shop." : "No meals left. Buy groceries in the shop.");
-    else if (e.type === "wish") play("action-ready", .4);
+    else if (e.type === "noStock") flash(e.kind === "snack" ? "No snacks left. Buy some in the shop." : e.kind === "meal" ? "No meals left. Buy groceries in the shop." : e.kind === "treat" ? `No special treats left. Buy one in the shop (${rfText(TREAT_PRICE)}).` : "No birthday cake. Buy one in the shop.");
+    else if (e.type === "wish") { play("action-ready", .4); if (e.action === "treat") flash(`${nick} wishes for a special treat: ${rfText(TREAT_PRICE)} in the Shop, half burned, half to Friend rewards (simulated).`); }
     else if (e.type === "wishDone") { flash(`Wish granted! +${e.points} friendship`); play("reward", .7); }
     else if (e.type === "blocked") flash("Your Friend can't get there.");
   }, [play, flash, note, nick, temper, familyTemper, traits, heirloom, discover]);
@@ -302,6 +315,28 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     const r = ev.currentTarget.getBoundingClientRect(), p = e.pick(ev.clientX - r.left, ev.clientY - r.top);
     if (p.kind === "friend") visitAct(VISIT_ACTS[1]); // click the neighbour: say hi
     else if (p.kind === "floor") e.guestWalkTo(p.i, p.j);
+  }
+  /** Its birthday secret is found: once a session it asks to celebrate (with a special line on its real birthday, UTC). */
+  useEffect(() => {
+    if (!traits || !found.has("birthday") || askedCake.current) return;
+    const timer = window.setTimeout(() => {
+      askedCake.current = true; setCake("asked");
+      const now = new Date(), today = now.getUTCMonth() === traits.birthday.month && now.getUTCDate() === traits.birthday.day;
+      const text = today ? `It really is ${nick}'s birthday today (${traits.birthday.label}, UTC)! Get the Birthday cake in the Shop: ${rfText(CAKE_PRICE)}, all burned.`
+        : `${nick} asks to celebrate its birthday (${traits.birthday.label}). Get the Birthday cake in the Shop: ${rfText(CAKE_PRICE)}, all burned.`;
+      flash(text); note(today ? "Its real birthday today (UTC): asks for a cake" : "Asks to celebrate its birthday"); engine.current?.say(today ? "It's my birthday today!" : "Can we celebrate my birthday?"); engine.current?.emote("gift", 3); play("action-ready", .5);
+    }, 6000);
+    return () => window.clearTimeout(timer);
+  }, [found, traits]); // eslint-disable-line react-hooks/exhaustive-deps
+  function buyCake() {
+    if (paused || cake === "none" || cake === "served") return;
+    if (cake === "asked") {
+      if (balance < CAKE_PRICE) { flash("Not enough RF (simulated)."); play("impact", .4); return; }
+      pay("cake", CAKE_PRICE); engine.current?.addStock(0, 0, 0, 1); setCake("bought"); play("purchase");
+      note(`Bought a birthday cake (${rfText(CAKE_PRICE)}, all burned)`);
+    }
+    if (engine.current?.celebrate()) { setPanel(null); flash(`${nick} takes the cake to the dining table.`); }
+    else flash("The dining table is out of reach. Put a chair or the table back, then serve the cake from the Shop.");
   }
   function startVisit(n: Neighbour) {
     if (paused) return;
@@ -392,7 +427,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (paused) return;
     const cost = BigInt(item.price) * 10n ** 18n;
     if (balance < cost) { flash("Not enough RF (simulated)."); play("impact", .4); return; }
-    setSpent(s => s + cost); setOwned(o => new Set([...o, item.id])); setOutfit(o => ({ ...o, [item.slot]: item.id }));
+    pay("wardrobe", cost); setOwned(o => new Set([...o, item.id])); setOutfit(o => ({ ...o, [item.slot]: item.id }));
     play("purchase"); flash(`${item.name} bought: ${formatGameAmount(cost / 2n, 18)} RF burned, ${formatGameAmount(cost / 2n, 18)} RF to Friend rewards (simulated).`);
     engine.current?.boostNeed("fun", 8);
   }
@@ -471,7 +506,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (placing.free && !placing.move) { setBought(m => new Map(m).set(uid, placing.def)); setStorage(s => ({ ...s, [placing.def]: Math.max(0, (s[placing.def] ?? 0) - 1) })); play("select", .4); }
     else if (!placing.move) {
       const cost = BigInt(item.price) * RF;
-      setSpent(s => s + cost); setBought(m => new Map(m).set(uid, placing.def)); play("purchase");
+      pay("furniture", cost); setBought(m => new Map(m).set(uid, placing.def)); play("purchase");
       flash(`${item.def.name} bought: ${formatGameAmount(cost / 2n, 18)} RF burned, ${formatGameAmount(cost / 2n, 18)} RF to Friend rewards (simulated).`);
       const acts = engine.current.menuFor(placing.def), loved = acts.find(a => temper.loves.includes(a.id)), hated = acts.find(a => temper.dislikes.includes(a.id));
       if (loved) { engine.current.say(`${pickOne(temper.voice.love)} A ${item.def.name.toLowerCase()}!`); engine.current.emote("heart", 2.4); engine.current.addFriendship(4); note(`New ${item.def.name.toLowerCase()} — loves it`); }
@@ -539,7 +574,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     recapDay.current = dueDay;
     const s = dayStats.current, m = memeNow(e);
     setRecap({ day: dueDay, ...s, level, found: found.size, url: m.url, alt: `${m.meme.top} / ${m.meme.bottom}`, best: bestRef.current });
-    dayStats.current = { own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0, sulks: 0 };
+    dayStats.current = { own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0, sulks: 0, treats: 0, cake: false };
     setMenu(null); setPanel("recap"); play("reward", .6);
   }, [dueDay, panel, placing, showIntro, paused]); // eslint-disable-line react-hooks/exhaustive-deps
   if (loadError) return <div className="fn-root fn-center" role="alert"><p>{loadError}</p><button type="button" className="fn-btn" onClick={() => { setLoadError(""); setAttempt(n => n + 1); }}>Retry</button></div>;
@@ -692,6 +727,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
             <img className="fn-meme fn-meme-small" src={recap.url} alt={recap.alt} />
             <ul className="fn-recap">
               <li><strong>{recap.own}</strong> things it chose by itself{recap.own ? <>, <strong>{recap.loved}</strong> of them things it loves</> : ""}</li>
+              {(recap.treats > 0 || recap.cake) && <li>{recap.treats > 0 && <>Shared <strong>{recap.treats}</strong> special {recap.treats === 1 ? "treat" : "treats"}</>}{recap.treats > 0 && recap.cake && " · "}{recap.cake && <>birthday cake shared at the dining table</>}</li>}
               <li>{recap.refused ? <>Refused <strong>{recap.refused}</strong> {recap.refused === 1 ? "thing" : "things"} it dislikes</> : "Refused nothing today"}{recap.sulks ? <> · sulked <strong>{recap.sulks}</strong> {recap.sulks === 1 ? "time" : "times"}</> : " · never sulked"}</li>
               <li><strong>{recap.wishes}</strong> {recap.wishes === 1 ? "wish" : "wishes"} granted{recap.gifts ? <> · <strong>{recap.gifts}</strong> Gift {recap.gifts === 1 ? "Box" : "Boxes"} opened</> : ""}</li>
               <li>Friendship: <strong>{BOND_TITLES[recap.level]}</strong> · secrets found: <strong>{recap.found}/{SECRETS.length}</strong></li>
@@ -774,8 +810,10 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
           {panel === "shop" && <>
             <h2>Shop</h2><p className="fn-sub">Simulated RF. Food is used by the fridge (snacks) and the stove or dinner table (meals).</p>
             <div className="fn-grid">
-              <button type="button" className="fn-tile" disabled={paused} onClick={() => { const cost = 10n ** 18n; if (balance < cost) { flash("Not enough RF (simulated)."); return; } setSpent(s => s + cost); engine.current?.addStock(4, 0); play("purchase"); flash("4 snacks added (1 RF, simulated)."); }}><img src={icon.apple} alt="" /><strong>Snack pack ×4</strong><small>1 RF · you have {v?.stock.snacks ?? 0}</small></button>
-              <button type="button" className="fn-tile" disabled={paused} onClick={() => { const cost = 2n * 10n ** 18n; if (balance < cost) { flash("Not enough RF (simulated)."); return; } setSpent(s => s + cost); engine.current?.addStock(0, 3); play("purchase"); flash("3 meals added (2 RF, simulated)."); }}><img src={icon.pot} alt="" /><strong>Groceries ×3 meals</strong><small>2 RF · you have {v?.stock.meals ?? 0}</small></button>
+              <button type="button" className="fn-tile" disabled={paused} onClick={() => { const cost = 10n ** 18n; if (balance < cost) { flash("Not enough RF (simulated)."); return; } pay("food", cost); engine.current?.addStock(4, 0); play("purchase"); flash("4 snacks added (1 RF, simulated)."); }}><img src={icon.apple} alt="" /><strong>Snack pack ×4</strong><small>1 RF · you have {v?.stock.snacks ?? 0}</small></button>
+              <button type="button" className="fn-tile" disabled={paused} onClick={() => { const cost = 2n * 10n ** 18n; if (balance < cost) { flash("Not enough RF (simulated)."); return; } pay("food", cost); engine.current?.addStock(0, 3); play("purchase"); flash("3 meals added (2 RF, simulated)."); }}><img src={icon.pot} alt="" /><strong>Groceries ×3 meals</strong><small>2 RF · you have {v?.stock.meals ?? 0}</small></button>
+              <button type="button" className="fn-tile" disabled={paused} onClick={() => { if (balance < TREAT_PRICE) { flash("Not enough RF (simulated)."); return; } const p = split("treats", TREAT_PRICE); pay("treats", TREAT_PRICE); engine.current?.addStock(0, 0, 1, 0); play("purchase"); flash(`${treatLabel} added (${rfText(TREAT_PRICE)}: ${rfText(p.burned)} burned, ${rfText(p.rewards)} to Friend rewards, simulated).`); }}><img src={icon.apple} alt="" /><strong>{treatLabel}</strong><small>{rfText(TREAT_PRICE)} · you have {v?.stock.treats ?? 0} · half burned, half to Friend rewards</small></button>
+              {cake !== "none" && <button type="button" className="fn-tile" disabled={paused || cake === "served"} onClick={buyCake}><img src={icon.gift} alt="" /><strong>Birthday cake</strong><small>{cake === "served" ? "Celebrated this session" : cake === "bought" ? "Serve it at the dining table" : `${rfText(CAKE_PRICE)} · all burned · shared at the dining table`}</small></button>}
               <button type="button" className="fn-tile" onClick={() => setPanel("wardrobe")}><img src={icon.hat} alt="" /><strong>Clothes</strong><small>Open the wardrobe</small></button>
             </div>
           </>}
