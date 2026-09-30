@@ -66,7 +66,7 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const FAVORITES = ["stargaze", "daydream", "toys", "bath", "admire", "cook", "snack", "tv", "games", "sit", "book", "read", "dance", "ball", "dress", "piano", "fish", "paint", "arcade", "telescope", "primp", "lounge"];
 
 /** murmur3's 32-bit finalizer: spreads neighbouring seeds and token IDs over the whole range. */
-function fmix(h: number) { h ^= h >>> 16; h = Math.imul(h, 0x85EBCA6B); h ^= h >>> 13; h = Math.imul(h, 0xC2B2AE35); return (h ^ (h >>> 16)) >>> 0; }
+export function fmix(h: number) { h ^= h >>> 16; h = Math.imul(h, 0x85EBCA6B); h ^= h >>> 13; h = Math.imul(h, 0xC2B2AE35); return (h ^ (h >>> 16)) >>> 0; }
 /** A counter-based generator: draw n is its own hash of (token key, n), so every trait is independent. */
 function rng(key: number) {
   let n = 0;

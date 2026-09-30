@@ -64,7 +64,7 @@ The full table (what each chose by itself) is in [submission/README.md](submissi
 ## Controls
 
 Click or tap furniture to pick an action, click the floor to walk. Arrows / WASD walk, `E` uses the nearest
-thing, `F` talks to your Friend, `Esc` closes. The front door visits a simulated neighbour's whole house (FriendSDK's sample Friends, not real players). The camera button makes a random meme about your Friend (one of twenty-one meme templates). In Buy mode: arrows move the piece, `R` rotates, `Enter` places.
+thing, `F` talks to your Friend, `Esc` closes. The front door visits a neighbour's whole house: real Generations Friends from a recorded snapshot, played by the game, so every visit is simulated. The camera button makes a random meme about your Friend (one of twenty-one meme templates). In Buy mode: arrows move the piece, `R` rotates, `Enter` places.
 Time: pause, 1× (a day lasts 8 minutes), 3×. Settings (`?`): volume, music, reduced motion.
 
 ## Requirements
@@ -94,7 +94,7 @@ npm run docs       # every number in the docs matches game.json and the code
 
 `npm test` and the browser checks need `npm install --no-save playwright` and `npx playwright install chromium`. Browser checks:
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`,
-`onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (simulated neighbours),
+`onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (the street and a simulated visit), `treats.mjs` (special treat, birthday cake, where your RF went). Unit checks: `npm run pixels` (quirks from pixels), `npm run street` (who lives on the street), `npm run ledger` (the RF split),
 `meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.
 Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The game is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone); the special treat, birthday cake and RF panel came after that run and are covered by the browser tests.
 README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs`; the family homes: `node tests/homes.mjs` (both also need `pngjs`).

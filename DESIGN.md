@@ -96,8 +96,12 @@ Every family also loves its own heirloom (below).
 - **Sulking.** Left alone too long (no petting, talking, dinner, ball or Gift Box with you) it sulks and refuses your
   requests until you make up: pet it or talk to it (1 to 3 times, by character strength) or open a Gift Box. How soon
   depends on family (Homebody fastest, Introvert hardly ever) and generation.
-- **Simulated neighbours.** No multiplayer in the SDK: the front door opens a list of FriendSDK's sample Friends
-  (#3412, #7730; SDK-supplied artwork), played by the game and labelled simulated. A visit is the neighbour's whole house in its
+- **Neighbours, simulated visits.** No multiplayer in the SDK: the front door opens a street of four real Generations Friends
+  from a recorded snapshot (`street.json`, 35 Friends, all families and generations, built by `scripts/street.ts` from the SDK's
+  pinned registry; picked from the Rare Royale roster; no owner data, no network read at play time because the SDK test harness
+  allows reading only the chosen Friend): the three closest token numbers live next door, one is new this week (hash of the ISO
+  week in UTC and the token ID); the generation is the one at the snapshot. The two SDK sample Friends are the fallback only if
+  the snapshot is empty. The game plays them and labels every visit simulated. A visit is the neighbour's whole house in its
   family's style, run by a second engine: the neighbour lives there by itself (free will) and your Friend is the guest,
   who walks over for each thing you do together; hug, say hi, dance or share a snack, and both temperaments decide the
   reaction. Each engine puts its own home and colour into the shared drawing state before it builds or draws.

@@ -25,7 +25,7 @@ import { randomMeme, renderMeme, type Meme } from "./memes.js";
 import { HEIRLOOM } from "./heirlooms.js";
 import { HOMES } from "./homes.js";
 import { WEATHER_LABEL } from "./weather.js";
-import { neighbours, type Neighbour } from "./neighbours.js";
+import { streetFor, ROLE_LABEL, SNAPSHOT_DATE, type Neighbour } from "./neighbours.js";
 import { VISIT_ACTS, react, type VisitAct } from "./visit.js";
 import "./style.css";
 
@@ -59,15 +59,15 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [menu, setMenu] = useState<Menu>(null);
   const [panel, setPanel] = useState<Panel>(null);
   const [meme, setMeme] = useState<{ meme: Meme; url: string } | null>(null);
-  // a visit to a simulated neighbour (FriendSDK has no multiplayer: the neighbours are its sample Friends, played by the game)
+  // a visit to a neighbour (FriendSDK has no multiplayer: a visit is always simulated, the game plays the neighbour)
   const [visit, setVisit] = useState<{ n: Neighbour; guestSays: string; hostSays: string; verdict: string; hopAt: number; done: ReadonlySet<string> } | null>(null);
   const visitCanvas = useRef<HTMLCanvasElement | null>(null), away = useRef<Engine | null>(null);
   // each neighbour remembers your visits (this session): how many, and how the last thing you did together went
   const [met, setMet] = useState<Readonly<Record<string, { visits: number; score: number; act: string; verdict: string; good: number }>>>({});
-  const nearby = useMemo(() => neighbours().filter(n => n.id !== friendId), [friendId]);
+  const nearby = useMemo(() => streetFor(friendId, new Date()), [friendId]); // the street this week, from the recorded snapshot (no network)
   // the neighbour you had the most good moments with (a visit act that went well: good vibes or better)
   const best = useMemo(() => { let b: Neighbour | null = null, g = 0; for (const n of nearby) { const m = met[String(n.id)]; if (m && m.good > g) { g = m.good; b = n; } } return b ? { n: b, good: g } : null; }, [nearby, met]);
-  const bestText = best ? `${best.n.traits.nickname} (sample Friend #${best.n.id.toString()}), ${best.good} good ${best.good === 1 ? "moment" : "moments"} together` : "";
+  const bestText = best ? `${best.n.traits.nickname} (${best.n.real ? "Friend" : "sample Friend"} #${best.n.id.toString()}), ${best.good} good ${best.good === 1 ? "moment" : "moments"} together` : "";
   const bestRef = useRef(""); bestRef.current = bestText;
   const [found, setFound] = useState<ReadonlySet<Secret>>(() => new Set());
   const foundRef = useRef(found); foundRef.current = found;
@@ -341,7 +341,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   }
   function startVisit(n: Neighbour) {
     if (paused) return;
-    engine.current?.care(); play("select", .5); note(`Visited ${n.traits.nickname} (simulated neighbour)`);
+    engine.current?.care(); play("select", .5); note(`Visited ${n.traits.nickname} (${n.real ? "real Friend, simulated visit" : "simulated neighbour"})`);
     const m = met[String(n.id)], again: Record<string, string> = { dance: "You again! Another dance?", snack: "You again! Brought snacks?", hug: "You again! Come here.", hi: "You again! Come in, come in." };
     const hostSays = !m ? n.temper.voice.hello[0].split(/(?<=[.!?])\s/)[0] : m.score > 0 ? again[m.act] ?? again.hi : m.score < 0 ? "Oh... it's you." : "Back again? Come in.";
     const guestSays = m && m.score < 0 ? "Let's try that again." : pickOne(temper.voice.hello).split(/(?<=[.!?])\s/)[0];
@@ -701,9 +701,10 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
       {panel === "visit" && visit && <section className="fn-away" role="dialog" aria-modal="true" aria-label={`Visiting ${visit.n.traits.nickname}`}>
         <canvas ref={visitCanvas} className="fn-visit" role="img" aria-label={`${nick} visiting ${visit.n.traits.nickname}'s house`} onPointerDown={onAwayDown} />
         <div className="fn-card fn-away-top">
-          <h2>{visit.n.traits.nickname}'s {HOMES[visit.n.family]?.name ?? "house"} <span className="fn-sim">simulated neighbour</span></h2>
+          <h2>{visit.n.traits.nickname}'s {HOMES[visit.n.family]?.name ?? "house"} <span className="fn-sim">{visit.n.real ? "real Friend · simulated visit" : "simulated neighbour"}</span></h2>
+          {visit.n.real && <p className="fn-away-meta">Friend #{visit.n.id.toString()} · {visit.n.family} · Gen {visit.n.generation} (at {SNAPSHOT_DATE}) · {visit.n.traits.quirk.label} · {ROLE_LABEL[visit.n.role]}</p>}
           <p className="fn-sub">{visit.verdict ? <strong>{visit.verdict}</strong> : <>{visit.n.traits.nickname} is a {visit.n.temper.title} and lives here by itself. What will {nick} think?</>}</p>
-          <small className="fn-away-note">A simulated visit: {visit.n.traits.nickname} is one of FriendSDK's sample Friends, played by the game, not by a real player. Click the floor to walk.</small>
+          <small className="fn-away-note">{visit.n.real ? <>A simulated visit: {visit.n.traits.nickname} is Friend #{visit.n.id.toString()}, a real Generations Friend whose canonical sprites were recorded on {SNAPSHOT_DATE}. The game plays it, not its owner, and no owner data is stored. Gen {visit.n.generation} is as of that snapshot. Click the floor to walk.</> : <>A simulated visit: {visit.n.traits.nickname} is one of FriendSDK's sample Friends, played by the game, not by a real player. Click the floor to walk.</>}</small>
         </div>
         <div className="fn-card fn-away-bar" role="toolbar" aria-label="Things to do together">
           {VISIT_ACTS.map(a => <button key={a.id} type="button" className="fn-btn fn-small" disabled={paused} onClick={() => visitAct(a)}><img src={icon[a.icon]} alt="" /> {a.label}{a.id === "snack" && v ? ` (${v.stock.snacks} left)` : ""}</button>)}
@@ -714,12 +715,12 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
         <section className="fn-panel" role="dialog" aria-modal="true" aria-label={panel}>
           <button type="button" className="fn-close" onClick={() => setPanel(null)} aria-label="Close">×</button>
           {panel === "neighbours" && <>
-            <h2>Neighbours <span className="fn-sim">simulated</span></h2>
-            <p className="fn-sub">Sample Friends that come with FriendSDK, played by the game. They are not real players: FriendSDK has no multiplayer yet.</p>
+            <h2>Neighbours <span className="fn-sim">{nearby[0]?.real ? "real Friends · simulated visits" : "simulated"}</span></h2>
+            <p className="fn-sub">{nearby[0]?.real ? `Real Generations Friends: canonical sprites recorded on ${SNAPSHOT_DATE} from the SDK's pinned registry (the same roster as Rare Royale), no owner data. The game plays them and every visit is simulated: FriendSDK has no multiplayer yet. Generations are as of that snapshot and change when a Friend is promoted.` : "Sample Friends that come with FriendSDK, played by the game. They are not real players: FriendSDK has no multiplayer yet."}</p>
             {best && <p className="fn-sub"><strong>Best friend on the street:</strong> {bestText}</p>}
             {nearby.length ? <div className="fn-grid">{nearby.map(n => <button key={String(n.id)} type="button" className="fn-tile" onClick={() => startVisit(n)} disabled={paused}>
               <img src={neighbourPortrait[String(n.id)]} width={60} height={64} alt="" style={{ background: n.traits.accent.light }} />
-              <strong>{n.traits.nickname}'s {HOMES[n.family]?.name ?? "room"}</strong><small>{n.family} · {n.temper.title} · sample Friend #{String(n.id)}</small>
+              <strong>{n.traits.nickname}'s {HOMES[n.family]?.name ?? "room"}</strong>{n.real ? <><small>Friend #{String(n.id)} · {n.family} · Gen {n.generation} (at {SNAPSHOT_DATE}) · {n.temper.title}</small><small>Quirk: {n.traits.quirk.label} · {ROLE_LABEL[n.role]} · real Friend · simulated visit</small></> : <small>{n.family} · {n.temper.title} · sample Friend #{String(n.id)}</small>}
               {met[String(n.id)] && <small>Visited {met[String(n.id)].visits}× · last time: {met[String(n.id)].verdict.toLowerCase() || "just a hello"}</small>}
             </button>)}</div> : <p>No one else lives on this street yet.</p>}
           </>}
