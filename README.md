@@ -5,9 +5,9 @@ A cozy isometric life sim starring **your** Rare Friend, built with FriendSDK v0
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/** (simulated economy)
 
-🎬 **Demo with sound (62 s, recorded before the food riddle, the birthday cake and the street of real neighbours):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`, MP4 in `media/`).
+🎬 **Demo with sound (85 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`, MP4 in `media/`). It shows the food riddle (the fridge holds a food it dislikes, the shop, its favourite), the birthday cake, *Where your RF went*, a meme, a visit to a real neighbour's house and a Gift Box.
 
-https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
+https://github.com/user-attachments/assets/90c31252-d4f2-44e6-b9bb-18fa4854d832
 
 
 Your Friend moves into a little pixel house and lives in it like a Sim. Everything it does by itself comes from
@@ -99,7 +99,7 @@ npm run docs       # every number in the docs matches game.json and the code
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`,
 `onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (the street and a simulated visit), `treats.mjs` (the food riddle, birthday cake, where your RF went). Unit checks: `npm run pixels` (quirks from pixels), `npm run street` (who lives on the street), `npm run ledger` (the RF split), `npm run food` (family tables and the fridge at move-in),
 `meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.
-Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The game is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone); the food riddle, birthday cake, RF panel and the street were also checked by hand with a real wallet on a local build of the same code before publishing, and are covered by the browser tests.
+Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The game is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone); the food riddle, birthday cake, RF panel and the street were also checked by hand with a real wallet, and are covered by the browser tests.
 README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs`; the family homes: `node tests/homes.mjs` (both also need `pngjs`).
 
 ## Layout

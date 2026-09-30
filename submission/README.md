@@ -4,9 +4,9 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (62 s, recorded before the food riddle, the birthday cake and the street of real neighbours):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`).
+🎬 **Demo with sound (85 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`). It shows the food riddle (the fridge holds a food it dislikes, the shop, its favourite), the birthday cake, *Where your RF went*, a meme, a visit to a real neighbour's house and a Gift Box.
 
-https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
+https://github.com/user-attachments/assets/90c31252-d4f2-44e6-b9bb-18fa4854d832
 
 
 **Project name**
@@ -201,7 +201,7 @@ Preview balance: 20 RF (simulated, from the SDK). Gift Box 1 RF (odds and values
 
 ## What have you tested?
 
-Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound, phone sizes and 60 fps; ten real Friends were played live from mainnet; the game was also checked by hand with a real wallet on Robinhood mainnet (the earlier game on the published build, on a computer and on a phone; the food riddle, birthday cake, RF panel and street of real neighbours on a local build of the same code before publishing); a docs check ties every number here to the code.
+Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover furniture actions, the Gift Box through the SDK confirmations, Buy mode, a full unattended day, sound, phone sizes and 60 fps; ten real Friends were played live from mainnet; the game was also checked by hand with a real wallet on Robinhood mainnet (the earlier game on a computer and on a phone; the food riddle, birthday cake, RF panel and street of real neighbours as well); a docs check ties every number here to the code.
 
 <details><summary><b>All checks</b></summary>
 
@@ -209,7 +209,7 @@ Typecheck, `friendsdk check` and `friendsdk test` pass; browser checks cover fur
 - Browser checks with the SDK test harness (Playwright): clicking furniture like a player (TV, bed, dinner, bath), the Gift Box through the SDK confirmations, Buy mode placing, a full unattended day at 3× (free will, wishes, night), the first own choice, secrets found by playing and the day's recap, sulking and making up, a visit to a neighbour from the street snapshot and the best friend it names, the food riddle (buying foods, feeding a loved and a disliked one, the favourite-snack secret), the birthday cake at the dining table, the *Where your RF went* panel, random memes, activity close-ups with particles, a sound check (music and activity sounds are scheduled; muting stops them), phone sizes (844 × 390 and 390 × 844), and frame rate (60 fps).
 - **Unit checks:** `npm run pixels` (every quirk comes from a measurement; the ten Friends' quirks and reasons), `npm run street` (the snapshot's coverage and decoding, ISO weeks, who lives next door, the fallback), `npm run ledger` (the exact RF split per source), `npm run food` (the family tables, the favourite, the fridge at move-in over 3000 tokens).
 - **Real Friends:** `tests/friends.mjs` (above) plays ten real Friends read live from mainnet through the real SDK runtime, with no browser errors; the README screenshots use the same live reads for #7730.
-- **Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it, and now runs on v0.1.4. The food riddle, the birthday cake, the *Where your RF went* panel, the street of real neighbours and the best-friend line were added after that run; they were checked by hand with a real wallet too, on a local build of the same code before publishing, and are covered by the browser tests with the mock wallet.
+- **Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it, and now runs on v0.1.4. The food riddle, the birthday cake, the *Where your RF went* panel, the street of real neighbours and the best-friend line were added after that run and were checked by hand with a real wallet too; all of it is also covered by the browser tests with the mock wallet.
 - **No transaction code:** The v0.1.4 preview bundle was scanned: neither `runtime.js` nor `game.js` contains transaction code (no `eth_sendTransaction`, `eth_sendRawTransaction`, signing, `writeContract` or ERC-20 `transferFrom`); the game reads the generation with a bare read-only client.
 - **Video:** `tests/video.mjs` records the demo above, picture and sound together, straight from the running game.
 - **Music:** `tests/music.mjs` records every track straight from the game's audio graph to check the mix (similar loudness across tracks, no clipping).
