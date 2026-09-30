@@ -64,11 +64,11 @@ Nothing in this build. The Gift Box is the SDK's `ChanceGame` with this `game.js
 
 ## How does it use randomness?
 
-Paid outcomes only through the SDK chance game. Browser randomness only drives behaviour (free will, wishes, refusals, memes). Personal traits are deterministic from the token.
+Paid outcomes only through the SDK chance game. Browser randomness only drives behaviour (free will, wishes, refusals, memes, the weather). Personal traits are deterministic from the token.
 
 ## Source code
 
-https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`40e7f7b`](https://github.com/DEDQ3E/rare-friends-nook/tree/40e7f7b12cb9360d8743a18986d4c19c00cd4420)) · FriendSDK v0.1.4, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
+https://github.com/DEDQ3E/rare-friends-nook (reviewed commit [`e44977d`](https://github.com/DEDQ3E/rare-friends-nook/tree/e44977d85156861ef75e77178e2b4561415d70cd)) · FriendSDK v0.1.4, React 19, TypeScript, Canvas 2D, Web Audio · all art and sound made in code.
 
 ## Playable demo / how to run
 
@@ -77,7 +77,7 @@ https://dedq3e.github.io/rare-friends-nook/ (simulated economy). Needs a browser
 ```sh
 git clone https://github.com/DEDQ3E/rare-friends-nook.git
 cd rare-friends-nook
-git checkout 40e7f7b12cb9360d8743a18986d4c19c00cd4420
+git checkout e44977d85156861ef75e77178e2b4561415d70cd
 npm ci
 npm run dev
 ```
@@ -90,7 +90,7 @@ Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F
 
 `npm run typecheck`, `friendsdk check`, `friendsdk test` (PASS at 960 px), `npm run docs` (every number in the docs matches `game.json` and the code), ten real Friends read live from mainnet, and browser checks: furniture, the Gift Box through the SDK confirmations, Buy mode, a full day with secrets and the recap, sound and mute, phone sizes, 60 fps. The live Pages build is byte-identical to `docs/`.
 
-**Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it. The automated checks and the demo video use the SDK's mock wallet. The v0.1.4 preview bundle was scanned: neither `runtime.js` nor `game.js` contains transaction code (no `eth_sendTransaction`, `eth_sendRawTransaction`, signing, `writeContract` or ERC-20 `transferFrom`); the game reads the generation with a bare read-only client.
+**Real wallet:** everything was also checked by hand with a real wallet on Robinhood mainnet holding a Generations NFT, on the published build, on a computer and on a phone in the wallet app's browser: wallet connection, Friend selection and the ownership gate, the house, needs and free will, the Gift Box through the SDK confirmations, food, clothes and Buy mode (simulated economy, no RF spent), neighbour visits and memes. That run caught a FriendSDK v0.1.2 bug (a wallet holding a Friend found none on the public RPC); the build moved to the v0.1.3 hotfix, which finds it, and now runs on v0.1.4. The automated checks and the demo video use the SDK's mock wallet. The v0.1.4 preview bundle was scanned: neither `runtime.js` nor `game.js` contains transaction code (no `eth_sendTransaction`, `eth_sendRawTransaction`, signing, `writeContract` or ERC-20 `transferFrom`); the game reads the generation with a bare read-only client.
 
 ## Known limitations
 
