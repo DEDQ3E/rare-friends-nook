@@ -62,7 +62,7 @@ Keepsakes: Pressed Flower 45% (0.35 RF), Snow Globe 28% (0.7 RF), Music Box 17% 
 
 ## What would be on-chain?
 
-Nothing in this build. The Gift Box is the SDK's `ChanceGame` with this `game.json` (`buy`, `play`, `settle`, `redeem` into the Friend's NFT wallet). Food, clothes and furniture need a custom RF integration; needs, friendship and the house need storage FriendSDK v0.1.4 does not supply.
+Nothing in this build. The Gift Box is the SDK's `ChanceGame` with this `game.json` (`buy`, `play`, `settle`, `redeem` into the Friend's NFT wallet). Food, treats, the birthday cake, clothes and furniture need a custom RF integration; needs, friendship and the house need storage FriendSDK v0.1.4 does not supply.
 
 ## How does it use randomness?
 
@@ -86,7 +86,7 @@ npm run dev
 
 ## How do you play?
 
-Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, find its three secrets, visit a neighbour (front door), make memes, open Gift Boxes, buy food, clothes and furniture. Time: pause, 1× (a day is 8 minutes), 3×.
+Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, find its three secrets, visit a neighbour (front door), make memes, open Gift Boxes, buy food, treats, clothes and furniture, open Where your RF went. Time: pause, 1× (a day is 8 minutes), 3×.
 
 ## What have you tested?
 
