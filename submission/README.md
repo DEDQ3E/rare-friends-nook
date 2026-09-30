@@ -4,7 +4,7 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (62 s):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`).
+🎬 **Demo with sound (62 s, recorded before the food riddle, the birthday cake and the street of real neighbours):** recorded from the real SDK runtime with Sparkling Friend #66666 read live from mainnet (only the wallet is mocked; `tests/video.mjs`).
 
 https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
 
@@ -191,7 +191,7 @@ On Windows, `play.bat` serves the prebuilt `docs/` folder on http://localhost:41
 - Find its favourite food: the card shows what its family likes and dislikes; buy foods in the Shop (1 RF a portion) and feed it at the fridge. Once its birthday is known it asks for a cake (3 RF). Click the RF counter to see where your RF went.
 - The front door visits a neighbour's house (a real Friend from the street snapshot, a simulated visit): click the floor to walk, or pick something to do together. Leave your Friend alone too long and it sulks; pet it or talk to it to make up.
 - Leave it alone and it lives its own life, choosing by need and by taste. Grant its wishes (thought bubbles) for friendship; it may refuse things it dislikes.
-- Pet it, talk to it, open Gift Boxes with it. Buy food, foods, clothes and furniture; place furniture anywhere free (arrows move it, `R` rotates).
+- Pet it, talk to it, open Gift Boxes with it. Buy snacks, foods, clothes and furniture; place furniture anywhere free (arrows move it, `R` rotates).
 - The camera button makes a random meme about your Friend; *Another meme* rolls again.
 - Time runs at pause, 1× (a day is 8 minutes) or 3×. The camera follows your Friend close up; zoom out for the whole house (Buy mode zooms out by itself). Settings: volume, music, reduced motion.
 

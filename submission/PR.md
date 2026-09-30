@@ -4,7 +4,7 @@
 
 🕹️ **Play: https://dedq3e.github.io/rare-friends-nook/**
 
-🎬 **Demo with sound (62 s):** the real SDK runtime with Sparkling Friend #66666 read live from mainnet, only the wallet mocked (`tests/video.mjs`).
+🎬 **Demo with sound (62 s, recorded before the food riddle, the birthday cake and the street of real neighbours):** the real SDK runtime with Sparkling Friend #66666 read live from mainnet, only the wallet mocked (`tests/video.mjs`).
 
 https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
 
@@ -88,7 +88,7 @@ npm run dev
 
 ## How do you play?
 
-Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, find its three secrets, visit a neighbour (front door), make memes, open Gift Boxes, buy food, foods, clothes and furniture (find which food it loves), open Where your RF went. Time: pause, 1× (a day is 8 minutes), 3×.
+Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, find its three secrets, visit a neighbour (front door), make memes, open Gift Boxes, buy snacks, foods, clothes and furniture (find which food it loves), open Where your RF went. Time: pause, 1× (a day is 8 minutes), 3×.
 
 ## What have you tested?
 
