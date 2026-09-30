@@ -12,14 +12,16 @@ https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
 
 Your Friend moves into a little pixel house and lives in it like a Sim. Everything it does by itself comes from
 the NFT: its **family** sets its temperament (loves, dislikes, voice, how it moves), its **generation** how strong
-that character is, and its own **sprite seed** a nickname, a favourite colour, a favourite activity, a favourite
-birthday and a catchphrase, quirks read from the shape of its own pixels, and a favourite food to find out (each family has its own table of liked and disliked foods).
+that character is, and its own **sprite seed** a nickname, a favourite colour, a favourite activity, a
+birthday and a catchphrase; its **quirks** are read from the shape of its own pixels, and its favourite **food** is a riddle to solve (each family has its own table of liked and disliked foods).
 
 | | |
 |---|---|
 | ![Meet your Friend](media/intro.png) | ![The house](media/house.png) |
 | ![Character card and diary](media/character.png) | ![Night](media/night.png) |
 | ![Gift Box](media/gift.png) | ![Buy mode](media/placing.png) |
+
+![The shop: snack pack, groceries and eight foods with their own icons](media/shop.png)
 
 ## What's in it
 
@@ -34,6 +36,7 @@ birthday and a catchphrase, quirks read from the shape of its own pixels, and a 
   wallpaper motif, floors, curtains, rugs and furniture materials (Moonlit Manor with bone wallpaper and black-lacquer
   furniture for a Skeleton, Cloud Loft with clouds and stars for a Hoverer, Stone Lodge in dark oak for a Colossus…).
   Only looks change: the same pieces in the same places, with the same activities and prices.
+- **A food riddle:** eight shop foods (1 RF a portion); every family likes three and dislikes two (shown on the card), each Friend loves one of its family's three and you find out by feeding it at the fridge; for some Friends the loved food is already in the fridge, for some it must be found, for some the fridge holds something they dislike. It sometimes wishes for "something tasty". After its birthday is found it asks once for a cake (3 RF, 100% burned) shared at the dining table.
 - **Hints:** the lowest need, and one thing in the house that raises it, with an arrow and a one-tap button.
 - **Home comfort:** pieces with an activity it loves make its needs drop slower, ones it dislikes faster (it grumbles
   about them); neighbours remember your last visit, a good one fills its need for company, and the street names your best friend (panel and day recap).
@@ -43,7 +46,7 @@ birthday and a catchphrase, quirks read from the shape of its own pixels, and a 
   evening with vinyl crackle, a music-box lullaby in 3/4) and a disco record to dance to, a sound for every activity,
   footsteps by floor, finches, an owl; all synthesized with Web Audio.
 - **Economy (simulated):** Gift Box on the SDK chance game (1 RF, five keepsakes worth 0.9165 RF on average when
-  sold back), food, clothes and Buy-mode furniture as RF sinks. The RF prices are example values on the scale of the
+  sold back), food, eight shop foods, a birthday cake, clothes and Buy-mode furniture as RF sinks; a small *RF burned* counter in the HUD opens *Where your RF went* (spend per source, burned and to Friend rewards, Gift Boxes separately). The RF prices are example values on the scale of the
   SDK's reference games (1 RF per consumable, about 0.90 RF back on average); to price higher, multiply every price
   and keepsake value by the same factor, which keeps the odds, the 91.65% return and the balance. Details in [submission/README.md](submission/README.md).
 
@@ -96,15 +99,15 @@ npm run docs       # every number in the docs matches game.json and the code
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`,
 `onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (the street and a simulated visit), `treats.mjs` (the food riddle, birthday cake, where your RF went). Unit checks: `npm run pixels` (quirks from pixels), `npm run street` (who lives on the street), `npm run ledger` (the RF split), `npm run food` (family tables and the fridge at move-in),
 `meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.
-Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The game is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone); the food riddle, birthday cake, RF panel and the street came after that run and are covered by the browser tests.
+Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The game is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone); the food riddle, birthday cake, RF panel and the street were also checked by hand with a real wallet on a local build of the same code before publishing, and are covered by the browser tests.
 README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs`; the family homes: `node tests/homes.mjs` (both also need `pngjs`).
 
 ## Layout
 
 `games/friend-nook/`: `index.tsx` (React adapter and UI), `engine.ts` (camera, rendering, walking, free will),
 `iso.ts` (projection and depth sorting), `house.ts`, `furniture.ts`, `catalog.ts`, `fx.ts` (living furniture),
-`sim.ts` (needs and actions), `personality.ts` (families), `traits.ts` (per-token traits), `heirlooms.ts` (family
-heirlooms), `homes.ts` (family homes), `memes.ts` (meme mode), `neighbours.ts` + `visit.ts` (simulated neighbours), `audio.ts`,
+`sim.ts` (needs, actions and the foods), `personality.ts` (families), `traits.ts` (per-token traits and the family food tables), `pixels.ts` (quirks from a Friend's own pixels), `ledger.ts` (where simulated RF goes), `heirlooms.ts` (family
+heirlooms), `homes.ts` (family homes), `memes.ts` (meme mode), `neighbours.ts` + `visit.ts` + `street.json` (the street of real Friends and simulated visits; `scripts/street.ts` builds the snapshot), `audio.ts`,
 `keepsakes.ts`, `art.ts`, `wardrobe.ts` + `fit.ts` (clothes fitted to any Friend), `game.json` (Gift Box odds).
 Design notes: [DESIGN.md](DESIGN.md).
 

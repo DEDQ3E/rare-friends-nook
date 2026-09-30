@@ -1,6 +1,6 @@
 export { traitsFor } from "../games/friend-nook/traits.ts";
 export { temperamentFor } from "../games/friend-nook/personality.ts";
-export { ACTION } from "../games/friend-nook/sim.ts";
+export { ACTION, FOOD_BY_ID } from "../games/friend-nook/sim.ts";
 import { createFriendReader, spriteFrame } from "@rarefriends/friendsdk/sprites";
 import { traitsFor } from "../games/friend-nook/traits.ts";
 import { temperamentFor } from "../games/friend-nook/personality.ts";

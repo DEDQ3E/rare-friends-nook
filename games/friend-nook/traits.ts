@@ -145,3 +145,8 @@ export function personalize(t: Temperament, p: Traits | null): Temperament {
 export function startFoods(food: FoodTaste): Readonly<Record<string, number>> {
   return food.start === "stocked" ? { [food.loved]: 2 } : food.start === "picky" ? { [food.hated[0]]: 2 } : {};
 }
+
+/** Which of this Friend's quirks makes it love this activity (for the reason the game gives on screen), if any. */
+export function quirkBehind(p: Traits, action: string): Trait | undefined {
+  return p.traits.find(x => QUIRK_LOVES[x.quirk.id]?.includes(action));
+}

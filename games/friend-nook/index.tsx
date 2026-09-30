@@ -20,7 +20,7 @@ import { SLOTS, SLOT_LABEL, WARDROBE, type Facing, type Outfit, type Slot, type 
 import { GIFT_LOVERS, KEEPSAKES } from "./keepsakes.js";
 import { CATALOG, CATALOG_DEF } from "./catalog.js";
 import { createSoundscape, voiceFor, type Soundscape } from "./audio.js";
-import { personalize, quirkStrengths, startFoods, traitsFor } from "./traits.js";
+import { personalize, quirkBehind, quirkStrengths, startFoods, traitsFor } from "./traits.js";
 import { randomMeme, renderMeme, type Meme } from "./memes.js";
 import { HEIRLOOM } from "./heirlooms.js";
 import { HOMES } from "./homes.js";
@@ -220,7 +220,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
         lastChoiceToast.current = now;
         const low = n ? NEEDS.reduce((a, k) => (n[k] < n[a] ? k : a)) : null;
         const why = traits?.favorite === e.action ? "its favourite thing" : heirloom?.action.id === e.action ? "its family heirloom"
-          : familyTemper.loves.includes(e.action) ? `a ${temper.title} loves this` : e.action === `food:${traits?.food.loved}` ? "its favourite food" : e.loved && traits ? `its quirk: ${traits.quirk.label.toLowerCase()}`
+          : familyTemper.loves.includes(e.action) ? `a ${temper.title} loves this` : e.action === `food:${traits?.food.loved}` ? "its favourite food" : e.loved && traits ? `its quirk: ${(quirkBehind(traits, e.action) ?? traits.traits[0]).quirk.label.toLowerCase()}`
           : low ? `${NEED_LABEL[low].toLowerCase()} was low` : "felt like it";
         const what = ACTION[e.action].label;
         flash(`${nick}'s own choice: ${what[0].toLowerCase()}${what.slice(1)} — ${why}`);
@@ -858,6 +858,8 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               <li>Arrows or WASD walk. <kbd>E</kbd> uses the nearest thing, <kbd>F</kbd> talks to your Friend, <kbd>Esc</kbd> closes.</li>
               <li>Leave it alone and it lives its own life: it picks what it likes, based on its family and generation.</li>
               <li>Fulfil its wishes (thought bubbles) for friendship. It may refuse things it dislikes.</li>
+              <li>Every family likes some foods and dislikes others (see the card). Buy foods in the Shop (1 RF a portion) and feed it at the fridge to find its favourite.</li>
+              <li>The front door visits a neighbour (a simulated visit). Click the RF counter to see where your RF went.</li>
               <li>RF, purchases and rewards are simulated in this preview. A reload starts a fresh session.</li>
               <li>On a phone, open the preview in your wallet app's browser (for example MetaMask → Browser) and turn the phone sideways.</li>
             </ul>

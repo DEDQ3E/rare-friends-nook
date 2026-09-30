@@ -9,10 +9,10 @@ for (let run = 0; run < 3; run++) await testGame("./games/friend-nook", { width:
     for (const t of ["family", "Gen", "Character strength", "Favourite thing: ???", "Quirk: ", ", so ", "three traits are still secret"]) assert.ok(card.includes(t), t);
     await game.getByRole("button", { name: /Welcome home/ }).click();
     const t0 = Date.now(), toast = game.locator(".fn-toast").filter({ hasText: /own choice|Secret \d/ });
-    await toast.waitFor({ timeout: 8000 });
+    await toast.waitFor({ timeout: 14000 });
     const text = await toast.innerText(), secs = (Date.now() - t0) / 1000;
     console.log(`${secs.toFixed(1)} s: ${text}`);
-    assert.ok(secs < 6, "first own choice within 6 s"); assert.match(text, /loves this|favourite thing|favourite food|family heirloom|quirk|Secret \d\/3 found: its favourite thing/);
+    assert.ok(secs < 10, "first own choice within 10 s (the walk to the fridge for a favourite food takes a few seconds more than one to the heirloom)"); assert.match(text, /loves this|favourite thing|favourite food|family heirloom|quirk|Secret \d\/3 found: its favourite thing/);
     await page.waitForTimeout(600); if (run === 0) await page.screenshot({ path: `${out}/onboarding.png` });
   } });
 console.log("ok");

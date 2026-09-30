@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { pixelFeatures, habitsFrom, POLES } from "../games/friend-nook/pixels.ts";
-import { traitsFor, personalize, quirkStrengths, QUIRKS } from "../games/friend-nook/traits.ts";
+import { traitsFor, personalize, quirkStrengths, quirkBehind, QUIRKS } from "../games/friend-nook/traits.ts";
 import { temperamentFor } from "../games/friend-nook/personality.ts";
 
 type Row = { id: string; family: string; seed: number; idleDown: string[]; walkDown: string[][] };
@@ -27,6 +27,11 @@ for (const r of ten) {
   combos.add(t.traits.map(x => x.quirk.id).join("+"));
   console.log(`#${r.id}`.padEnd(7), r.family.padEnd(10), t.traits.map(x => `${x.quirk.label} (${x.degree}): ${x.reason}`).join("  |  "));
 }
+// the reason the game gives for a quirk-loved choice names the quirk that makes it love it, not just the main one
+const tr = (id: string) => { const r = ten.find(x => x.id === id)!; return traitsFor(BigInt(id), r.seed, temperamentFor(r.family), spritesOf(r)); };
+assert.equal(quirkBehind(tr("65001"), "read")?.quirk.id, "bookworm", "Nuraki reads because of its second quirk");
+assert.equal(quirkBehind(tr("88888"), "dance")?.quirk.id, "lighteater", "Luli dances because of its second quirk");
+assert.equal(quirkBehind(tr("65001"), "toys"), undefined);
 assert.ok(combos.size >= 9, `ten Friends, at least nine different combinations (got ${combos.size})`);
 
 // the measurements themselves, on two Friends that are easy to read by eye

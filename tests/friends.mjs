@@ -42,7 +42,8 @@ try {
     const { traits: t } = await lib.traitsOfFriend(id);
     assert.equal(t.nickname, row.nickname, "traits computed from the same seed");
     for (const x of t.traits) assert.ok(text.includes(`${x.quirk.label}`) && text.includes(x.reason), `the card shows ${x.quirk.label} and why`);
-    Object.assign(row, { favorite: lib.ACTION[t.favorite].label, snack: t.snack, birthday: t.birthday.label, quirk: t.traits.map(x => x.quirk.label).join(" + "), why: t.traits.map(x => x.reason).join("; ") });
+    Object.assign(row, { favorite: lib.ACTION[t.favorite].label, snack: t.snack, birthday: t.birthday.label, quirk: t.traits.map(x => x.quirk.label).join(" + "), why: t.traits.map(x => x.reason).join("; "),
+      food: `${lib.FOOD_BY_ID[t.food.loved].name} (${{ stocked: "already in the fridge", hunt: "to be found in the shop", picky: "the fridge holds a dislike" }[t.food.start]})` });
     await game.getByRole("button", { name: /Welcome home/ }).click();
     await game.getByRole("button", { name: "Got it" }).click({ timeout: 3000 }).catch(() => {});
     // its first own choice, as the game explains it on screen
@@ -70,8 +71,8 @@ try {
 writeFileSync("./media/friends.json", JSON.stringify(results, null, 2) + "\n");
 
 // the table for the READMEs
-const md = ["| Friend | Family · generation | Nickname | Temperament · strength | Favourite thing | Colour | Quirk | Chose by itself (first 4 in-game hours) |", "|---|---|---|---|---|---|---|---|",
-  ...results.map(r => `| #${r.id} | ${r.family} · ${r.generation} | ${r.nickname} | ${r.temperament} · ${r.strength} | ${r.favorite} | ${r.colour} | ${r.quirk} | ${r.chose.map(c => c.replace(/^\d\d:\d\d /, "").replace(" (loves it)", " ♥")).join(", ") || "—"} |`)];
+const md = ["| Friend | Family · generation | Nickname | Temperament · strength | Favourite thing | Colour | Quirk | Favourite food (fridge at move-in) | Chose by itself (first 4 in-game hours) |", "|---|---|---|---|---|---|---|---|---|",
+  ...results.map(r => `| #${r.id} | ${r.family} · ${r.generation} | ${r.nickname} | ${r.temperament} · ${r.strength} | ${r.favorite} | ${r.colour} | ${r.quirk} | ${r.food} | ${r.chose.map(c => c.replace(/^\d\d:\d\d /, "").replace(" (loves it)", " ♥")).join(", ") || "—"} |`)];
 writeFileSync("./media/friends.md", md.join("\n") + "\n");
 
 // one picture: each Friend in the same house at its first own choice, and what makes it different

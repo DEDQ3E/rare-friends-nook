@@ -26,6 +26,7 @@ try {
   await game.getByRole("button", { name: "Got it" }).click().catch(() => {});
   await page.waitForTimeout(900);
   await shot("house");
+  await game.getByRole("button", { name: "Shop" }).click(); await shot("shop"); await game.getByRole("button", { name: "Close" }).click(); // the eight foods
 
   // Gift Box through the SDK confirmations
   const confirm = async () => { const b = page.getByRole("button", { name: "Confirm preview" }); await b.waitFor({ timeout: 30000 }); await b.click(); };
