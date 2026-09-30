@@ -78,7 +78,7 @@ phone, open the preview in the wallet app's browser and turn the phone sideways.
 ```
 npm ci
 npm run dev        # local dev server with the SDK runtime
-npm run build      # static build into docs/ (GitHub Pages)
+npm run build      # static build into tmp/pages, copied into docs/ (GitHub Pages)
 ```
 
 On Windows, `play.bat` serves the prebuilt `docs/` on http://localhost:4183.
@@ -88,11 +88,11 @@ On Windows, `play.bat` serves the prebuilt `docs/` on http://localhost:4183.
 ```
 npm run typecheck
 npm run check      # friendsdk check
-npm test           # friendsdk test
+npm test           # friendsdk test (needs Playwright, below)
 npm run docs       # every number in the docs matches game.json and the code
 ```
 
-Browser checks (need `npm install --no-save playwright` and `npx playwright install chromium`):
+`npm test` and the browser checks need `npm install --no-save playwright` and `npx playwright install chromium`. Browser checks:
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`,
 `onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (simulated neighbours),
 `meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.

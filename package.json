@@ -8,7 +8,7 @@
     "dev": "friendsdk dev games/friend-nook",
     "check": "friendsdk check games/friend-nook",
     "test": "friendsdk test games/friend-nook",
-    "build": "friendsdk build games/friend-nook --outdir docs",
+    "build": "friendsdk build games/friend-nook --outdir tmp/pages && node -e \"require('fs').cpSync('tmp/pages','docs',{recursive:true})\"",
     "typecheck": "tsc -p tsconfig.json",
     "docs": "esbuild tests/docs.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/docs-check.mjs && node tmp/docs-check.mjs"
   },
