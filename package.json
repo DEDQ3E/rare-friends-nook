@@ -10,7 +10,8 @@
     "test": "friendsdk test games/friend-nook",
     "build": "friendsdk build games/friend-nook --outdir tmp/pages && node -e \"require('fs').cpSync('tmp/pages','docs',{recursive:true})\"",
     "typecheck": "tsc -p tsconfig.json",
-    "docs": "esbuild tests/docs.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/docs-check.mjs && node tmp/docs-check.mjs"
+    "docs": "esbuild tests/docs.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/docs-check.mjs && node tmp/docs-check.mjs",
+    "pixels": "esbuild tests/pixel-traits.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/pixel-traits.mjs && node tmp/pixel-traits.mjs"
   },
   "author": "DEDQ3E",
   "license": "Apache-2.0",

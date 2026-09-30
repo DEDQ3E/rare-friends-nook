@@ -46,7 +46,7 @@ const TEMPLATES: readonly Template[] = [
   (c, r) => ["Nobody:", `${c.nick}: ${pick(c.temper.voice.idle, r)}`, 1],
   c => c.traits ? ["Every single time:", c.traits.catchphrase, 1] : null,
   // found secrets only
-  c => c.traits && c.known.has("quirk") ? [`${c.nick}'s toxic trait:`, c.traits.quirk.blurb, 2] : null,
+  c => c.traits ? [`${c.nick}'s toxic trait:`, c.traits.quirk.blurb, 2] : null,
   c => c.traits && c.known.has("favorite") && ACTION[c.traits.favorite] ? ["Core memory unlocked", `${c.nick}: ${label(c.traits.favorite)}`, c.action === c.traits.favorite ? 5 : 2] : null,
   c => c.traits && c.known.has("snack") ? ["HODL", `${c.nick} guarding the last ${c.traits.snack}`, 2] : null,
   c => c.traits && c.known.has("birthday") && c.known.has("snack") ? [`Birthday: ${c.traits.birthday.label}`, `Gifts accepted in ${c.traits.snack}`, 1] : null,

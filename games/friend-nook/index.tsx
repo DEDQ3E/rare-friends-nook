@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { GameComponentProps } from "@rarefriends/friendsdk/runtime";
 import { maximumPrize, type GamePlay, type GameSnapshot } from "@rarefriends/friendsdk/game";
 import { formatGameAmount } from "@rarefriends/friendsdk/ui";
@@ -19,7 +19,7 @@ import { SLOTS, SLOT_LABEL, WARDROBE, type Facing, type Outfit, type Slot, type 
 import { GIFT_LOVERS, KEEPSAKES } from "./keepsakes.js";
 import { CATALOG, CATALOG_DEF } from "./catalog.js";
 import { createSoundscape, voiceFor, type Soundscape } from "./audio.js";
-import { personalize, traitsFor } from "./traits.js";
+import { personalize, quirkStrengths, traitsFor } from "./traits.js";
 import { randomMeme, renderMeme, type Meme } from "./memes.js";
 import { HEIRLOOM } from "./heirlooms.js";
 import { HOMES } from "./homes.js";
@@ -37,10 +37,10 @@ const DEF_OFFERS = (action: string) => ["bed", "wardrobe", "windowseat", "toyche
 const ACTIONS_ON = (def: string) => Object.values(ACTION).filter(a => a.on.includes(def)).map(a => a.id);
 const pickOne = (lines: readonly string[]) => lines[Math.floor(Math.random() * lines.length)];
 const NEED_ICON = { hunger: "apple", energy: "zzz", fun: "star", hygiene: "drop", social: "heart" } as const;
-/** Four of the token's own traits start hidden; each is found by playing, not by reading. */
-type Secret = "favorite" | "snack" | "birthday" | "quirk";
-const SECRETS: readonly Secret[] = ["favorite", "snack", "birthday", "quirk"];
-const SECRET_HINT: Readonly<Record<Secret, string>> = { favorite: "watch what it picks by itself", snack: "feed it", birthday: "talk to it", quirk: "become friends" };
+/** Three of the token's own traits start hidden; each is found by playing, not by reading. */
+type Secret = "favorite" | "snack" | "birthday";
+const SECRETS: readonly Secret[] = ["favorite", "snack", "birthday"];
+const SECRET_HINT: Readonly<Record<Secret, string>> = { favorite: "watch what it picks by itself", snack: "feed it", birthday: "talk to it" };
 const SNACK_ACTIONS: readonly string[] = ["snack", "bar", "cook", "dinner"];
 const RECAP_HOUR = 22; // the day's recap card comes at 22:00
 const lower = (s: string) => s ? s[0].toLowerCase() + s.slice(1) : s;
@@ -105,7 +105,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const familyTemper = temperamentFor(family);
   const heirloom = family ? HEIRLOOM[family] : undefined;
   const home = family ? HOMES[family] : undefined;
-  const traits = useMemo(() => (seed === null ? null : traitsFor(friendId, seed, familyTemper)), [friendId, seed, familyTemper]);
+  const traits = useMemo(() => (seed === null || !sprites ? null : traitsFor(friendId, seed, familyTemper, sprites)), [friendId, seed, sprites, familyTemper]);
   const temper = useMemo(() => personalize(familyTemper, traits), [familyTemper, traits]);
   const nick = traits?.nickname ?? `Friend #${friendId.toString()}`;
   const strength = strengthOf(generation ?? null);
@@ -171,8 +171,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (!traits || foundRef.current.has(s)) return false;
     const next = new Set(foundRef.current); next.add(s); foundRef.current = next; setFound(next);
     const what = s === "favorite" ? `its favourite thing is to ${lower(ACTION[traits.favorite]?.label ?? traits.favorite)}`
-      : s === "snack" ? `its favourite snack is ${traits.snack}` : s === "birthday" ? `its birthday is ${traits.birthday.label}`
-      : `its quirk: ${traits.quirk.label.toLowerCase()} (${lower(traits.quirk.blurb)})`;
+      : s === "snack" ? `its favourite snack is ${traits.snack}` : `its birthday is ${traits.birthday.label}`;
     flash(`Secret ${next.size}/${SECRETS.length} found: ${what}`); note(`Secret found: ${what}`);
     engine.current?.addFriendship(3); engine.current?.emote("sparkle", 2.2); play("reward", .5);
     lastChoiceToast.current = performance.now();
@@ -232,7 +231,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     return () => { ro.disconnect(); window.clearInterval(tick); e.destroy(); engine.current = null; };
   }, [ready]);
   useEffect(() => { if (sprites) engine.current?.setSprites(sprites); }, [sprites, ready]);
-  useEffect(() => { engine.current?.setCharacter(temper, strength, traits?.quirk.id ?? null); }, [temper, strength, traits, ready]);
+  useEffect(() => { engine.current?.setCharacter(temper, strength, quirkStrengths(traits)); }, [temper, strength, traits, ready]);
   useEffect(() => { if (traits) engine.current?.setAccent(traits.accent); }, [traits, ready]);
   useEffect(() => { engine.current?.setOutfit(outfit); }, [outfit, ready]);
   useEffect(() => { engine.current?.setPaused(paused); if (paused) setMenu(null); }, [paused, ready]);
@@ -271,7 +270,6 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   // friendship level-ups
   const level = bondLevel(view?.friendship ?? 0);
   useEffect(() => {
-    if (level >= 1) discover("quirk");
     if (level > lastLevel.current) { engine.current?.say(`We're ${BOND_TITLES[level].toLowerCase()}s now!`); engine.current?.emote("sparkle", 2.5); play("reward", .6); note(`Friendship level ${level + 1}: ${BOND_TITLES[level]}`); }
     lastLevel.current = level;
   }, [level]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -287,7 +285,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     let e: Engine;
     try { e = createEngine(c, () => {}); } catch { return; }
     away.current = e; e.resize();
-    e.setSprites(visitN.sprites); e.setCharacter(visitN.temper, .6, visitN.traits.quirk.id); e.setAccent(visitN.traits.accent);
+    e.setSprites(visitN.sprites); e.setCharacter(visitN.temper, .6, quirkStrengths(visitN.traits)); e.setAccent(visitN.traits.accent);
     e.setMinute(engine.current?.view().minute ?? 8 * 60); e.setZoom(1); e.setReducedMotion(lessMotion); e.setPaused(paused);
     e.setGuest(sprites, outfit);
     if (visit) e.meet(visit.hostSays, visit.guestSays, "heart", null);
@@ -429,7 +427,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     setReveal(settled); setGiftsOpened(n => n + 1); dayStats.current.gifts++;
     lastGift.current = { name: k.name, rare: settled.outcomeId >= 4, at: viewRef.current?.minute ?? 0 };
     play(settled.outcomeId >= 5 ? "reveal-legendary" : settled.outcomeId >= 3 ? "reveal-rare" : "reveal-common");
-    const lover = GIFT_LOVERS.has(temper.family), bond = Math.round(k.bond * (lover ? 1.5 : 1) * (traits?.quirk.id === "collector" ? 1.5 : 1) * (1 + strength * .5));
+    const lover = GIFT_LOVERS.has(temper.family), bond = Math.round(k.bond * (lover ? 1.5 : 1) * (1 + .5 * (quirkStrengths(traits).collector ?? 0)) * (1 + strength * .5));
     engine.current?.addFriendship(bond); engine.current?.boostNeed("social", 10 + k.bond); engine.current?.boostNeed("fun", 6);
     engine.current?.emote(settled.outcomeId >= 3 ? "sparkle" : "heart", 2.6);
     engine.current?.say(lover ? `A ${k.name.toLowerCase()}! ${temper.voice.love[0]}` : settled.outcomeId >= 4 ? `A ${k.name.toLowerCase()}... wow.` : `Oh, a ${k.name.toLowerCase()}. Thank you!`);
@@ -622,14 +620,14 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
             <span className="fn-chip fn-hate">✕ Dislikes: {familyTemper.dislikes.map(id => ACTION[id]?.label).filter(Boolean).join(", ") || "nothing, really"}</span>
           </div>
           {(home || heirloom) && <p className="fn-heir">{home && <><strong>Family home: {home.name}</strong>{heirloom ? " · " : ""}</>}{heirloom && <><strong>heirloom: {heirloom.def.name}</strong> (in the living room) — {heirloom.blurb}</>}</p>}
-          <p className="fn-sub">Only {nick} has these, and four are secrets. Watch and play to find them:</p>
+          <p className="fn-sub">Only {nick} has these. Quirks are read from its own pixels, not picked from a list; three traits are still secret:</p>
           <ul className="fn-mine">
+            {traits.traits.map((x, i) => <li key={x.quirk.id}><strong>{i === 0 ? "Quirk" : "Habit"}: {x.quirk.label}</strong> ({x.degree}) — {x.reason}. <small>{x.quirk.blurb}</small></li>)}
             <li><strong>Favourite colour:</strong> <i className="fn-swatch" style={{ background: traits.accent.top }} /> {traits.accent.name}</li>
             <li><strong>Says:</strong> “{traits.catchphrase}”</li>
             <li className="fn-secret"><strong>Favourite thing:</strong> ??? <small>{SECRET_HINT.favorite}</small></li>
             <li className="fn-secret"><strong>Favourite snack:</strong> ??? <small>{SECRET_HINT.snack}</small></li>
             <li className="fn-secret"><strong>Birthday:</strong> ??? <small>{SECRET_HINT.birthday}</small></li>
-            <li className="fn-secret"><strong>Quirk:</strong> ??? <small>{SECRET_HINT.quirk}</small></li>
           </ul>
           <p className="fn-note fn-intro-note">Family and generation come from the NFT; the rest is read from its own sprite seed, so every Friend is different. Character only changes behaviour, never prices, odds or rewards.</p>
           <div className="fn-row"><button type="button" className="fn-btn" ref={el => el?.focus({ preventScroll: true })} onClick={() => { setIntroDone(true); play("select", .5); }}>Welcome home, {nick}!</button></div>
@@ -720,7 +718,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               {v && <><dt>Home comfort</dt><dd>{v.comfort.loved} {v.comfort.loved === 1 ? "thing" : "things"} it loves, {v.comfort.disliked} it dislikes{v.comfort.mult < .995 ? ` · needs drop ${Math.round((1 - v.comfort.mult) * 100)}% slower` : v.comfort.mult > 1.005 ? ` · needs drop ${Math.round((v.comfort.mult - 1) * 100)}% faster` : " · as when it moved in"}</dd></>}
               {home && <><dt>Family home</dt><dd>{home.name}: walls, wallpaper, floors and rugs in its family's style</dd></>}
               {heirloom && <><dt>Family heirloom</dt><dd>{heirloom.def.name}: {heirloom.action.label.toLowerCase()} (living room)</dd></>}
-              <dt>Quirk</dt><dd>{found.has("quirk") ? <>{traits.quirk.label}: {traits.quirk.blurb}</> : <span className="fn-secret">??? — {SECRET_HINT.quirk}</span>}</dd>
+              {traits.traits.map((x, i) => <Fragment key={x.quirk.id}><dt>{i === 0 ? "Quirk" : "Habit"}</dt><dd>{x.quirk.label} ({x.degree}): {x.reason}. {x.quirk.blurb}</dd></Fragment>)}
               <dt>Catchphrase</dt><dd>“{traits.catchphrase}”</dd></>}
               <dt>Friendship</dt><dd>{BOND_TITLES[level]} (level {level + 1}) · {v?.friendship ?? 0} points{level < BOND_LEVELS.length - 1 ? ` · next at ${BOND_LEVELS[level + 1]}` : ""}</dd>
             </dl>

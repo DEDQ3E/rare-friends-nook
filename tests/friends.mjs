@@ -39,9 +39,10 @@ try {
       birthday: pick(/Birthday: ([^\n]+)/), quirk: pick(/Quirk: ([^\n—]+)/), says: pick(/Says: [“"]([^”"]+)/),
       home: pick(/Family home: ([^·\n]+)/), heirloom: pick(/heirloom: ([^\n(]+)/), swatch: await card.locator(".fn-swatch").evaluate(e => e.style.background),
     };
-    const t = lib.traitsFor(id, Number(id), lib.temperamentFor(row.family));
+    const { traits: t } = await lib.traitsOfFriend(id);
     assert.equal(t.nickname, row.nickname, "traits computed from the same seed");
-    Object.assign(row, { favorite: lib.ACTION[t.favorite].label, snack: t.snack, birthday: t.birthday.label, quirk: t.quirk.label });
+    for (const x of t.traits) assert.ok(text.includes(`${x.quirk.label}`) && text.includes(x.reason), `the card shows ${x.quirk.label} and why`);
+    Object.assign(row, { favorite: lib.ACTION[t.favorite].label, snack: t.snack, birthday: t.birthday.label, quirk: t.traits.map(x => x.quirk.label).join(" + "), why: t.traits.map(x => x.reason).join("; ") });
     await game.getByRole("button", { name: /Welcome home/ }).click();
     await game.getByRole("button", { name: "Got it" }).click({ timeout: 3000 }).catch(() => {});
     // its first own choice, as the game explains it on screen
@@ -77,7 +78,7 @@ writeFileSync("./media/friends.md", md.join("\n") + "\n");
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const tiles = results.map(r => `<figure><div class="shot"><img src="data:image/png;base64,${readFileSync(`${out}/${r.id}-room.png`).toString("base64")}"></div>
   <figcaption><b>${esc(r.nickname)}</b> <small>#${r.id}</small><br>${esc(r.family)} · ${esc(r.generation)} · ${esc(r.temperament)} (${esc(r.strength)})<br>
-  <i style="background:${esc(r.swatch)}"></i>${esc(r.colour)} · ${esc(r.quirk)}<br>${esc(r.home)} · ${esc(r.heirloom)}<br><em>Own choice: ${esc(r.first)}</em></figcaption></figure>`).join("");
+  <i style="background:${esc(r.swatch)}"></i>${esc(r.colour)} · ${esc(r.quirk)}<br><small>${esc(r.why)}</small><br>${esc(r.home)} · ${esc(r.heirloom)}<br><em>Own choice: ${esc(r.first)}</em></figcaption></figure>`).join("");
 const browser = await chromium.launch(), sheet = await browser.newPage({ viewport: { width: 1900, height: 1000 } });
 await sheet.setContent(`<style>
 body{margin:0;background:#f3e6cf;font:13px/1.45 "Courier New",monospace;color:#2b1d14}
@@ -91,7 +92,7 @@ figcaption{padding:7px 9px 9px;min-height:100px}b{font-size:15px}small{color:#8a
 i{display:inline-block;width:11px;height:11px;border:1px solid #2b1d14;margin-right:5px;vertical-align:-1px}
 em{font-style:normal;color:#9b3d2a;font-weight:bold}
 </style><main><h1>Ten real Friends, ten family homes</h1><p>Same floor plan, same furniture. Family, generation and the token's own seed make each one different:
-its family home (walls, wallpaper, floors), name, colour (bed, cushion, rug), quirk, family heirloom, and what it chose by itself seconds after moving in.</p>
+its family home (walls, wallpaper, floors), name, colour (bed, cushion, rug), quirks read from its own pixels, family heirloom, and what it chose by itself seconds after moving in.</p>
 <div class="grid">${tiles}</div></main>`);
 await sheet.locator("main").screenshot({ path: "./media/friends-rooms.png" });
 await browser.close();

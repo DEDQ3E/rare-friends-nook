@@ -60,7 +60,7 @@ export function neighbours(): readonly Neighbour[] {
     const clip = (f: Facing, walking: boolean) => Array.from({ length: 8 }, (_, i) => spriteFrame(art, f, walking, i, "right").frame.rows);
     const set = (walking: boolean) => Object.fromEntries(FACINGS.map(f => [f, clip(f, walking)])) as Record<Facing, string[][]>;
     const sprites: FriendSprites = { walk: set(true), idle: set(false) };
-    const family = art.familyName, base = temperamentFor(family), traits = traitsFor(s.id, art.seed, base);
+    const family = art.familyName, base = temperamentFor(family), traits = traitsFor(s.id, art.seed, base, sprites);
     return { id: s.id, family, sprites, traits, temper: personalize(base, traits), heirloom: HEIRLOOM[family] };
   });
   return cache;

@@ -1,15 +1,24 @@
 /** Personal traits: what makes THIS Friend unique, not just its family. Derived deterministically from the
- * token's canonical sprite seed and token ID (read by the SDK's sprite reader), so the same Friend always has
- * the same nickname, favourite colour, favourite thing, favourite snack, birthday, catchphrase and quirk.
+ * token: its quirks come from the shape of its own pixels (see pixels.ts: mass, eyes, symmetry, walk, height,
+ * sparkles, ears, head), each with a reason the card can show; its nickname, favourite colour, favourite thing,
+ * favourite snack, birthday and catchphrase come from hashes of its canonical sprite seed and token ID.
  * Traits only change behaviour and looks. They never change prices, odds, rewards, or who may play. */
 import { ACTION } from "./sim.js";
 import type { Temperament } from "./personality.js";
+import type { FriendSprites } from "./engine.js";
+import { habitsFrom, pixelFeatures, type Features, type Habit } from "./pixels.js";
 
 export type Accent = Readonly<{ name: string; top: string; left: string; right: string; light: string }>;
-export type Quirk = Readonly<{ id: "chatterbox" | "quiet" | "nightsnacker" | "earlybird" | "sleepyhead" | "neat" | "collector" | "hummer" | "bookworm" | "speedy" | "skywatcher" | "cuddly"; label: string; blurb: string }>;
+export type QuirkId = "chatterbox" | "quiet" | "nightsnacker" | "earlybird" | "sleepyhead" | "neat" | "collector" | "hummer" | "bookworm" | "speedy" | "skywatcher" | "cuddly" | "appetite" | "lighteater" | "steady" | "easygoing";
+export type Quirk = Readonly<{ id: QuirkId; label: string; blurb: string }>;
+/** A quirk this Friend has, how strongly, and why (the measurement behind it). */
+export type Trait = Readonly<{ quirk: Quirk; strength: number; degree: Habit["degree"]; reason: string }>;
 export type Traits = Readonly<{
   nickname: string; accent: Accent; favorite: string; snack: string; birthday: { month: number; day: number; label: string };
-  catchphrase: string; quirk: Quirk;
+  catchphrase: string;
+  quirk: Quirk;             // the main quirk (= traits[0].quirk)
+  traits: readonly Trait[]; // one or two, strongest first
+  features: Features;       // the measurements behind them
 }>;
 
 const ACCENTS: readonly Accent[] = [
@@ -36,10 +45,16 @@ export const QUIRKS: readonly Quirk[] = [
   { id: "speedy", label: "Speedy", blurb: "Always in a hurry: walks a quarter faster." },
   { id: "skywatcher", label: "Sky watcher", blurb: "Loves daydreaming at the window and looking at the stars." },
   { id: "cuddly", label: "Cuddle bug", blurb: "Gets lonely sooner and loves being petted." },
+  { id: "appetite", label: "Big appetite", blurb: "Gets hungry faster and loves a seat on the sofa." },
+  { id: "lighteater", label: "Light eater", blurb: "Hungers more slowly and loves to dance." },
+  { id: "steady", label: "Steady feet", blurb: "Tires more slowly and loves dancing and ball games." },
+  { id: "easygoing", label: "Easygoing", blurb: "Takes life as it comes: everything drains a little slower." },
 ];
+const QUIRK_BY_ID = new Map(QUIRKS.map(q => [q.id, q]));
 /** Activities a quirk adds to the Friend's loves (and removes from its dislikes). */
-const QUIRK_LOVES: Readonly<Partial<Record<Quirk["id"], readonly string[]>>> = {
+const QUIRK_LOVES: Readonly<Partial<Record<QuirkId, readonly string[]>>> = {
   neat: ["wash"], bookworm: ["book", "read"], skywatcher: ["daydream", "stargaze", "telescope"], cuddly: ["pet", "talk"],
+  appetite: ["sit", "lounge"], lighteater: ["dance"], steady: ["dance", "ball"], speedy: ["ball"], hummer: ["piano"],
 };
 const FIRST = ["Mo", "Pi", "Lu", "Bo", "Ki", "Nu", "Zu", "Fi", "Ta", "Ro", "Mi", "Po", "Su", "Ji", "Wo", "Ba", "Gu", "Da", "Ye", "Ko", "Hu", "Te", "Ve", "Lo"];
 const MID = ["", "", "", "", "ra", "mi", "lu", "ko"];
@@ -58,7 +73,7 @@ function rng(key: number) {
   return () => fmix(fmix(key ^ Math.imul(++n, 0x9E3779B9)) + n) / 4294967296;
 }
 
-export function traitsFor(tokenId: bigint, seed: number, t: Temperament): Traits {
+export function traitsFor(tokenId: bigint, seed: number, t: Temperament, sprites: FriendSprites): Traits {
   const r = rng(fmix(fmix(seed >>> 0) ^ Number(tokenId & 0xFFFFFFFFn) ^ Math.imul(Number((tokenId >> 32n) & 0xFFFFFFFFn), 0x9E3779B1)));
   const pick = <T,>(list: readonly T[]) => list[Math.floor(r() * list.length)];
   const nickname = pick(FIRST) + pick(MID) + pick(LAST);
@@ -69,22 +84,35 @@ export function traitsFor(tokenId: bigint, seed: number, t: Temperament): Traits
   const snack = pick(SNACKS);
   const month = Math.floor(r() * 12), day = 1 + Math.floor(r() * 28);
   const catchphrase = `${pick(PHRASE_A)} ${pick(PHRASE_B)}`;
-  const quirk = pick(QUIRKS);
-  return { nickname, accent, favorite, snack, birthday: { month, day, label: `${MONTHS[month]} ${day}` }, catchphrase, quirk };
+  // the quirks are not drawn from a list: they are read off the Friend's own pixels
+  const features = pixelFeatures(sprites);
+  const traits: Trait[] = habitsFrom(features).map(h => ({ quirk: QUIRK_BY_ID.get(h.quirk as QuirkId)!, strength: h.strength, degree: h.degree, reason: h.reason }));
+  return { nickname, accent, favorite, snack, birthday: { month, day, label: `${MONTHS[month]} ${day}` }, catchphrase, quirk: traits[0].quirk, traits, features };
 }
 
-/** The family temperament with this Friend's own traits folded in. */
+/** How strongly this Friend has each quirk (absent = does not have it): the engine scales its own behaviours with it. */
+export function quirkStrengths(p: Traits | null): Readonly<Record<string, number>> {
+  return Object.fromEntries((p?.traits ?? []).map(x => [x.quirk.id, x.strength]));
+}
+
+/** The family temperament with this Friend's own traits folded in. Every effect scales with how strong the
+ * measurement is (0.4 just past its cut-off, 1 at its strongest). */
 export function personalize(t: Temperament, p: Traits | null): Temperament {
   if (!p) return t;
-  const decay = { ...t.decay };
-  if (p.quirk.id === "sleepyhead") decay.energy = (decay.energy ?? 1) * 1.2;
-  if (p.quirk.id === "neat") decay.hygiene = (decay.hygiene ?? 1) * .7;
-  if (p.quirk.id === "cuddly") decay.social = (decay.social ?? 1) * 1.3;
-  const extra = QUIRK_LOVES[p.quirk.id] ?? [];
+  const decay = { ...t.decay }, s = quirkStrengths(p);
+  const scale = (k: "hunger" | "energy" | "hygiene" | "social" | "fun", by: number) => { decay[k] = (decay[k] ?? 1) * by; };
+  if (s.appetite) scale("hunger", 1 + .4 * s.appetite);
+  if (s.lighteater) scale("hunger", 1 - .3 * s.lighteater);
+  if (s.sleepyhead) scale("energy", 1 + .3 * s.sleepyhead);
+  if (s.steady) scale("energy", 1 - .25 * s.steady);
+  if (s.neat) scale("hygiene", 1 - .4 * s.neat);
+  if (s.cuddly) scale("social", 1 + .35 * s.cuddly);
+  if (s.easygoing) for (const k of ["hunger", "energy", "hygiene", "social", "fun"] as const) scale(k, 1 - .15 * s.easygoing);
+  const extra = p.traits.flatMap(x => QUIRK_LOVES[x.quirk.id] ?? []);
   const loves = [...t.loves, p.favorite, ...extra].filter((a, i, all) => all.indexOf(a) === i && !!ACTION[a]);
   const dislikes = t.dislikes.filter(a => !extra.includes(a));
   return {
-    ...t, loves, dislikes, decay, speed: t.speed * (p.quirk.id === "speedy" ? 1.25 : 1),
+    ...t, loves, dislikes, decay, speed: t.speed * (1 + .3 * (s.speedy ?? 0)),
     voice: { ...t.voice, hello: [`${t.voice.hello[0]} ${p.catchphrase}`], idle: [...t.voice.idle, p.catchphrase, `I could go for some ${p.snack}.`], love: [...t.voice.love, p.catchphrase] },
   };
 }

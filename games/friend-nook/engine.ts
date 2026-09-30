@@ -84,7 +84,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   let parts: Part[] = [];
   const blocked = new Uint8Array(GW * GH);
   let sprites: FriendSprites | null = null, outfit: Outfit = {};
-  let temper: Temperament = BALANCED, strength = .5, quirk: string | null = null, humIn = 1;
+  let temper: Temperament = BALANCED, strength = .5, quirks: Readonly<Record<string, number>> = {}, humIn = 1;
   let clean = false; // a meme snapshot: no arrow, bubble or speech
   // left alone too long it sulks: player requests are refused until you make up (pet it, talk to it, a Gift Box)
   let careAt = 8 * 60, grudge = 0; // the day starts at 08:00
@@ -309,7 +309,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     for (const p of placed) for (const a of actionsOn(p.def, minute)) {
       const key = a.id + (a.seat ? "" : p.uid); if (seen.has(key)) continue; seen.add(key);
       let v = desire(a, needs, temper, strength, minute, stock);
-      if (quirk === "nightsnacker" && isNight(minute) && (a.id === "snack" || a.id === "bar")) v *= 2.5;
+      if (quirks.nightsnacker && isNight(minute) && (a.id === "snack" || a.id === "bar")) v *= 1 + 1.5 * quirks.nightsnacker;
       if (v > 0) options.push({ a, uid: p.uid, v });
     }
     if (lovedOnly && options.some(o => temper.loves.includes(o.a.id))) options.splice(0, options.length, ...options.filter(o => temper.loves.includes(o.a.id)));
@@ -399,13 +399,13 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
       doing.left -= gm;
       if (a.id === "ball") setBallLift(Math.abs(Math.sin(t * 5)) * 10);
       if (a.sleep && (!bubble || t > bubble.until) && Math.floor(t) % 4 === 0) show("zzz", 2);
-      const h = (minute % DAY_MINUTES) / 60, dawn = quirk === "earlybird" && a.id === "sleep" && h >= 5.5 && h < 9 && needs.energy > 55;
+      const h = (minute % DAY_MINUTES) / 60, dawn = !!quirks.earlybird && a.id === "sleep" && h >= 5.5 && h < 9 && needs.energy > 55;
       const full = dawn || (a.sleep && needs.energy >= 99 && !(a.id === "sleep" && isNight(minute)));
       if (doing.left <= 0 || full) finish();
     }
     if (temper.family === "Mask" && !doing && !fr.moving && !reduced && Math.random() < dt * (.25 + .35 * strength)) fr.facing = fr.facing === "left" ? "right" : fr.facing === "right" ? "down" : "left";
     // the Hummer hums while it walks
-    if (quirk === "hummer" && fr.moving && !reduced) { humIn -= dt; if (humIn <= 0) { humIn = 1.1 + Math.random(); const [hx, hy] = headPoint(); particles.push({ x: hx + 8, y: hy - 4, vx: 4, vy: -10, life: 1.4, max: 1.4, kind: "icon", icon: ICONS.note, r: 0 }); onEvent({ type: "hum" }); } }
+    if (quirks.hummer && fr.moving && !reduced) { humIn -= dt; if (humIn <= 0) { humIn = (1.1 + Math.random()) / (.5 + quirks.hummer); const [hx, hy] = headPoint(); particles.push({ x: hx + 8, y: hy - 4, vx: 4, vy: -10, life: 1.4, max: 1.4, kind: "icon", icon: ICONS.note, r: 0 }); onEvent({ type: "hum" }); } }
     // footsteps
     if (fr.moving) { stepIn -= dt * Math.min(2, speed); if (stepIn <= 0) { stepIn = .3 / temper.speed; const r = roomAt(fr.i, fr.j); onEvent({ type: "step", surface: r === "bedroom" ? "carpet" : r === "bathroom" || r === "kitchen" ? "tile" : "wood" }); } }
     // particles from what the Friend is doing
@@ -447,7 +447,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     // voice
     voiceIn -= dt;
     if (voiceIn <= 0) {
-      voiceIn = (35 + Math.random() * 40) * (quirk === "chatterbox" ? .5 : quirk === "quiet" ? 2 : 1);
+      voiceIn = (35 + Math.random() * 40) * (1 - .5 * (quirks.chatterbox ?? 0)) * (1 + (quirks.quiet ?? 0));
       const low = NEEDS.filter(k => needs[k] < 25).sort((a, b) => needs[a] - needs[b])[0];
       const line = low ? { hunger: temper.voice.hungry, energy: temper.voice.tired, fun: temper.voice.bored, hygiene: temper.voice.grubby, social: temper.voice.lonely }[low] : pickLine(temper.voice.idle);
       const bad = placed.filter(p => !STARTER.has(p.uid) && likeOf(p.def) < 0);
@@ -715,8 +715,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   return {
     setSprites(s: FriendSprites) { sprites = s; },
     setOutfit(o: Outfit) { outfit = o; },
-    setCharacter(temperament: Temperament, s: number, q: string | null = null) {
-      temper = temperament; strength = s; quirk = q;
+    setCharacter(temperament: Temperament, s: number, q: Readonly<Record<string, number>> = {}) {
+      temper = temperament; strength = s; quirks = q;
       // the family decorates the house its own way (walls, wallpaper, floors, curtains, rugs)
       const home = homeFor(temperament.family); if (myHome !== home) { myHome = home; rebuild(); }
       // the family's heirloom moves in with the Friend (once; the player may move it or put it away later)
