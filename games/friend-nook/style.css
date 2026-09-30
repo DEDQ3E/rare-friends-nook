@@ -196,3 +196,6 @@ kbd{border:2px solid var(--line);padding:0 4px;background:#fffaf0;font:inherit;f
 /* the family's heirloom line on the Meet card */
 .fn-heir { margin: 6px 0 2px; font-size: 12px; line-height: 1.35; }
 @container (max-width: 720px) { .fn-heir { font-size: 10px; margin: 3px 0 1px; } }
+
+.fn-food{padding:4px 6px}.fn-food small{font-size:10px}
+.fn-intro .fn-table{margin:3px 0 2px;font-size:11px}

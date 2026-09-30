@@ -1,15 +1,15 @@
 // Where simulated RF goes: the split of every spend, exact in base units (18 decimals), and the totals the
-// "Where your RF went" panel shows. A special treat is 1 RF (half burned, half to Friend rewards), the birthday
+// "Where your RF went" panel shows. A shop food is 1 RF a portion (half burned, half to Friend rewards), the birthday
 // cake 3 RF (all burned), food, clothes and furniture half and half. Personality changes none of it.
 // Run: npm run ledger
 import assert from "node:assert/strict";
 import { BURN_PERCENT, CAKE_PRICE, EMPTY_LEDGER, RF, SOURCES, TREAT_PRICE, split, spend, totals } from "../games/friend-nook/ledger.ts";
-import { ACTION, ACTIONS, STOCK_OF, desire, setTreatName } from "../games/friend-nook/sim.ts";
+import { ACTION, ACTIONS, FOODS, STOCK_OF, desire, stockOf } from "../games/friend-nook/sim.ts";
 import { temperamentFor } from "../games/friend-nook/personality.ts";
 
 // prices and shares
 assert.equal(TREAT_PRICE, RF); assert.equal(CAKE_PRICE, 3n * RF);
-assert.deepEqual(split("treats", TREAT_PRICE), { burned: RF / 2n, rewards: RF / 2n }, "a treat: half burned, half to Friend rewards");
+assert.deepEqual(split("treats", TREAT_PRICE), { burned: RF / 2n, rewards: RF / 2n }, "a food: half burned, half to Friend rewards");
 assert.deepEqual(split("cake", CAKE_PRICE), { burned: 3n * RF, rewards: 0n }, "the cake: all burned");
 assert.deepEqual(split("food", 2n * RF), { burned: RF, rewards: RF });
 assert.deepEqual(split("wardrobe", 5n * RF), { burned: 5n * RF / 2n, rewards: 5n * RF / 2n });
@@ -31,12 +31,14 @@ assert.equal(t.burned, 11n * RF); assert.equal(t.rewards, 8n * RF); assert.equal
 assert.deepEqual(totals(EMPTY_LEDGER), { spent: 0n, burned: 0n, rewards: 0n });
 assert.equal(EMPTY_LEDGER.cake, 0n, "spend never mutates the old ledger"); assert.deepEqual(spend(EMPTY_LEDGER, "cake", 1n).cake, 1n);
 
-// the treat and the party: paid extras are given by you (never taken by free will), need their stock, and stay out of menus
-const stock = { snacks: 3, meals: 2, treats: 1, cakes: 1 }, hungry = { hunger: 10, energy: 50, fun: 10, hygiene: 50, social: 50 };
-for (const family of ["Mask", "Colossus", "Hoverer"]) for (const id of ["treat", "party"]) assert.equal(desire(ACTION[id], hungry, temperamentFor(family), 1, 12 * 60, stock), 0, `${family}: free will never takes ${id}`);
-assert.equal(ACTION.party.uses, "cake"); assert.equal(ACTION.treat.uses, "treat"); assert.equal(STOCK_OF.cake, "cakes"); assert.equal(STOCK_OF.treat, "treats");
-assert.ok(ACTION.party.hidden, "the party is in no menu"); assert.ok(ACTIONS.filter(a => a.on.includes("fridge") && !a.hidden).some(a => a.id === "treat"), "the treat is at the fridge");
-// unnamed until the snack secret is found
-setTreatName(null); assert.equal(ACTION.treat.label, "Special treat");
-setTreatName("strawberry mochi"); assert.equal(ACTION.treat.label, "Strawberry mochi (treat)"); setTreatName(null);
+// the foods and the party: the cake is served by you (never taken by free will), foods need stock, the party stays out of menus
+const stock = { snacks: 3, meals: 2, cakes: 1, foods: { "corn-dogs": 1 } as Record<string, number> }, hungry = { hunger: 10, energy: 50, fun: 10, hygiene: 50, social: 50 };
+for (const family of ["Mask", "Colossus", "Hoverer"]) assert.equal(desire(ACTION.party, hungry, temperamentFor(family), 1, 12 * 60, stock), 0, `${family}: free will never serves the cake`);
+assert.equal(ACTION.party.uses, "cake"); assert.equal(STOCK_OF.cake, "cakes"); assert.ok(ACTION.party.hidden, "the party is in no menu");
+const dog = ACTION["food:corn-dogs"], mochi = ACTION["food:rice-balls"];
+assert.equal(dog.uses, "food"); assert.equal(dog.food, "corn-dogs"); assert.ok(ACTIONS.filter(a => a.on.includes("fridge") && !a.hidden).length >= FOODS.length, "the foods are at the fridge");
+assert.equal(FOODS.length, 8); assert.equal(new Set(FOODS.map(f => f.id)).size, 8);
+assert.equal(stockOf(stock, dog), 1); assert.equal(stockOf(stock, mochi), 0); assert.equal(stockOf(stock, ACTION.snack), 3); assert.equal(stockOf(stock, ACTION.dress), Infinity);
+const mask = temperamentFor("Mask");
+assert.ok(desire(dog, hungry, mask, 1, 12 * 60, stock) > 0, "free will takes a food that is in the fridge"); assert.equal(desire(mochi, hungry, mask, 1, 12 * 60, stock), 0, "...and not one that is not");
 console.log("ledger ok:", t.spent / RF, "RF spent,", t.burned / RF, "burned,", t.rewards / RF, "to Friend rewards");

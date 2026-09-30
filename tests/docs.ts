@@ -1,7 +1,7 @@
 // Every number in README.md and submission/README.md must match game.json and the code.
 // Run: npm run docs (bundles this file with esbuild, then runs it with Node).
 import { readFileSync } from "node:fs";
-import { ACTIONS } from "../games/friend-nook/sim.js";
+import { ACTIONS, FOODS } from "../games/friend-nook/sim.js";
 import { FURNITURE } from "../games/friend-nook/furniture.js";
 import { CATALOG } from "../games/friend-nook/catalog.js";
 import { WARDROBE } from "../games/friend-nook/wardrobe.js";
@@ -53,13 +53,14 @@ expect(Math.min(...cat) === 2 && Math.max(...cat) === 6, "furniture prices 2–6
 expect(index.includes("const cost = 10n ** 18n;") && index.includes("engine.current?.addStock(4, 0)"), "snack pack: 1 RF for 4");
 expect(index.includes("const cost = 2n * 10n ** 18n;") && index.includes("engine.current?.addStock(0, 3)"), "groceries: 2 RF for 3 meals");
 inDocs("Snack pack ×4: 1 RF", ["submission/README.md"]); inDocs("Groceries ×3 meals: 2 RF", ["submission/README.md"]);
-expect(engine.includes("const stock: Stock = { snacks: 3, meals: 2, treats: 0, cakes: 0 };"), "starting stock 3 snacks, 2 meals");
+expect(engine.includes("const stock: Stock = { snacks: 3, meals: 2, cakes: 0, foods: {} };"), "starting stock 3 snacks, 2 meals");
 inDocs("3 snacks and 2 meals", ["submission/README.md"]);
 // content counts
 const furnitureKinds = new Set([...FURNITURE, ...CATALOG.map(c => c.def)].filter(f => ACTIONS.some(a => a.on.includes(f.id))).map(f => f.id));
-const everyday = ACTIONS.filter(a => !a.on.some(o => o.startsWith("heirloom-"))); // heirlooms are counted on their own
+const everyday = ACTIONS.filter(a => !a.on.some(o => o.startsWith("heirloom-")) && a.uses !== "food"); // the eight foods are counted on their own // heirlooms are counted on their own
 inDocs(`${everyday.length} things to do on ${furnitureKinds.size} kinds of furniture`, ["submission/README.md"]);
 inDocs(`${everyday.length} activities`, ["README.md"]);
+inDocs(`${["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"][FOODS.length]} foods`, ["submission/README.md"]); for (const f of FOODS) inDocs(f.name.toLowerCase(), ["submission/README.md"]);
 const WORDS0 = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
 inDocs(`${WORDS0[HEIRLOOMS.length]} family heirlooms`);
 for (const h of HEIRLOOMS) inDocs(`| ${h.family} | ${h.def.name} | ${h.action.label} |`, ["submission/README.md"]);

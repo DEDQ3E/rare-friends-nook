@@ -5,7 +5,7 @@ import { CELL, COLS, GH, GW, ROWS, buildStructure, drawShell, edgeOpen, roomAt, 
 import { homeFor } from "./homes.js";
 import { weatherAt, type Weather } from "./weather.js";
 import { DEF, buildPlaced, footprint, placePoint, starterHouse, setBallLift, setHutchItems, type Placed } from "./furniture.js";
-import { ACTION, ACTIONS, DAY_MINUTES, GAME_MINUTES_PER_SECOND, NEEDS, STOCK_OF, actionsOn, clamp, darkness, decayNeeds, desire, isNight, mood, type ActionDef, type NeedKey, type Needs, type Stock } from "./sim.js";
+import { ACTION, ACTIONS, DAY_MINUTES, GAME_MINUTES_PER_SECOND, NEEDS, STOCK_OF, actionsOn, clamp, darkness, decayNeeds, desire, isNight, mood, stockOf, type ActionDef, type NeedKey, type Needs, type Stock } from "./sim.js";
 import { BALANCED, preference, refuseChance, type Temperament } from "./personality.js";
 import { ICONS, drawFriend, drawIconBubble, feetRow, topRow, type Pixmap } from "./art.js";
 import type { Facing, Outfit } from "./wardrobe.js";
@@ -45,7 +45,7 @@ export type EngineEvent =
   | { type: "refuse"; action: string; sulking?: boolean }
   | { type: "sulk"; grudge: number }
   | { type: "forgive" }
-  | { type: "noStock"; kind: "snack" | "meal" | "treat" | "cake" }
+  | { type: "noStock"; kind: "snack" | "meal" | "food" | "cake"; food?: string }
   | { type: "wish"; action: string }
   | { type: "wishDone"; action: string; points: number }
   | { type: "start"; action: string; auto: boolean; loved: boolean; disliked: boolean }
@@ -93,7 +93,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   let paused = false, speed = 1, reduced = false, zoom = 1, zoomTo = 1, heirloomFor: string | null = null;
   let minute = 8 * 60;                      // Day 1, 08:00
   const needs: Needs = { hunger: 72, energy: 80, fun: 60, hygiene: 85, social: 55 };
-  const stock: Stock = { snacks: 3, meals: 2, treats: 0, cakes: 0 };
+  const stock: Stock = { snacks: 3, meals: 2, cakes: 0, foods: {} };
+  let foodsSeeded = false;
   let friendship = 0, keepsakeCount = 0;
   const fr = { i: 5.75, j: 7.75, z: 0, facing: "down" as Facing, path: [] as [number, number][], moving: false, clock: 0, lie: false, bath: false };
   let doing: Doing | null = null;
@@ -244,7 +245,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     if (!force && fromPlayer && Math.random() < refuseChance(temper, strength, id)) {
       say(pickLine(temper.voice.nope)); show("angry", 2); onEvent({ type: "refuse", action: id }); idleFor = 0; return false;
     }
-    if (a.uses && stock[STOCK_OF[a.uses]] <= 0) { if (fromPlayer) { say(temper.voice.hungry); onEvent({ type: "noStock", kind: a.uses }); } return false; }
+    if (a.uses && stockOf(stock, a) <= 0) { if (fromPlayer) { say(temper.voice.hungry); onEvent({ type: "noStock", kind: a.uses, food: a.food }); } return false; }
     stop();
     const loved = temper.loves.includes(id);
     if (a.on.includes("friend")) { doing = { action: a, target: null, phase: "do", left: a.minutes, spot: null, seat: null, loved, auto: !fromPlayer }; begin(); return true; }
@@ -269,7 +270,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
   function begin() {
     if (!doing) return;
     const a = doing.action; doing.phase = "do"; fr.path = []; fr.moving = false;
-    if (a.uses) stock[STOCK_OF[a.uses]]--;
+    if (a.uses === "food") stock.foods[a.food!]--; else if (a.uses) stock[STOCK_OF[a.uses]]--;
     const p = doing.target ? placedById(doing.target) : null;
     if (p) { const [x0, y0, x1, y1] = footprint(p); fr.facing = faceToward((x0 + x1) / 2 - fr.i, (y0 + y1) / 2 - fr.j); }
     if (a.pose !== "stand" && doing.seat) {
@@ -294,7 +295,8 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     const a = doing.action, loved = doing.loved;
     for (const [k, v] of Object.entries(a.done ?? {}) as [NeedKey, number][]) needs[k] = clamp(needs[k] + v);
     if (a.id === "keepsakes") needs.fun = clamp(needs.fun + Math.min(20, 2 * keepsakeCount));
-    friendship += (loved ? 3 : 1) + (a.id === "treat" ? 5 : 0);
+    friendship += (loved ? 3 : 1) + (a.uses === "food" && loved ? 5 : 0);
+    if (a.uses === "food" && temper.dislikes.includes(a.id)) { needs.fun = clamp(needs.fun - 10); needs.hunger = clamp(needs.hunger - 10); } // a bad meal: barely fills it, and spoils its mood
     if (wish && wish.action === a.id) { const pts = 12 + Math.round(8 * strength); friendship += pts; wish = null; wishIn = 100 + Math.random() * 80; show("sparkle", 2.4); onEvent({ type: "wishDone", action: a.id, points: pts }); }
     stop(); idleFor = 0;
     if (grudge && (a.id === "pet" || a.id === "talk")) makeUp(1);
@@ -438,9 +440,9 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     if (!wish && wishIn <= 0) {
       const h = (minute % DAY_MINUTES) / 60, bedtime = h >= 20 || h < 2;
       const pool = ACTIONS.filter(a => temper.loves.includes(a.id) && !a.panel && a.id !== doing?.action.id && (a.id !== "sleep" || bedtime) && placed.some(p => a.on.includes(p.def)) && (!a.when || (a.when === "night") === isNight(minute)));
-      const day = Math.floor(minute / DAY_MINUTES), wantsTreat = treatWishDay !== day && placed.some(p => p.def === "fridge") && Math.random() < .5;
+      const day = Math.floor(minute / DAY_MINUTES), favFood = temper.loves.find(id => id.startsWith("food:")), wantsTreat = !!favFood && treatWishDay !== day && placed.some(p => p.def === "fridge") && Math.random() < .5;
       if (wantsTreat) treatWishDay = day; // asked for, so not again today
-      const choice = wantsTreat ? ACTION.treat : pool.length ? pool[Math.floor(Math.random() * pool.length)] : ACTION.ball;
+      const choice = wantsTreat ? ACTION[favFood!] : pool.length ? pool[Math.floor(Math.random() * pool.length)] : ACTION.ball;
       wish = { action: choice.id, until: minute + 6 * 60 }; onEvent({ type: "wish", action: choice.id }); show(choice.icon as keyof typeof ICONS, 3.5, true);
     }
     if (wish && minute > wish.until) { wish = null; wishIn = 60; }
@@ -760,7 +762,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     say,
     emote(icon: keyof typeof ICONS, seconds = 2) { show(icon, seconds); },
     /** Actions shown in the menu of a clicked piece (always offered; availability is explained in the menu). */
-    menuFor(def: string) { return actionsOn(def, minute); },
+    menuFor(def: string) { return actionsOn(def, minute).filter(a => a.uses !== "food" || stockOf(stock, a) > 0); }, // only the foods in the fridge
     nearestUsable(): Placed | null {
       let best: Placed | null = null, bd = 1.6;
       for (const p of placed) { if (!actionsOn(p.def, minute).length) continue; const s = spotFor(p); if (!s) continue; const d = Math.hypot(s[0] - fr.i, s[1] - fr.j); if (d < bd) { bd = d; best = p; } }
@@ -778,7 +780,7 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     hintOptions(need: NeedKey) {
       const out: { uid: string; action: string }[] = [];
       for (const p of placed) for (const a of actionsOn(p.def, minute)) {
-        if (a.panel || (a.uses && stock[STOCK_OF[a.uses]] <= 0)) continue;
+        if (a.panel || stockOf(stock, a) <= 0) continue;
         const gain = (a.rates?.[need] ?? 0) * a.minutes / 60 + (a.done?.[need] ?? 0) + (a.withYou && need === "social" ? 4 * a.minutes / 60 : 0);
         if (gain >= 8 && !out.some(o => o.action === a.id && (a.seat || o.uid === p.uid))) out.push({ uid: p.uid, action: a.id });
       }
@@ -806,14 +808,18 @@ export function createEngine(canvas: HTMLCanvasElement, onEvent: (e: EngineEvent
     removePiece(uid: string) { if (doing?.target === uid) stop(); placed = placed.filter(p => p.uid !== uid); rebuild(); },
     pieceById(uid: string) { const p = placedById(uid); return p ? { ...p } : null; },
     setKeepsakes(colors: readonly string[]) { keepsakeCount = colors.length; setHutchItems(colors); rebuild(); },
-    addStock(snacks: number, meals: number, treats = 0, cakes = 0) { stock.snacks += snacks; stock.meals += meals; stock.treats += treats; stock.cakes += cakes; },
+    addStock(snacks: number, meals: number, cakes = 0) { stock.snacks += snacks; stock.meals += meals; stock.cakes += cakes; },
+    /** Portions of one food (by food id) into the fridge. */
+    addFood(food: string, n: number) { stock.foods[food] = (stock.foods[food] ?? 0) + n; },
+    /** What is in the fridge when this Friend moves in (once per session): its loved food, nothing special, or something it dislikes. */
+    seedFoods(foods: Readonly<Record<string, number>>) { if (foodsSeeded) return; foodsSeeded = true; for (const [f, n] of Object.entries(foods)) stock.foods[f] = (stock.foods[f] ?? 0) + n; },
     /** The birthday party: it goes to the dining table and shares the cake with you (needs a cake in stock and a chair or table). */
     celebrate(): boolean { return command("party", null, true, true); },
     addFriendship(v: number) { friendship += v; },
     boostNeed(k: NeedKey, v: number) { needs[k] = clamp(needs[k] + v); },
     preferenceOf(id: string) { return preference(temper, strength, id); },
     view(): View {
-      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null, sulk: grudge, weather: weatherAt(minute), comfort: { ...comfort } };
+      return { needs: { ...needs }, minute, mood: mood(needs), action: doing?.action.id ?? null, walking: fr.moving, wish: wish?.action ?? null, friendship, stock: { ...stock, foods: { ...stock.foods } }, room: roomAt(fr.i, fr.j), speed, active: doing?.phase === "do" ? doing.action.id : null, sulk: grudge, weather: weatherAt(minute), comfort: { ...comfort } };
     },
     /** Meme mode: a clean picture of the Friend and the room around it, cut from the current view. */
     snapshot(): HTMLCanvasElement {

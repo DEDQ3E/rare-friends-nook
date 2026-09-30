@@ -77,7 +77,8 @@ Every family also loves its own heirloom (below).
   Friendship points; Friendship levels are titles, from Stranger to Forever Friend.
 - **Voice.** Short speech lines and emotes per family (talk, idle, reactions to gifts and food).
 - **The token itself.** Nickname, favourite colour (blanket, cushion, rug), a favourite activity outside the family's
-  loves, snack, birthday and catchphrase are each their own hash of the sprite seed and token ID. The quirks are NOT
+  loves, birthday and catchphrase are each their own hash of the sprite seed and token ID. The favourite food is a riddle (below).
+  The quirks are NOT
   hashed: `pixels.ts` measures the Friend's own 16 × 16 silhouette (mass, eye holes, symmetry, walk motion, height,
   sparkles, ears or antennae, head size, legs) as ratios of its size; each measurement past a fixed cut-off is a pole
   (big eyes, light build, ...) with a strength 0.4 to 1, and the two strongest on different axes become the main quirk
@@ -85,8 +86,15 @@ Every family also loves its own heirloom (below).
   speed, talk rate, loved activities, night snacks, humming, gift bonus); a quirk may overrule the family (a Bookworm Mask
   reads). The card shows each with its reason ("Big eyes, so it loves the stars"). Cut-offs are constants set from the
   ten tested Friends (`tests/pixel-traits.ts`); a Friend beyond them lands at full strength.
+- **The food riddle.** Eight shop foods (`FOODS` in `sim.ts`, 1 RF a portion, eaten at the fridge, one action each). `FAMILY_FOOD` in `traits.ts`
+  gives each family three liked and two disliked foods (shown on the card); a Friend loves one of its family's three (hash of the
+  token) and dislikes the family's two: they become `food:<id>` loves and dislikes, so free will, refusals (a disliked food may be
+  refused), hearts and wishes work like any activity. A loved food: +5 friendship and the favourite-snack secret; a disliked one: hunger
+  barely filled and mood -10. The fridge at move-in varies by token: stocked (2 portions of its loved food), hunt (nothing special), picky
+  (2 portions of a disliked food). The Friend sometimes wishes for "something tasty" (its loved food, at most once a game day, unnamed
+  until the secret is found). Prices never change with personality.
 - **Three secrets.** The card shows family, generation, temperament, heirloom, colour, catchphrase and the quirks with their
-  reasons, and hides three traits until they are found: favourite thing (it does it), favourite snack (feed it), birthday
+  reasons, and hides three traits until they are found: favourite thing (it does it), favourite snack (feed it the right food), birthday
   (talk to it). Each find: a line on screen, 3 friendship points, and the character card fills in.
 - **One day, one arc.** No saves in the SDK sandbox, so a session is one day: at 22:00 a recap card (own choices and how
   many it loves, refusals, wishes, gifts, friendship, secrets found, a meme of the day).
@@ -137,7 +145,7 @@ Every family also loves its own heirloom (below).
 - **Gift Box** (the SDK chance game, `game.json`): 1 RF. Opens one keepsake of five rarity tiers, which gives
   Friendship when opened. Kept keepsakes stand in the hutch; any keepsake can be sold back for RF (redeem).
 - **Shop** (simulated RF spend): snacks and meals (consumed by the fridge and the stove), clothes, and
-  furniture/decor for Buy mode. Spent RF is split 50% burned, 50% to Friend rewards (simulated, labeled); the special treat (1 RF) the same way, the birthday cake (3 RF) 100% burned. `ledger.ts` keeps the books per source (food, treats, cake, wardrobe, furniture); the HUD shows an *RF burned* counter and opens *Where your RF went* (spent, burned, to Friend rewards per source; the Gift Box stake separately).
+  furniture/decor for Buy mode. Spent RF is split 50% burned, 50% to Friend rewards (simulated, labeled); the shop foods (1 RF a portion) the same way, the birthday cake (3 RF) 100% burned. `ledger.ts` keeps the books per source (food, treats, cake, wardrobe, furniture); the HUD shows an *RF burned* counter and opens *Where your RF went* (spent, burned, to Friend rewards per source; the Gift Box stake separately).
 - Every price and odd shown in the UI is read from code or `game.json`; tests check the docs against them.
 - The RF prices are example values on the scale of the SDK's reference games (1 RF per consumable, about 0.90 RF
   back). To price higher, multiply every price and keepsake value by the same factor: odds, the 91.65% return and
@@ -145,6 +153,6 @@ Every family also loves its own heirloom (below).
 
 ## Scope for the vibeathon
 
-House, camera, walking, depth sorting; needs and clock; 34 activities on 28 kinds of furniture plus nine
+House, camera, walking, depth sorting; needs and clock; 33 activities on 28 kinds of furniture plus nine
 family heirlooms; 9 family homes; 9 temperaments with generation strength, per-token traits, wishes, refusals and voice lines;
 shop, wardrobe, Gift Box; Buy mode with a nine-piece catalog; mobile layout; tests. No storage exists in the SDK sandbox: progress resets on reload.

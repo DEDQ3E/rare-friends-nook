@@ -7,7 +7,7 @@ await testGame("./games/friend-nook", { width: 1280, height: 800, timeout: 30000
     const errors = []; page.on("pageerror", e => errors.push(String(e)));
     await page.screenshot({ path: `${out}/day-card.png` });
     const card = await game.locator(".fn-intro").innerText();
-    assert.ok(!card.includes("rice balls") && !card.includes("Sep 20"), "the card keeps the secrets");
+    assert.ok(card.includes("Favourite snack: ???") && !card.includes("Favourite snack: mango pudding") && !card.includes("Sep 20"), "the card keeps the secrets (the family table is only a hint)");
     await game.getByRole("button", { name: /Welcome home/ }).click();
     await game.getByRole("button", { name: "Got it" }).click({ timeout: 3000 }).catch(() => {});
     await page.waitForTimeout(1500);

@@ -13,7 +13,8 @@
     "docs": "esbuild tests/docs.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/docs-check.mjs && node tmp/docs-check.mjs",
     "pixels": "esbuild tests/pixel-traits.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/pixel-traits.mjs && node tmp/pixel-traits.mjs",
     "ledger": "esbuild tests/ledger.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/ledger.mjs && node tmp/ledger.mjs",
-    "street": "esbuild tests/street.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/street.mjs && node tmp/street.mjs"
+    "street": "esbuild tests/street.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/street.mjs && node tmp/street.mjs",
+    "food": "esbuild tests/food.ts --bundle --platform=node --format=esm --log-level=error --outfile=tmp/food.mjs && node tmp/food.mjs"
   },
   "author": "DEDQ3E",
   "license": "Apache-2.0",

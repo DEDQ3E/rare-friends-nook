@@ -3,7 +3,7 @@
  * sparkles, ears, head), each with a reason the card can show; its nickname, favourite colour, favourite thing,
  * favourite snack, birthday and catchphrase come from hashes of its canonical sprite seed and token ID.
  * Traits only change behaviour and looks. They never change prices, odds, rewards, or who may play. */
-import { ACTION } from "./sim.js";
+import { ACTION, FOOD_BY_ID, FOODS } from "./sim.js";
 import type { Temperament } from "./personality.js";
 import type { FriendSprites } from "./engine.js";
 import { habitsFrom, pixelFeatures, type Features, type Habit } from "./pixels.js";
@@ -13,12 +13,18 @@ export type QuirkId = "chatterbox" | "quiet" | "nightsnacker" | "earlybird" | "s
 export type Quirk = Readonly<{ id: QuirkId; label: string; blurb: string }>;
 /** A quirk this Friend has, how strongly, and why (the measurement behind it). */
 export type Trait = Readonly<{ quirk: Quirk; strength: number; degree: Habit["degree"]; reason: string }>;
+/** What this Friend eats: each family likes three of the shop's foods and dislikes two; this Friend loves one of its family's
+ * three (the riddle: the player finds out by feeding it), and what is in the fridge when it moves in varies:
+ * stocked = its loved food is already there, hunt = nothing special (the loved one must be found in the shop),
+ * picky = the fridge holds something it dislikes. */
+export type FoodTaste = Readonly<{ loved: string; likes: readonly string[]; hated: readonly string[]; start: "stocked" | "hunt" | "picky" }>;
 export type Traits = Readonly<{
   nickname: string; accent: Accent; favorite: string; snack: string; birthday: { month: number; day: number; label: string };
   catchphrase: string;
   quirk: Quirk;             // the main quirk (= traits[0].quirk)
   traits: readonly Trait[]; // one or two, strongest first
   features: Features;       // the measurements behind them
+  food: FoodTaste;
 }>;
 
 const ACCENTS: readonly Accent[] = [
@@ -31,7 +37,19 @@ const ACCENTS: readonly Accent[] = [
   { name: "Moss", top: "#9BB35C", left: "#809845", right: "#697F36", light: "#C8D99A" },
   { name: "Plum", top: "#A0628E", left: "#864C75", right: "#6E3B60", light: "#C99BBD" },
 ];
-const SNACKS = ["strawberry mochi", "cheese toast", "honey pancakes", "seaweed crackers", "cherry pie", "mango pudding", "salted pretzels", "berry yoghurt", "corn dogs", "cinnamon rolls", "rice balls", "choco biscuits"];
+/** Each family's table: three foods it likes (its Friends' favourites come from these) and two it dislikes. */
+export const FAMILY_FOOD: Readonly<Record<string, Readonly<{ likes: readonly string[]; dislikes: readonly string[] }>>> = {
+  Skeleton: { likes: ["corn-dogs", "seaweed-crackers", "rice-balls"], dislikes: ["mango-pudding", "berry-yoghurt"] },
+  Mask: { likes: ["cherry-pie", "honey-pancakes", "cheese-toast"], dislikes: ["seaweed-crackers", "rice-balls"] },
+  Family: { likes: ["honey-pancakes", "cherry-pie", "cheese-toast"], dislikes: ["seaweed-crackers", "corn-dogs"] },
+  Cellular: { likes: ["berry-yoghurt", "rice-balls", "mango-pudding"], dislikes: ["corn-dogs", "honey-pancakes"] },
+  Asymmetry: { likes: ["corn-dogs", "mango-pudding", "cheese-toast"], dislikes: ["berry-yoghurt", "rice-balls"] },
+  Hoverer: { likes: ["mango-pudding", "berry-yoghurt", "rice-balls"], dislikes: ["corn-dogs", "cheese-toast"] },
+  Colossus: { likes: ["corn-dogs", "cheese-toast", "honey-pancakes"], dislikes: ["berry-yoghurt", "mango-pudding"] },
+  Sparkling: { likes: ["cherry-pie", "mango-pudding", "berry-yoghurt"], dislikes: ["corn-dogs", "seaweed-crackers"] },
+  Hollow: { likes: ["seaweed-crackers", "rice-balls", "cheese-toast"], dislikes: ["cherry-pie", "honey-pancakes"] },
+};
+const UNKNOWN_FOOD = { likes: FOODS.slice(0, 3).map(f => f.id), dislikes: FOODS.slice(-2).map(f => f.id) };
 export const QUIRKS: readonly Quirk[] = [
   { id: "chatterbox", label: "Chatterbox", blurb: "Talks twice as often." },
   { id: "quiet", label: "Quiet one", blurb: "Talks half as often, and means it." },
@@ -81,13 +99,18 @@ export function traitsFor(tokenId: bigint, seed: number, t: Temperament, sprites
   // a personal favourite outside the family's loves, so two Friends of one family still differ
   const options = FAVORITES.filter(a => !t.loves.includes(a) && !t.dislikes.includes(a));
   const favorite = pick(options.length ? options : FAVORITES);
-  const snack = pick(SNACKS);
+  r(); // (the favourite snack used to be a draw from a list: it is now the food it loves, below; the draw stays so nothing else changes)
   const month = Math.floor(r() * 12), day = 1 + Math.floor(r() * 28);
   const catchphrase = `${pick(PHRASE_A)} ${pick(PHRASE_B)}`;
   // the quirks are not drawn from a list: they are read off the Friend's own pixels
   const features = pixelFeatures(sprites);
   const traits: Trait[] = habitsFrom(features).map(h => ({ quirk: QUIRK_BY_ID.get(h.quirk as QuirkId)!, strength: h.strength, degree: h.degree, reason: h.reason }));
-  return { nickname, accent, favorite, snack, birthday: { month, day, label: `${MONTHS[month]} ${day}` }, catchphrase, quirk: traits[0].quirk, traits, features };
+  // the food riddle: one of its family's three liked foods is its favourite; the start of the fridge varies with the token
+  const table = FAMILY_FOOD[t.family] ?? UNKNOWN_FOOD, loved = table.likes[Math.floor(r() * table.likes.length)];
+  const start = (["stocked", "hunt", "picky"] as const)[Math.floor(r() * 3)];
+  const food: FoodTaste = { loved, likes: table.likes, hated: table.dislikes, start };
+  const snack = FOOD_BY_ID[loved].name.toLowerCase();
+  return { nickname, accent, favorite, snack, birthday: { month, day, label: `${MONTHS[month]} ${day}` }, catchphrase, quirk: traits[0].quirk, traits, features, food };
 }
 
 /** How strongly this Friend has each quirk (absent = does not have it): the engine scales its own behaviours with it. */
@@ -109,10 +132,16 @@ export function personalize(t: Temperament, p: Traits | null): Temperament {
   if (s.cuddly) scale("social", 1 + .35 * s.cuddly);
   if (s.easygoing) for (const k of ["hunger", "energy", "hygiene", "social", "fun"] as const) scale(k, 1 - .15 * s.easygoing);
   const extra = p.traits.flatMap(x => QUIRK_LOVES[x.quirk.id] ?? []);
-  const loves = [...t.loves, p.favorite, ...extra].filter((a, i, all) => all.indexOf(a) === i && !!ACTION[a]);
-  const dislikes = t.dislikes.filter(a => !extra.includes(a));
+  const foodLoves = [`food:${p.food.loved}`], foodHates = p.food.hated.map(f => `food:${f}`);
+  const loves = [...t.loves, p.favorite, ...extra, ...foodLoves].filter((a, i, all) => all.indexOf(a) === i && !!ACTION[a]);
+  const dislikes = [...t.dislikes.filter(a => !extra.includes(a)), ...foodHates];
   return {
     ...t, loves, dislikes, decay, speed: t.speed * (1 + .3 * (s.speedy ?? 0)),
-    voice: { ...t.voice, hello: [`${t.voice.hello[0]} ${p.catchphrase}`], idle: [...t.voice.idle, p.catchphrase, `I could go for some ${p.snack}.`], love: [...t.voice.love, p.catchphrase] },
+    voice: { ...t.voice, hello: [`${t.voice.hello[0]} ${p.catchphrase}`], idle: [...t.voice.idle, p.catchphrase, "I could go for something tasty."], love: [...t.voice.love, p.catchphrase] },
   };
+}
+
+/** What is in the fridge when the Friend moves in, besides the usual snacks and meals (portions by food id). */
+export function startFoods(food: FoodTaste): Readonly<Record<string, number>> {
+  return food.start === "stocked" ? { [food.loved]: 2 } : food.start === "picky" ? { [food.hated[0]]: 2 } : {};
 }

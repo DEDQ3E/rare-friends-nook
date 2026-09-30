@@ -1,4 +1,4 @@
-/** Where simulated RF goes. Every purchase the game simulates (food, special treats, the birthday cake, clothes,
+/** Where simulated RF goes. Every purchase the game simulates (food, the shop foods, the birthday cake, clothes,
  * furniture) is split the same way the published tables say: a share burned, the rest to Friend rewards. The Gift
  * Box is the SDK's chance game and is accounted for separately (its stake is not burned). Nothing here touches
  * prices, odds or rewards of the Gift Box, and a Friend's personality never changes any of it. */
@@ -6,7 +6,7 @@ export const RF = 10n ** 18n;
 
 export type Source = "food" | "treats" | "cake" | "wardrobe" | "furniture";
 export const SOURCES: readonly Source[] = ["food", "treats", "cake", "wardrobe", "furniture"];
-export const SOURCE_LABEL: Readonly<Record<Source, string>> = { food: "Food", treats: "Special treats", cake: "Birthday cake", wardrobe: "Wardrobe", furniture: "Furniture" };
+export const SOURCE_LABEL: Readonly<Record<Source, string>> = { food: "Food", treats: "Shop foods", cake: "Birthday cake", wardrobe: "Wardrobe", furniture: "Furniture" };
 /** Share of each spend that is burned, in percent; the rest goes to Friend rewards (proposed, simulated). */
 export const BURN_PERCENT: Readonly<Record<Source, bigint>> = { food: 50n, treats: 50n, cake: 100n, wardrobe: 50n, furniture: 50n };
 

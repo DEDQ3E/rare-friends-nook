@@ -74,6 +74,15 @@ export const ICONS: Readonly<Record<string, Pixmap>> = {
   brush: { palette: { k: "#6E4630", s: "#C9D3D8", r: "#E07A5F", b: "#4F7CAC" }, rows: [".......rr", "......rrr", ".....sss.", "....kss..", "...kk....", "..kk.....", ".kk....bb", "kk....bbb", "k......b."] },
   speaker: { palette: { k }, rows: [".........", "...k...k.", "..kk.k..k", "kkkk..k.k", "kkkk..k.k", "kkkk..k.k", "..kk.k..k", "...k...k.", "........."] },
   mute: { palette: { k, r: "#C0504D" }, rows: [".........", "...k.....", "..kk.....", "kkkk.r..r", "kkkk..rr.", "kkkk..rr.", "..kk.r..r", "...k.....", "........."] },
+  // the shop's foods (9 × 9)
+  rice: { palette: { w: "#FFFFFF", k: "#2E3A34", s: "#DAD5C4" }, rows: [".........", "....w....", "...www...", "..wwwww..", ".wwwwwws.", "wwwwwwwss", "wwkkkkkss", "wwkkkkkss", "........."] },
+  toast: { palette: { b: "#C68B4A", y: "#F2C94C", o: "#E0A92C" }, rows: ["..bb.bb..", ".bbbbbbb.", "bbyyyyybb", "byyyyyyyb", "byyoyyyyb", "byyyyyoyb", "bbyyyyybb", ".bbbbbbb.", "........."] },
+  pancakes: { palette: { p: "#E6B86A", d: "#B9823F", h: "#E89B1C" }, rows: ["...hh....", "..hhhhh..", ".ppppppp.", "ddddddddd", ".ppppppp.", "ddddddddd", ".ppppppp.", "ddddddddd", "........."] },
+  crackers: { palette: { g: "#3F6B4A", l: "#7FB58A" }, rows: [".........", "gggggg...", "glglgg...", "gggggggg.", "glggglggg", "..gglgggg", "..ggggggg", "..gglglg.", "........."] },
+  pie: { palette: { c: "#D9A05B", r: "#C0392B", w: "#F28B82" }, rows: [".........", "cccccccc.", "crrrrrrrc", "crrwrrrrc", "cccrrrrc.", ".ccrrrcc.", "..cccrc..", "...ccc...", "........."] },
+  pudding: { palette: { y: "#F6B93B", w: "#FFFFFF", g: "#C9D3D8", r: "#C0392B" }, rows: ["....r....", "...yyy...", "..yyyyy..", ".yyyyyyy.", ".yyyyyyy.", ".wwwwwww.", "..wwwww..", "..ggggg..", "........."] },
+  yoghurt: { palette: { g: "#8B99A6", w: "#F4F1F7", p: "#A0336E" }, rows: [".ggggggg.", ".wwwwwww.", ".wppwppw.", ".wppppww.", ".wwwwwww.", ".wwpwwww.", ".wwwwwww.", "..wwwww..", "........."] },
+  corndog: { palette: { y: "#E6A23C", o: "#C07A1C", s: "#D9C9A0" }, rows: [".......yy", "......yoy", ".....yoy.", "....yoy..", "...yoy...", "..yoy....", ".ssy.....", "ss.......", "........."] },
   sparkle: { palette: { y: "#FFE08A", w: "#FFFFFF" }, rows: ["....y....", "....y....", "...ywy...", "yyywwwyyy", "...ywy...", "....y....", "....y....", ".........", "........."] },
 };
 

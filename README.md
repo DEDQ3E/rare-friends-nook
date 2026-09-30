@@ -13,7 +13,7 @@ https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
 Your Friend moves into a little pixel house and lives in it like a Sim. Everything it does by itself comes from
 the NFT: its **family** sets its temperament (loves, dislikes, voice, how it moves), its **generation** how strong
 that character is, and its own **sprite seed** a nickname, a favourite colour, a favourite activity, a favourite
-snack, a birthday and a catchphrase, and quirks read from the shape of its own pixels.
+birthday and a catchphrase, quirks read from the shape of its own pixels, and a favourite food to find out (each family has its own table of liked and disliked foods).
 
 | | |
 |---|---|
@@ -23,7 +23,7 @@ snack, a birthday and a catchphrase, and quirks read from the shape of its own p
 
 ## What's in it
 
-- **The house:** 12 × 10 tiles, five rooms, cut-away walls, day and night, 34 activities on furniture that
+- **The house:** 12 × 10 tiles, five rooms, cut-away walls, day and night, 33 activities on furniture that
   animates while it's used (TV channels and a video game, swimming fish, a turning record, a sizzling pan).
 - **The Friend:** its canonical Generations frames in four facings, never recoloured, rotated or reshaped;
   clothes fitted to its own silhouette. Needs (hunger, energy, fun, hygiene, social), free will, wishes,
@@ -94,9 +94,9 @@ npm run docs       # every number in the docs matches game.json and the code
 
 `npm test` and the browser checks need `npm install --no-save playwright` and `npx playwright install chromium`. Browser checks:
 `node tests/interact.mjs`, `gift.mjs`, `buy.mjs`, `fx.mjs`, `bath.mjs`, `audio.mjs`, `life.mjs`, `phone.mjs`, `perf.mjs`,
-`onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (the street and a simulated visit), `treats.mjs` (special treat, birthday cake, where your RF went). Unit checks: `npm run pixels` (quirks from pixels), `npm run street` (who lives on the street), `npm run ledger` (the RF split),
+`onboarding.mjs` (the first own choice), `day.mjs` (secrets and the recap), `sulk.mjs`, `visit.mjs` (the street and a simulated visit), `treats.mjs` (the food riddle, birthday cake, where your RF went). Unit checks: `npm run pixels` (quirks from pixels), `npm run street` (who lives on the street), `npm run ledger` (the RF split), `npm run food` (family tables and the fridge at move-in),
 `meme.mjs` (also needs `pngjs`). Real Friends read live from mainnet: `node tests/friends.mjs`. Music to WAV: `node tests/music.mjs`.
-Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The game is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone); the special treat, birthday cake, RF panel and the street came after that run and are covered by the browser tests.
+Demo video with sound: `node tests/video.mjs` (Microsoft Edge). The game is also checked by hand on the published build with a real wallet on Robinhood mainnet (computer and phone); the food riddle, birthday cake, RF panel and the street came after that run and are covered by the browser tests.
 README media: `node tests/media.mjs`; the heirloom sheet: `node tests/heirlooms.mjs`; the family homes: `node tests/homes.mjs` (both also need `pngjs`).
 
 ## Layout
