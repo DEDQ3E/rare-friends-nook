@@ -13,7 +13,7 @@ https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
 Your Friend moves into a little pixel house and lives in it like a Sim. Everything it does by itself comes from
 the NFT: its **family** sets its temperament (loves, dislikes, voice, how it moves), its **generation** how strong
 that character is, and its own **sprite seed** a nickname, a favourite colour, a favourite activity, a favourite
-snack, a birthday, a catchphrase and a quirk that no other Friend has.
+snack, a birthday and a catchphrase, and quirks read from the shape of its own pixels.
 
 | | |
 |---|---|

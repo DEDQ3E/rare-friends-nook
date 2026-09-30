@@ -12,7 +12,7 @@ https://github.com/user-attachments/assets/3081a86d-9c9d-491c-8f63-ebbe96be1ca4
 **Builder / contact:** [DEDQ3E](https://github.com/DEDQ3E) · Discord `dedq3e3` · Telegram [@DEDQ3E](https://t.me/DEDQ3E)
 **Category:** Character Spotlight
 
-**One sentence:** Your Generations Friend lives in a cozy isometric house like a Sim, and everything it does by itself comes from the NFT: its family sets its temperament, its generation how strong that character is, and its own sprite seed a name, a favourite colour, a favourite thing and a quirk no other Friend has (RF purchases and rewards are simulated in this preview).
+**One sentence:** Your Generations Friend lives in a cozy isometric house like a Sim, and everything it does by itself comes from the NFT: its family sets its temperament, its generation how strong that character is, its own sprite seed a name, a favourite colour and a favourite thing, and the shape of its own pixels its quirks, each with a reason shown on the card (RF purchases and rewards are simulated in this preview).
 
 Full submission: [`submissions/friend-nook/README.md`](https://github.com/DEDQ3E/rarefriends-vibeathon/blob/submission-friend-nook/submissions/friend-nook/README.md).
 
@@ -27,11 +27,11 @@ It is the [Rare Friends](https://rarefriends.com/) home loop, playable today: ra
 - **Its own artwork:** canonical Generations frames through the SDK sprite reader, never recoloured or reshaped; clothes fitted to its own silhouette.
 - **Family = temperament:** loves, dislikes, need rates, speed, voice and a signature idle per family. It may refuse what it dislikes.
 - **Generation = character strength:** one read-only `generation(tokenId)` call, from Legendary (Gen 1) to Mild (Gen 6): stronger Friends care more, refuse more and speak more expressively.
-- **The token itself:** its sprite seed gives a nickname, a favourite colour (its blanket, cushion and rug), a favourite activity, a snack, a birthday, a catchphrase and one of twelve quirks with real effects. Two Hoverers are different Friends.
+- **The token itself:** its sprite seed gives a nickname, a favourite colour (its blanket, cushion and rug), a favourite activity, a snack, a birthday and a catchphrase. Its quirks are read from its own pixels, not drawn from a list: the game measures the silhouette (mass, eye holes, symmetry, how much the legs move, height, sparkles, ears, head) and builds a main quirk and a habit from what stands out, each with a strength and a reason on the card ("Big eyes, so it loves the stars"). Sixteen quirks with real effects; two Hoverers are different Friends.
 - **A family heirloom:** each family brings one piece (a bone xylophone for a Skeleton, a mirror ball for a Sparkling…) with an activity only that family has.
 - **A family home:** the family decorates the house too: nine homes on the same floor plan, each with its own walls, wallpaper motif, floors, curtains, rugs and furniture materials (Moonlit Manor with bone wallpaper and black-lacquer furniture for a Skeleton, Cloud Loft with clouds and stars for a Hoverer, Stone Lodge in dark oak for a Colossus…). Only looks change: the same pieces, activities and prices.
 - **Its first own choice, explained:** seconds after the *Meet your Friend* card it picks something it loves, and the game says why ("Humippy's own choice: float on the cloud — its family heirloom").
-- **Four secrets and one day:** the card hides four traits (favourite thing, snack, birthday, quirk) until you find them by watching, feeding, talking and making friends. At 22:00 a recap card sums up the day together; one session is one day, since the SDK keeps no saves.
+- **Three secrets and one day:** the card hides three traits (favourite thing, snack, birthday) until you find them by watching, feeding, talking and making friends. At 22:00 a recap card sums up the day together; one session is one day, since the SDK keeps no saves.
 - **It sulks, and has neighbours:** left alone too long it sulks and refuses requests until you make up (sooner for a Gen 1 or a Homebody, hardly ever for an Introvert). The front door visits simulated neighbours, FriendSDK's two sample Friends played by the game, not real players: your Friend steps into the neighbour's whole house, in its family's style, where it lives by itself; hug, dance or share a snack (from your own stock), and both characters decide how it goes; the neighbour remembers your last visit.
 - **Memes about it:** the camera makes a random meme, one of twenty-one meme templates in today's formats (gm, POV, +1000 aura, let him cook, WAGMI) filled from its own voice, temperament, heirloom and what it is doing right now (the platform's *Make memes*).
 
@@ -84,7 +84,7 @@ npm run dev
 
 ## How do you play?
 
-Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, find its four secrets, visit a neighbour (front door), make memes, open Gift Boxes, buy food, clothes and furniture. Time: pause, 1× (a day is 8 minutes), 3×.
+Click furniture to pick an action, the floor to walk; arrows / WASD, `E` use, `F` talk, `Esc` close. Keep its needs up (follow the hint), grant its wishes, find its three secrets, visit a neighbour (front door), make memes, open Gift Boxes, buy food, clothes and furniture. Time: pause, 1× (a day is 8 minutes), 3×.
 
 ## What have you tested?
 

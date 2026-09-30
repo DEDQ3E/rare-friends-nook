@@ -64,7 +64,8 @@ const WORDS0 = ["zero", "one", "two", "three", "four", "five", "six", "seven", "
 inDocs(`${WORDS0[HEIRLOOMS.length]} family heirlooms`);
 for (const h of HEIRLOOMS) inDocs(`| ${h.family} | ${h.def.name} | ${h.action.label} |`, ["submission/README.md"]);
 const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty-one", "twenty-two", "twenty-three", "twenty-four", "twenty-five"];
-inDocs(`one of ${WORDS[QUIRKS.length]} quirks`, ["submission/README.md"]);
+inDocs(`${WORDS[QUIRKS.length]} quirks`, ["submission/README.md"]);
+expect(readFileSync("submission/PR.md", "utf8").includes(`${WORDS[QUIRKS.length][0].toUpperCase()}${WORDS[QUIRKS.length].slice(1)} quirks`), "PR.md should say the quirk count");
 for (const q of QUIRKS) inDocs(q.label.toLowerCase(), ["submission/README.md"]);
 // the ten-Friend table is the one tests/friends.mjs recorded
 inDocs(readFileSync("media/friends.md", "utf8").trim(), ["submission/README.md"]);

@@ -12,17 +12,18 @@
     "colour": "Rose",
     "snack": "seaweed crackers",
     "birthday": "Jan 7",
-    "quirk": "Sleepyhead",
+    "quirk": "Big appetite + Neat freak",
     "says": "Stars forever!",
     "home": "Backstage",
     "heirloom": "Mask stand",
     "swatch": "rgb(229, 143, 176)",
-    "first": "admire self — a Performer loves this",
+    "why": "Solid build, so it has a big appetite; Perfectly symmetrical, so it likes everything in order",
+    "first": "try on a mask — its family heirloom",
     "chose": [
-      "08:18 Admire self (loves it)",
-      "09:18 Try on a mask (loves it)",
-      "10:16 Snack at the bar",
-      "11:21 Nap"
+      "08:09 Try on a mask (loves it)",
+      "09:33 Cook a meal",
+      "10:59 Try on a mask (loves it)",
+      "11:41 Try on a mask (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -40,17 +41,17 @@
     "colour": "Plum",
     "snack": "seaweed crackers",
     "birthday": "Dec 4",
-    "quirk": "Chatterbox",
+    "quirk": "Neat freak + Bookworm",
     "says": "Socks forever!",
     "home": "Greenhouse Lab",
     "heirloom": "Cell garden",
     "swatch": "rgb(160, 98, 142)",
-    "first": "snack at the bar — a Foodie loves this",
+    "why": "Perfectly symmetrical, so it likes everything in order; Tiny eyes, so it reads up close",
+    "first": "cook a meal — a Foodie loves this",
     "chose": [
-      "08:15 Snack at the bar (loves it)",
-      "09:08 Tend the cell garden (loves it)",
-      "10:09 Play video games",
-      "11:39 Snack at the bar (loves it)"
+      "08:19 Cook a meal (loves it)",
+      "09:55 Read (loves it)",
+      "11:32 Wash up (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -68,16 +69,17 @@
     "colour": "Mint",
     "snack": "cinnamon rolls",
     "birthday": "Jul 2",
-    "quirk": "Early bird",
+    "quirk": "Quiet one + Speedy",
     "says": "Bubbles ahoy!",
     "home": "Funhouse",
     "heirloom": "Wobbly tower",
     "swatch": "rgb(127, 199, 167)",
-    "first": "play video games — a Chaos Gremlin loves this",
+    "why": "Big head, so it thinks more than it says; Legs that never stop, so it is always in a hurry",
+    "first": "play with toys — a Chaos Gremlin loves this",
     "chose": [
-      "08:10 Play video games (loves it)",
-      "09:59 Play video games (loves it)",
-      "11:29 Cook a meal"
+      "08:14 Play with toys (loves it)",
+      "09:37 Snack at the bar",
+      "10:31 Play video games (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -95,16 +97,17 @@
     "colour": "Sunflower",
     "snack": "salted pretzels",
     "birthday": "May 24",
-    "quirk": "Night snacker",
+    "quirk": "Chatterbox + Hummer",
     "says": "Clouds galore!",
     "home": "Funhouse",
     "heirloom": "Wobbly tower",
     "swatch": "rgb(242, 201, 76)",
-    "first": "play video games — a Chaos Gremlin loves this",
+    "why": "Lopsided outline, so it has so much to say; Long ears or antennae, so it picks up tunes to hum",
+    "first": "cook a meal — its favourite thing (secret found)",
     "chose": [
-      "08:11 Play video games (loves it)",
-      "09:40 Cook a meal (loves it)",
-      "11:14 Play with toys (loves it)"
+      "08:17 Cook a meal (loves it)",
+      "10:13 Play video games (loves it)",
+      "12:03 Play with toys (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -122,16 +125,17 @@
     "colour": "Sunflower",
     "snack": "rice balls",
     "birthday": "Sep 20",
-    "quirk": "Quiet one",
+    "quirk": "Cuddle bug + Sleepyhead",
     "says": "Buttons for everyone!",
     "home": "Cloud Loft",
     "heirloom": "Cloud cushion",
     "swatch": "rgb(242, 201, 76)",
+    "why": "Low and round, so it loves to be held; Barely lifts its feet, so it tires fast",
     "first": "float on the cloud — its family heirloom",
     "chose": [
       "08:09 Float on the cloud (loves it)",
-      "09:58 Snack at the bar",
-      "11:03 Play video games"
+      "09:25 Snack at the bar",
+      "10:28 Play video games"
     ],
     "wishes": [],
     "errors": []
@@ -149,15 +153,17 @@
     "colour": "Coral",
     "snack": "honey pancakes",
     "birthday": "Jan 5",
-    "quirk": "Sky watcher",
+    "quirk": "Big appetite + Chatterbox",
     "says": "Stars and spoons!",
     "home": "Stone Lodge",
     "heirloom": "Old boulder seat",
     "swatch": "rgb(240, 138, 111)",
+    "why": "Solid build, so it has a big appetite; Lopsided outline, so it has so much to say",
     "first": "watch TV — a Gentle Giant loves this",
     "chose": [
       "08:14 Watch TV (loves it)",
-      "12:00 Watch TV (loves it)"
+      "10:50 Grab a snack",
+      "11:22 Cook a meal"
     ],
     "wishes": [],
     "errors": []
@@ -175,16 +181,17 @@
     "colour": "Moss",
     "snack": "choco biscuits",
     "birthday": "Oct 5",
-    "quirk": "Sleepyhead",
+    "quirk": "Collector + Hummer",
     "says": "Noodles in a jar!",
     "home": "Glam Suite",
     "heirloom": "Mirror ball",
     "swatch": "rgb(155, 179, 92)",
-    "first": "admire self — a Style Icon loves this",
+    "why": "Sparkles around it, so it treasures shiny gifts; Long ears or antennae, so it picks up tunes to hum",
+    "first": "take a bath — a Style Icon loves this",
     "chose": [
-      "08:18 Admire self (loves it)",
-      "09:18 Dance under the mirror ball (loves it)",
-      "10:25 Take a bath (loves it)"
+      "08:16 Take a bath (loves it)",
+      "09:34 Dance under the mirror ball (loves it)",
+      "11:22 Cook a meal"
     ],
     "wishes": [],
     "errors": []
@@ -202,16 +209,17 @@
     "colour": "Mint",
     "snack": "berry yoghurt",
     "birthday": "Sep 21",
-    "quirk": "Sleepyhead",
+    "quirk": "Big appetite + Neat freak",
     "says": "Biscuits and spoons!",
     "home": "Moonlit Manor",
     "heirloom": "Bone xylophone",
     "swatch": "rgb(127, 199, 167)",
+    "why": "Solid build, so it has a big appetite; Perfectly symmetrical, so it likes everything in order",
     "first": "watch TV — a Night Owl loves this",
     "chose": [
       "08:12 Watch TV (loves it)",
-      "10:05 Grab a snack (loves it)",
-      "11:08 Watch TV (loves it)"
+      "10:24 Grab a snack (loves it)",
+      "11:21 Rattle out a tune (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -229,16 +237,17 @@
     "colour": "Moss",
     "snack": "honey pancakes",
     "birthday": "Feb 14",
-    "quirk": "Night snacker",
+    "quirk": "Sky watcher + Neat freak",
     "says": "Pickles in a jar!",
     "home": "Moonlit Manor",
     "heirloom": "Bone xylophone",
     "swatch": "rgb(155, 179, 92)",
+    "why": "Big eyes, so it loves the stars; Perfectly symmetrical, so it likes everything in order",
     "first": "watch TV — a Night Owl loves this",
     "chose": [
       "08:12 Watch TV (loves it)",
-      "10:01 Cook a meal",
-      "11:58 Nap"
+      "10:02 Cook a meal",
+      "11:27 Rattle out a tune (loves it)"
     ],
     "wishes": [],
     "errors": []
@@ -256,18 +265,17 @@
     "colour": "Lavender",
     "snack": "seaweed crackers",
     "birthday": "Jan 14",
-    "quirk": "Night snacker",
+    "quirk": "Early bird + Light eater",
     "says": "Biscuits and spoons!",
     "home": "Cozy Cottage",
     "heirloom": "Family photo table",
     "swatch": "rgb(142, 124, 195)",
+    "why": "Tall and slim, so it sees the sunrise first; Slight build, so it nibbles instead of feasting",
     "first": "look at family photos — its family heirloom",
     "chose": [
       "08:09 Look at family photos (loves it)",
       "09:00 Play video games",
-      "10:28 Snack at the bar",
-      "11:22 Look at family photos (loves it)",
-      "12:00 Look at family photos (loves it)"
+      "10:35 Cook a meal"
     ],
     "wishes": [],
     "errors": []

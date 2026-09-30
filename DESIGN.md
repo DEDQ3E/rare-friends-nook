@@ -76,12 +76,18 @@ Every family also loves its own heirloom (below).
 - **Wishes.** A thought bubble shows a wish drawn from the Friend's likes. Fulfilling it gives
   Friendship points; Friendship levels are titles, from Stranger to Forever Friend.
 - **Voice.** Short speech lines and emotes per family (talk, idle, reactions to gifts and food).
-- **The token itself.** Each trait is its own hash of the sprite seed and token ID: nickname, favourite colour
-  (blanket, cushion, rug), a favourite activity outside the family's loves, snack, birthday, catchphrase and one
-  of twelve quirks with real effects; a quirk may overrule the family (a Bookworm Mask reads).
-- **Four secrets.** The card shows family, generation, temperament, heirloom, colour and catchphrase, and hides four traits
-  until they are found: favourite thing (it does it), favourite snack (feed it), birthday (talk to it), quirk (first
-  friendship level). Each find: a line on screen, 3 friendship points, and the character card fills in.
+- **The token itself.** Nickname, favourite colour (blanket, cushion, rug), a favourite activity outside the family's
+  loves, snack, birthday and catchphrase are each their own hash of the sprite seed and token ID. The quirks are NOT
+  hashed: `pixels.ts` measures the Friend's own 16 × 16 silhouette (mass, eye holes, symmetry, walk motion, height,
+  sparkles, ears or antennae, head size, legs) as ratios of its size; each measurement past a fixed cut-off is a pole
+  (big eyes, light build, ...) with a strength 0.4 to 1, and the two strongest on different axes become the main quirk
+  and a habit (none standing out: easygoing). Sixteen quirks with effects that scale with strength (need decay, walking
+  speed, talk rate, loved activities, night snacks, humming, gift bonus); a quirk may overrule the family (a Bookworm Mask
+  reads). The card shows each with its reason ("Big eyes, so it loves the stars"). Cut-offs are constants set from the
+  ten tested Friends (`tests/pixel-traits.ts`); a Friend beyond them lands at full strength.
+- **Three secrets.** The card shows family, generation, temperament, heirloom, colour, catchphrase and the quirks with their
+  reasons, and hides three traits until they are found: favourite thing (it does it), favourite snack (feed it), birthday
+  (talk to it). Each find: a line on screen, 3 friendship points, and the character card fills in.
 - **One day, one arc.** No saves in the SDK sandbox, so a session is one day: at 22:00 a recap card (own choices and how
   many it loves, refusals, wishes, gifts, friendship, secrets found, a meme of the day).
 - **Memes.** The camera: a random two-line meme in today's formats (gm/gn, POV, +1000 aura, let him cook, locked in, side

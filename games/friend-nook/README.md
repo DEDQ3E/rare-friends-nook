@@ -1,7 +1,7 @@
 # Rare Friends: Friend Nook
 
 An isometric life sim starring your Rare Friend. Its family sets its temperament, its generation how strong that
-character is, and its own sprite seed a name, a favourite colour, a favourite thing and a quirk. See `README.md` and
+character is, and its own sprite seed a name, a favourite colour and a favourite thing, and the shape of its own pixels its quirks. See `README.md` and
 `DESIGN.md` in the repository root.
 
 - Click furniture to choose an action, click the floor to walk; arrows / WASD walk, `E` uses, `F` talks, `Esc` closes.
