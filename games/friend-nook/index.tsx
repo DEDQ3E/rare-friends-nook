@@ -62,11 +62,15 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
   const [visit, setVisit] = useState<{ n: Neighbour; guestSays: string; hostSays: string; verdict: string; hopAt: number; done: ReadonlySet<string> } | null>(null);
   const visitCanvas = useRef<HTMLCanvasElement | null>(null), away = useRef<Engine | null>(null);
   // each neighbour remembers your visits (this session): how many, and how the last thing you did together went
-  const [met, setMet] = useState<Readonly<Record<string, { visits: number; score: number; act: string; verdict: string }>>>({});
+  const [met, setMet] = useState<Readonly<Record<string, { visits: number; score: number; act: string; verdict: string; good: number }>>>({});
   const nearby = useMemo(() => neighbours().filter(n => n.id !== friendId), [friendId]);
+  // the neighbour you had the most good moments with (a visit act that went well: good vibes or better)
+  const best = useMemo(() => { let b: Neighbour | null = null, g = 0; for (const n of nearby) { const m = met[String(n.id)]; if (m && m.good > g) { g = m.good; b = n; } } return b ? { n: b, good: g } : null; }, [nearby, met]);
+  const bestText = best ? `${best.n.traits.nickname} (sample Friend #${best.n.id.toString()}), ${best.good} good ${best.good === 1 ? "moment" : "moments"} together` : "";
+  const bestRef = useRef(""); bestRef.current = bestText;
   const [found, setFound] = useState<ReadonlySet<Secret>>(() => new Set());
   const foundRef = useRef(found); foundRef.current = found;
-  const [recap, setRecap] = useState<{ day: number; own: number; loved: number; refused: number; wishes: number; gifts: number; sulks: number; level: number; found: number; url: string; alt: string } | null>(null);
+  const [recap, setRecap] = useState<{ day: number; own: number; loved: number; refused: number; wishes: number; gifts: number; sulks: number; level: number; found: number; url: string; alt: string; best: string } | null>(null);
   const lastGift = useRef<{ name: string; rare: boolean; at: number } | null>(null); // for the Gift Box meme
   const dayStats = useRef({ own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0, sulks: 0 }), recapDay = useRef(0);
   const [toast, setToast] = useState("");
@@ -305,7 +309,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     const m = met[String(n.id)], again: Record<string, string> = { dance: "You again! Another dance?", snack: "You again! Brought snacks?", hug: "You again! Come here.", hi: "You again! Come in, come in." };
     const hostSays = !m ? n.temper.voice.hello[0].split(/(?<=[.!?])\s/)[0] : m.score > 0 ? again[m.act] ?? again.hi : m.score < 0 ? "Oh... it's you." : "Back again? Come in.";
     const guestSays = m && m.score < 0 ? "Let's try that again." : pickOne(temper.voice.hello).split(/(?<=[.!?])\s/)[0];
-    setMet(r => ({ ...r, [String(n.id)]: { visits: (m?.visits ?? 0) + 1, score: m?.score ?? 0, act: m?.act ?? "", verdict: m?.verdict ?? "" } }));
+    setMet(r => ({ ...r, [String(n.id)]: { visits: (m?.visits ?? 0) + 1, score: m?.score ?? 0, act: m?.act ?? "", verdict: m?.verdict ?? "", good: m?.good ?? 0 } }));
     setVisit({ n, guestSays, hostSays, verdict: m ? `Visit ${m.visits + 1}. Last time: ${m.verdict.toLowerCase() || "just a hello"}` : "", hopAt: 0, done: new Set() });
     setPanel("visit");
   }
@@ -316,7 +320,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     const r = react(temper, visit.n.temper, a), first = !visit.done.has(a.id);
     // a good time together fills its need for company; an awkward one barely helps
     if (first) { engine.current?.addFriendship(r.score >= 2 ? 4 : r.score >= 1 ? 3 : r.score === 0 ? 1 : 0); engine.current?.boostNeed("social", r.score > 0 ? 35 : r.score === 0 ? 12 : 4); }
-    setMet(m => ({ ...m, [String(visit.n.id)]: { visits: m[String(visit.n.id)]?.visits ?? 1, score: r.score, act: a.id, verdict: r.verdict } }));
+    setMet(m => ({ ...m, [String(visit.n.id)]: { visits: m[String(visit.n.id)]?.visits ?? 1, score: r.score, act: a.id, verdict: r.verdict, good: (m[String(visit.n.id)]?.good ?? 0) + (r.score > 0 ? 1 : 0) } }));
     play(r.score > 0 ? "reward" : "select", .5); note(`${a.label} with ${visit.n.traits.nickname}: ${r.verdict.toLowerCase()}`);
     setVisit({ ...visit, guestSays: r.guest, hostSays: r.host, verdict: r.verdict, hopAt: r.score > 0 ? performance.now() : 0, done: new Set([...visit.done, a.id]) });
     away.current?.meet(r.host, r.guest, a.icon, a.id === "dance" ? "dance" : r.score > 0 ? "hop" : null);
@@ -534,7 +538,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
     if (!e || !view || dueDay <= recapDay.current || panel || placing || showIntro || paused) return;
     recapDay.current = dueDay;
     const s = dayStats.current, m = memeNow(e);
-    setRecap({ day: dueDay, ...s, level, found: found.size, url: m.url, alt: `${m.meme.top} / ${m.meme.bottom}` });
+    setRecap({ day: dueDay, ...s, level, found: found.size, url: m.url, alt: `${m.meme.top} / ${m.meme.bottom}`, best: bestRef.current });
     dayStats.current = { own: 0, loved: 0, refused: 0, wishes: 0, gifts: 0, sulks: 0 };
     setMenu(null); setPanel("recap"); play("reward", .6);
   }, [dueDay, panel, placing, showIntro, paused]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -676,6 +680,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
           {panel === "neighbours" && <>
             <h2>Neighbours <span className="fn-sim">simulated</span></h2>
             <p className="fn-sub">Sample Friends that come with FriendSDK, played by the game. They are not real players: FriendSDK has no multiplayer yet.</p>
+            {best && <p className="fn-sub"><strong>Best friend on the street:</strong> {bestText}</p>}
             {nearby.length ? <div className="fn-grid">{nearby.map(n => <button key={String(n.id)} type="button" className="fn-tile" onClick={() => startVisit(n)} disabled={paused}>
               <img src={neighbourPortrait[String(n.id)]} width={60} height={64} alt="" style={{ background: n.traits.accent.light }} />
               <strong>{n.traits.nickname}'s {HOMES[n.family]?.name ?? "room"}</strong><small>{n.family} · {n.temper.title} · sample Friend #{String(n.id)}</small>
@@ -690,6 +695,7 @@ export default function FriendNook({ friendId, client, paused }: GameComponentPr
               <li>{recap.refused ? <>Refused <strong>{recap.refused}</strong> {recap.refused === 1 ? "thing" : "things"} it dislikes</> : "Refused nothing today"}{recap.sulks ? <> · sulked <strong>{recap.sulks}</strong> {recap.sulks === 1 ? "time" : "times"}</> : " · never sulked"}</li>
               <li><strong>{recap.wishes}</strong> {recap.wishes === 1 ? "wish" : "wishes"} granted{recap.gifts ? <> · <strong>{recap.gifts}</strong> Gift {recap.gifts === 1 ? "Box" : "Boxes"} opened</> : ""}</li>
               <li>Friendship: <strong>{BOND_TITLES[recap.level]}</strong> · secrets found: <strong>{recap.found}/{SECRETS.length}</strong></li>
+              {recap.best && <li>Best friend on the street: <strong>{recap.best}</strong></li>}
             </ul>
             <p className="fn-sub">The SDK keeps no saves, so every visit is one day together. Screenshot it to share.</p>
             <div className="fn-row"><button type="button" className="fn-btn" onClick={() => setPanel(null)}>Good night, {nick}</button></div>

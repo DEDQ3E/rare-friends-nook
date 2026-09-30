@@ -124,6 +124,7 @@ Every family also loves its own heirloom (below).
 - Home comfort: each piece with an activity it loves (beyond the house it moved into) makes its needs drop 6% slower,
   each piece it only dislikes 6% faster (between 30% slower and 24% faster); it grumbles about bought pieces it
   dislikes, and is glad or sorry when one is put away. The character card shows the comfort.
+- Best friend on the street: the neighbour with the most good moments (good vibes or better) is named in the neighbours panel and in the day recap.
 - Neighbours remember: the next visit is greeted by how the last one went; a good visit fills social (+35), an awkward
   one barely (+4); a shared snack comes out of your stock.
 

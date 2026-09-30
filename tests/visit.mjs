@@ -30,7 +30,10 @@ for (const [w, h, name] of [[1280, 800, "visit-desktop"], [844, 390, "visit-phon
     await game.getByRole("button", { name: "Go home" }).click();
     await page.waitForTimeout(700); await page.screenshot({ path: `${out}/${name}-home.png` }); // home keeps its own family look
     // a second visit: the neighbour remembers the first
-    await door(); await game.getByRole("button", { name: /sample Friend #/ }).first().click(); await scene.waitFor();
+    await door();
+    const street = await game.locator("section[role=dialog]").filter({ hasText: "Neighbours" }).innerText();
+    assert.match(street, /Best friend on the street: \S+ \(sample Friend #\d+\), 1 good moment together/); console.log(street.match(/Best friend[^\n]*/)[0]);
+    await game.getByRole("button", { name: /sample Friend #/ }).first().click(); await scene.waitFor();
     const again = await scene.locator(".fn-sub").innerText(); console.log("again →", again); assert.match(again, /Visit 2. Last time/);
     await game.getByRole("button", { name: "Go home" }).click();
     await game.getByRole("button", { name: "Open your Friend's character card" }).click();

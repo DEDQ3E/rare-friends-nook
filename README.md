@@ -36,7 +36,7 @@ snack, a birthday and a catchphrase, and quirks read from the shape of its own p
   Only looks change: the same pieces in the same places, with the same activities and prices.
 - **Hints:** the lowest need, and one thing in the house that raises it, with an arrow and a one-tap button.
 - **Home comfort:** pieces with an activity it loves make its needs drop slower, ones it dislikes faster (it grumbles
-  about them); neighbours remember your last visit, and a good one fills its need for company.
+  about them); neighbours remember your last visit, a good one fills its need for company, and the street names your best friend (panel and day recap).
 - **Weather:** clear, cloudy, rain, snow or a storm in the windows, changing every few in-game hours; the whole street
   shares it, so a neighbour's windows show the same sky.
 - **Sound:** a composed soundtrack for each time of day (marimba morning, vibraphone-and-Rhodes swing, lo-fi
